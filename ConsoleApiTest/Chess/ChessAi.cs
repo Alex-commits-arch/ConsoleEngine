@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleLibrary.Structures;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,17 +9,27 @@ namespace ConsoleApiTest.Chess
 {
     class ChessAi
     {
-        private ChessGame chessGame;
+        private ChessGame game;
 
-        public ChessAi(ChessGame chessGame)
+        public ChessAi(ChessGame game)
         {
-            this.chessGame = chessGame;
+            this.game = game;
         }
 
+        Random rnd = new Random();
         public void MakeMove()
         {
-            
-            //chessGame.Advance();
+            var locations = game.board.GetLocations(PieceColor.Black);
+            Location[] moves = new Location[0];
+            Location from;
+            do
+            {
+                from = locations.ElementAt(rnd.Next(locations.Length));
+                moves = game.board.GetMoves(from);
+            } while (moves.Length == 0);
+            Location to = moves.ElementAt(rnd.Next(moves.Length));
+
+            game.Move(from, to);
         }
     }
 }

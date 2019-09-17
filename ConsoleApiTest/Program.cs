@@ -12,7 +12,7 @@ namespace ConsoleApiTest
     {
         static void Main(string[] args)
         {
-            var app = new Chess.ChessApp(86, 32);
+            var app = new Chess.ChessApp(86, 34);
             app.Init();
         }
     }

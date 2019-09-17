@@ -1,4 +1,5 @@
-﻿using ConsoleLibrary.TextExtensions;
+﻿using ConsoleLibrary.Structures;
+using ConsoleLibrary.TextExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +33,53 @@ namespace ConsoleLibrary.Graphics.Shapes
             data = new char[height, width];
         }
 
+        private int GetRightmostEmpty()
+        {
+            int rightMost = data.GetLength(1);
+
+            for (int x = data.GetLength(1) - 1; x >= 0; x--)
+            {
+                for (int y = 0; y < data.GetLength(0); y++)
+                {
+                    if (data[y, x] != '\0')
+                        return rightMost;
+                }
+                rightMost = x;
+            }
+            return rightMost;
+        }
+
+        private int GetBottommostEmpty()
+        {
+            int bottommost = data.GetLength(0);
+
+            for (int y = data.GetLength(0) - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < data.GetLength(1); x++)
+                {
+                    if (data[y, x] != '\0')
+                        return bottommost;
+                }
+                bottommost = y;
+            }
+            return bottommost;
+        }
+
+        private Location GetLastNonEmpty()
+        {
+            Location last = new Location(0, 0);
+
+            for (int y = data.GetLength(0) - 1; y >= 0; y--)
+            {
+                for (int x = data.GetLength(1) - 1; x >= 0; x--)
+                {
+                    if (data[y, x] != '\0')
+                        return new Location(x, y);
+                }
+            }
+            return last;
+        }
+
         public void Text(string s, BreakMode mode = BreakMode.Word)
         {
             //var test = data.Length;
@@ -39,7 +87,7 @@ namespace ConsoleLibrary.Graphics.Shapes
             //Buffer.BlockCopy(s.ToArray(), 0, data, 0, Math.Min(s.Length, data.Length) * 2);
             if (mode == BreakMode.Word && s.Contains(' '))
             {
-                string[] strings = s.Split(' ');
+                string[] strings = s.Split(' ', '\n');
                 char[] spaces = ' '.Repeat(strings.Length - 1).ToCharArray();
                 var combined = strings.Zip(
                     spaces,
@@ -91,6 +139,9 @@ namespace ConsoleLibrary.Graphics.Shapes
 
             }
 
+            int rightmost = GetRightmostEmpty();
+            int bottommost = GetBottommostEmpty();
+
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
@@ -100,7 +151,7 @@ namespace ConsoleLibrary.Graphics.Shapes
                     //    data[x, y] = ' ';
 
                     //[y, x]
-                    if (data[y, x] == '\0')
+                    if (data[y, x] == '\0' && x < rightmost && y < bottommost)
                         data[y, x] = ' ';
                 }
             }
