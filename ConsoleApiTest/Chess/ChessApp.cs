@@ -156,12 +156,12 @@ namespace ConsoleApiTest.Chess
 
         private void DrawText()
         {
-            var currentPlayerText = new TextBox(20, 1);
-            currentPlayerText.Text("Test");
+            var currentPlayerText = new TextBox(20, 4);
+            currentPlayerText.Text("This is a longer text to test the capabilities of the text box :)");
 
             var textBuffer = context["text"];
 
-            textBuffer.Draw(currentPlayerText, boardColor, 20, 05);
+            textBuffer.Draw(currentPlayerText, boardColor, windowCenter - new Location(currentPlayerText.width, currentPlayerText.height) /2 );
         }
 
         private void DrawMoves(Location[] locations)

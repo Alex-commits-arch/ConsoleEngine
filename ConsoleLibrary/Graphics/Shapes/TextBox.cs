@@ -29,10 +29,14 @@ namespace ConsoleLibrary.Graphics.Shapes
             this.width = width;
             this.height = height;
             data = new char[width, height];
+            data = new char[height, width];
         }
 
         public void Text(string s, BreakMode mode = BreakMode.Word)
         {
+            //var test = data.Length;
+            //var test1 = data.LongLength;
+            //Buffer.BlockCopy(s.ToArray(), 0, data, 0, Math.Min(s.Length, data.Length) * 2);
             if (mode == BreakMode.Word && s.Contains(' '))
             {
                 string[] strings = s.Split(' ');
@@ -56,16 +60,27 @@ namespace ConsoleLibrary.Graphics.Shapes
                         y++;
                         if (y >= height)
                         {
-                            data[width - 3, height - 1] = '.';
-                            data[width - 2, height - 1] = '.';
-                            data[width - 1, height - 1] = '.';
+                            //[x, y]
+                            //data[width - 3, height - 1] = '.';
+                            //data[width - 2, height - 1] = '.';
+                            //data[width - 1, height - 1] = '.';
+
+                            //[y, x]
+                            data[height - 1, width - 3] = '.';
+                            data[height - 1, width - 2] = '.';
+                            data[height - 1, width - 1] = '.';
+                            //data[height - 1, width - 1] = '…';
                             break;
                         }
                     }
 
                     for (int j = 0; j < str.Length; j++)
                     {
-                        data[x + j, y] = str[j];
+                        //[x, y]
+                        //data[x + j, y] = str[j];
+
+                        //[y, x]
+                        data[y, x + j] = str[j];
                     }
 
                     x += str.Length + 1;
@@ -80,8 +95,13 @@ namespace ConsoleLibrary.Graphics.Shapes
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (data[x, y] == '\0')
-                        data[x, y] = ' ';
+                    //[x,y]
+                    //if (data[x, y] == '\0')
+                    //    data[x, y] = ' ';
+
+                    //[y, x]
+                    if (data[y, x] == '\0')
+                        data[y, x] = ' ';
                 }
             }
         }
