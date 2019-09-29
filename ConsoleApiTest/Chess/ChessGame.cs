@@ -12,6 +12,7 @@ namespace ConsoleApiTest.Chess
         public ChessBoard board;
         public PieceColor currentPlayer;
         public bool againstComputer;
+        public bool gameOver = false;
 
         private ChessAi ai;
 
@@ -26,31 +27,25 @@ namespace ConsoleApiTest.Chess
 
         public void Move(Location from, Location to)
         {
+            if (board.IsKing(to))
+            {
+                gameOver = true;
+            }
+
             board.Move(from, to);
             ChangePlayer();
         }
 
-        //public Location[] GetMoves(Location location)
-        //{
-        //    return board.GetMoves(location);
-        //}
-        //public void Advance()
-        //{
-        //    //if(ai != null && currentPlayer == PieceColor.Black)
-        //    //{
-        //    //    ai.MakeMove();
-        //    //}
-
-        //    ChangePlayer();
-        //}
-
         private void ChangePlayer()
         {
-            currentPlayer = currentPlayer == PieceColor.Black ? PieceColor.White : PieceColor.Black;
-
-            if (againstComputer && currentPlayer == PieceColor.Black)
+            if (!gameOver)
             {
-                ai.MakeMove();
+                currentPlayer = currentPlayer == PieceColor.Black ? PieceColor.White : PieceColor.Black;
+
+                if (againstComputer && currentPlayer == PieceColor.Black)
+                {
+                    ai.MakeMove();
+                }
             }
         }
     }

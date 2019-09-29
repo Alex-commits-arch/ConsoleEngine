@@ -1,4 +1,5 @@
-﻿using ConsoleLibrary.TextExtensions;
+﻿using ConsoleLibrary.Structures;
+using ConsoleLibrary.TextExtensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,13 +30,64 @@ namespace ConsoleLibrary.Graphics.Shapes
             this.width = width;
             this.height = height;
             data = new char[width, height];
+            data = new char[height, width];
+        }
+
+        private int GetRightmostEmpty()
+        {
+            int rightMost = data.GetLength(1);
+
+            for (int x = data.GetLength(1) - 1; x >= 0; x--)
+            {
+                for (int y = 0; y < data.GetLength(0); y++)
+                {
+                    if (data[y, x] != '\0')
+                        return rightMost;
+                }
+                rightMost = x;
+            }
+            return rightMost;
+        }
+
+        private int GetBottommostEmpty()
+        {
+            int bottommost = data.GetLength(0);
+
+            for (int y = data.GetLength(0) - 1; y >= 0; y--)
+            {
+                for (int x = 0; x < data.GetLength(1); x++)
+                {
+                    if (data[y, x] != '\0')
+                        return bottommost;
+                }
+                bottommost = y;
+            }
+            return bottommost;
+        }
+
+        private Location GetLastNonEmpty()
+        {
+            Location last = new Location(0, 0);
+
+            for (int y = data.GetLength(0) - 1; y >= 0; y--)
+            {
+                for (int x = data.GetLength(1) - 1; x >= 0; x--)
+                {
+                    if (data[y, x] != '\0')
+                        return new Location(x, y);
+                }
+            }
+            return last;
         }
 
         public void Text(string s, BreakMode mode = BreakMode.Word)
         {
+            //var test = data.Length;
+            //var test1 = data.LongLength;
+            //Buffer.BlockCopy(s.ToArray(), 0, data, 0, Math.Min(s.Length, data.Length) * 2);
             if (mode == BreakMode.Word && s.Contains(' '))
             {
-                string[] strings = s.Split(' ');
+                string[] strings = s.Split(' ', '\n');
                 char[] spaces = ' '.Repeat(strings.Length - 1).ToCharArray();
                 var combined = strings.Zip(
                     spaces,
@@ -56,16 +108,27 @@ namespace ConsoleLibrary.Graphics.Shapes
                         y++;
                         if (y >= height)
                         {
-                            data[width - 3, height - 1] = '.';
-                            data[width - 2, height - 1] = '.';
-                            data[width - 1, height - 1] = '.';
+                            //[x, y]
+                            //data[width - 3, height - 1] = '.';
+                            //data[width - 2, height - 1] = '.';
+                            //data[width - 1, height - 1] = '.';
+
+                            //[y, x]
+                            data[height - 1, width - 3] = '.';
+                            data[height - 1, width - 2] = '.';
+                            data[height - 1, width - 1] = '.';
+                            //data[height - 1, width - 1] = '…';
                             break;
                         }
                     }
 
                     for (int j = 0; j < str.Length; j++)
                     {
-                        data[x + j, y] = str[j];
+                        //[x, y]
+                        //data[x + j, y] = str[j];
+
+                        //[y, x]
+                        data[y, x + j] = str[j];
                     }
 
                     x += str.Length + 1;
@@ -76,12 +139,20 @@ namespace ConsoleLibrary.Graphics.Shapes
 
             }
 
+            int rightmost = GetRightmostEmpty();
+            int bottommost = GetBottommostEmpty();
+
             for (int x = 0; x < width; x++)
             {
                 for (int y = 0; y < height; y++)
                 {
-                    if (data[x, y] == '\0')
-                        data[x, y] = ' ';
+                    //[x,y]
+                    //if (data[x, y] == '\0')
+                    //    data[x, y] = ' ';
+
+                    //[y, x]
+                    if (data[y, x] == '\0' && x < rightmost && y < bottommost)
+                        data[y, x] = ' ';
                 }
             }
         }

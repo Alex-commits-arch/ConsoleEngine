@@ -55,6 +55,11 @@ namespace ConsoleApiTest.Chess
             }
         }
 
+        public bool IsKing(Location location)
+        {
+            return board[location.x, location.y].type == PieceType.King;
+        }
+
         public bool CanMove(PieceColor player, Location location)
         {
             return ContainsPieceAt(location) && ColorAt(location) == player;
@@ -63,6 +68,11 @@ namespace ConsoleApiTest.Chess
         private PieceColor ColorAt(Location location)
         {
             return board[location.x, location.y].color;
+        }
+
+        public PieceType TypeAt(Location location)
+        {
+            return board[location.x, location.y].type;
         }
 
         private bool ContainsPieceAt(Location location)
@@ -74,6 +84,20 @@ namespace ConsoleApiTest.Chess
         {
             board[to.x, to.y] = board[from.x, from.y];
             board[from.x, from.y] = new ChessPiece(PieceType.None, PieceColor.Black);
+        }
+
+        public Location[] GetLocations(PieceColor color)
+        {
+            List<Location> locations = new List<Location>();
+            for (int x = 0; x < 8; x++)
+            {
+                for (int y = 0; y < 8; y++)
+                {
+                    if (board[x, y].type != PieceType.None && board[x, y].color == color)
+                        locations.Add(new Location(x, y));
+                }
+            }
+            return locations.ToArray();
         }
 
         private class ChessLogic
@@ -129,16 +153,16 @@ namespace ConsoleApiTest.Chess
 
                     if (board.WithinBounds(dir)
                      && board[dir.x, dir.y].type == PieceType.None
-                     && (direction < 0 && location.y == 6) || location.y == 1 && !ContainsFriend(board, dir, color))
+                     && ((direction < 0 && location.y == 6) || location.y == 1) && !ContainsFriend(board, dir, color) && !ContainsEnemy(board, dir, color))
                         locations.Add(dir);
                 }
 
                 //capturing
                 dir = location + directions[2];
-                if (board.WithinBounds(dir) && ContainsEnemy(board, dir, color))// && board[dir.x, dir.y].type != PieceType.None)
+                if (board.WithinBounds(dir) && ContainsEnemy(board, dir, color))
                     locations.Add(dir);
                 dir = location + directions[3];
-                if (board.WithinBounds(dir) && ContainsEnemy(board, dir, color))// && board[dir.x, dir.y].type != PieceType.None)
+                if (board.WithinBounds(dir) && ContainsEnemy(board, dir, color))
                     locations.Add(dir);
 
                 return locations.ToArray();
@@ -197,6 +221,10 @@ static class BoardExtensions
 {
     public static bool WithinBounds(this ChessPiece[,] board, Location location)
     {
+        if(location.y == -1)
+        {
+
+        }
         return location.x >= 0 && location.x <= board.GetUpperBound(0)
             && location.y >= 0 && location.y <= board.GetUpperBound(1);
     }
@@ -230,4 +258,3 @@ enum PieceColor
     White,
     Black
 }
-

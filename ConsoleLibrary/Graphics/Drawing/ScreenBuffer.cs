@@ -48,11 +48,40 @@ namespace ConsoleLibrary.Graphics.Drawing
                     if (x + i >= 0 && x + i < width
                      && y + j >= 0 && y + j < height)
                     {
-                        Draw(shape[i, j], a, x + i, y + j);
+                        //[x, y]
+                        //Draw(shape[i, j], a, x + i, y + j);
+
+                        //[y, x]
+                        Draw(shape[j, i], a, x + i, y + j);
                     }
                 }
             }
         }
+
+        public void Draw(string s, int a, Location l)
+        {
+            Draw(s, (ushort)a, l.x, l.y);
+        }
+
+        public void Draw(string s, ushort a, Location l)
+        {
+            Draw(s, a, l.x, l.y);
+        }
+
+        public void Draw(string s, int a, int x = 0, int y = 0)
+        {
+            Draw(s, (ushort)a, x, y);
+        }
+
+        public void Draw(string s, ushort a, int x = 0, int y = 0)
+        {
+            for (int i = 0; i < s.Length; i++)
+            {
+                Draw(s[i], a, x+i, y);
+            }
+        }
+
+
 
         public void Draw(char c, int a, Location l)
         {
