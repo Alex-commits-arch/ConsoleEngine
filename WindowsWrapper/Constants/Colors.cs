@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleLibrary.Api.WinApi.Constants
+namespace WindowsWrapper.Constants
 {
     public class Colors
     {

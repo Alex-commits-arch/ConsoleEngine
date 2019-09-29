@@ -1,10 +1,6 @@
-﻿using ConsoleLibrary.Api.WinApi.Constants;
-using ConsoleLibrary.Api.WinApi.Structs;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
+using WindowsWrapper;
+using WindowsWrapper.Constants;
 
 namespace ConsoleLibrary.TextExtensions
 {

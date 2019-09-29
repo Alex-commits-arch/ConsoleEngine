@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleLibrary", "ConsoleLi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApiTest", "ConsoleApiTest\ConsoleApiTest.csproj", "{514E67FF-856F-4BEE-A61F-FBBD345F713E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WindowsWrapper", "WindowsWrapper\WindowsWrapper.csproj", "{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{514E67FF-856F-4BEE-A61F-FBBD345F713E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{514E67FF-856F-4BEE-A61F-FBBD345F713E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{514E67FF-856F-4BEE-A61F-FBBD345F713E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

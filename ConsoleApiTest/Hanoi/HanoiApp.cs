@@ -11,8 +11,8 @@ using ConsoleLibrary.Graphics.Shapes;
 using System.Threading;
 using static ConsoleLibrary.Input.InputManager;
 using ConsoleLibrary.Input;
-using ConsoleLibrary.Api.WinApi.Constants;
 using ConsoleLibrary.Graphics.Drawing;
+using WindowsWrapper.Constants;
 
 namespace ConsoleApiTest
 {

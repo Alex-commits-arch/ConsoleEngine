@@ -59,6 +59,10 @@
       <Project>{41E731A2-8AA7-467C-BD85-AF2A0DDA44D2}</Project>
       <Name>ConsoleLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WindowsWrapper\WindowsWrapper.csproj">
+      <Project>{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}</Project>
+      <Name>WindowsWrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,8 +1,8 @@
-﻿using ConsoleLibrary.Api.WinApi;
-using ConsoleLibrary.Api.WinApi.Constants;
-using ConsoleLibrary.Graphics.Drawing;
+﻿using ConsoleLibrary.Graphics.Drawing;
 using ConsoleLibrary.Input;
 using System;
+using WindowsWrapper;
+using WindowsWrapper.Constants;
 
 namespace ConsoleLibrary
 {

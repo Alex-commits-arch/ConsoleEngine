@@ -1,6 +1,6 @@
-﻿using ConsoleLibrary.Api.WinApi.Constants;
-using ConsoleLibrary.Api.WinApi.Structs;
-using System.Text;
+﻿using System.Text;
+using WindowsWrapper;
+using WindowsWrapper.Constants;
 
 namespace ConsoleLibrary.TextExtensions
 {

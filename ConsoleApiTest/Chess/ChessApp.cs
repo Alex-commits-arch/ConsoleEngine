@@ -1,5 +1,4 @@
 ﻿using ConsoleLibrary;
-using ConsoleLibrary.Api.WinApi.Constants;
 using ConsoleLibrary.Graphics.Drawing;
 using ConsoleLibrary.Graphics.Shapes;
 using ConsoleLibrary.Input;
@@ -10,6 +9,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsWrapper.Constants;
 using static ConsoleLibrary.Input.InputManager;
 
 namespace ConsoleApiTest.Chess

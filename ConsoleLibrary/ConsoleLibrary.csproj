@@ -41,11 +41,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api\WinApi\Constants\Colors.cs" />
-    <Compile Include="Api\WinApi\Constants\Window.cs" />
-    <Compile Include="Api\WinApi\Structs\CharInfo.cs" />
-    <Compile Include="Api\WinApi\Structs\Coord.cs" />
-    <Compile Include="Api\WinApi\Structs\SmallRect.cs" />
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="ConsoleExtensions\ConsoleExtensions.cs" />
     <Compile Include="Graphics\Drawing\DrawingContext.cs" />
@@ -57,11 +52,16 @@
     <Compile Include="Structures\Structures.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextExtensions\CharExtensions.cs" />
-    <Compile Include="Api\WinApi\WinApi.cs" />
     <Compile Include="TextExtensions\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ArrayExtensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsWrapper\WindowsWrapper.csproj">
+      <Project>{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}</Project>
+      <Name>WindowsWrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

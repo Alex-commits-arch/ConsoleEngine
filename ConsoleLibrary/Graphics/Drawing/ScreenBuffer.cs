@@ -1,5 +1,4 @@
-﻿using ConsoleLibrary.Api.WinApi.Structs;
-using ConsoleLibrary.Graphics.Shapes;
+﻿using ConsoleLibrary.Graphics.Shapes;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
 using System;
@@ -7,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsWrapper;
 
 namespace ConsoleLibrary.Graphics.Drawing
 {

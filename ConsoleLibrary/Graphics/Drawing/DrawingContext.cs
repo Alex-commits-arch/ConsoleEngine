@@ -1,6 +1,4 @@
-﻿using ConsoleLibrary.Api.WinApi;
-using ConsoleLibrary.Api.WinApi.Structs;
-using ConsoleLibrary.Graphics.Shapes;
+﻿using ConsoleLibrary.Graphics.Shapes;
 using ConsoleLibrary.TextExtensions;
 using Microsoft.Win32.SafeHandles;
 using System;
@@ -11,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsWrapper;
 
 namespace ConsoleLibrary.Graphics.Drawing
 {

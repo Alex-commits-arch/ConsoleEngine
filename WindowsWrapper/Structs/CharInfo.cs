@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace ConsoleLibrary.Api.WinApi.Structs
+namespace WindowsWrapper
 {
     [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Auto)]
     public struct CharInfo
