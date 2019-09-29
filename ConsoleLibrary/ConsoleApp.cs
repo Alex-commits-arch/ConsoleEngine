@@ -1,5 +1,4 @@
 ﻿using ConsoleLibrary.Graphics.Drawing;
-using ConsoleLibrary.Input;
 using System;
 using WindowsWrapper;
 using WindowsWrapper.Constants;

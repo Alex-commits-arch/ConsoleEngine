@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using WindowsWrapper;
 using WindowsWrapper.Constants;
+using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.TextExtensions
 {
@@ -37,7 +38,7 @@ namespace ConsoleLibrary.TextExtensions
                     int i = y * w + x;
                     output[i].UnicodeChar = cArr[x, y];//.FormatUnicode();
                     output[i].AsciiChar = (byte)cArr[x, y];
-                    output[i].Attributes = (ushort)(Colors.FOREGROUND_GREEN | Colors.FOREGROUND_INTENSITY);
+                    output[i].Attributes = (short)(Colors.FOREGROUND_GREEN | Colors.FOREGROUND_INTENSITY);
                 }
             }
             return output;

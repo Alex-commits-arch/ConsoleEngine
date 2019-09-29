@@ -1,16 +1,16 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace WindowsWrapper
+namespace WindowsWrapper.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct SmallRect
+    public struct SMALL_RECT
     {
         public short Left;
         public short Top;
         public short Right;
         public short Bottom;
 
-        public SmallRect(short Left, short Top, short Right, short Bottom)
+        public SMALL_RECT(short Left, short Top, short Right, short Bottom)
         {
             this.Left = Left;
             this.Top = Top;

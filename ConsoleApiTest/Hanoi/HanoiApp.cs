@@ -2,15 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ConsoleLibrary.ConsoleExtensions;
-using System.Diagnostics;
-using ConsoleLibrary.TextExtensions;
 using ConsoleLibrary.Graphics.Shapes;
-using System.Threading;
-using static ConsoleLibrary.Input.InputManager;
-using ConsoleLibrary.Input;
+using static ConsoleLibrary.InputManager;
 using ConsoleLibrary.Graphics.Drawing;
 using WindowsWrapper.Constants;
 

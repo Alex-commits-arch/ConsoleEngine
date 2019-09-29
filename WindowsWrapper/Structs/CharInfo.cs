@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace WindowsWrapper
+namespace WindowsWrapper.Structs
 {
     [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Auto)]
     public struct CharInfo
@@ -10,6 +10,6 @@ namespace WindowsWrapper
         [FieldOffset(0)]
         public byte AsciiChar;
         [FieldOffset(2)]
-        public ushort Attributes;
+        public short Attributes;
     }
 }

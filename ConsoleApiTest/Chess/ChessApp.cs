@@ -1,7 +1,6 @@
 ﻿using ConsoleLibrary;
 using ConsoleLibrary.Graphics.Drawing;
 using ConsoleLibrary.Graphics.Shapes;
-using ConsoleLibrary.Input;
 using ConsoleLibrary.Structures;
 using System;
 using System.Collections.Generic;
@@ -10,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WindowsWrapper.Constants;
-using static ConsoleLibrary.Input.InputManager;
+using static ConsoleLibrary.InputManager;
 
 namespace ConsoleApiTest.Chess
 {

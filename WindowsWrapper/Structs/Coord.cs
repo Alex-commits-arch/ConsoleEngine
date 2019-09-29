@@ -1,17 +1,17 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace WindowsWrapper
+namespace WindowsWrapper.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct Coord
+    public struct COORD
     {
         public short X;
         public short Y;
 
-        public Coord(short X, short Y)
+        public COORD(short X, short Y)
         {
             this.X = X;
             this.Y = Y;
         }
-    };
+    }
 }

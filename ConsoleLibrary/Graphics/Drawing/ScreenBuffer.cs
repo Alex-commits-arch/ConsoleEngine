@@ -1,12 +1,7 @@
 ﻿using ConsoleLibrary.Graphics.Shapes;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WindowsWrapper;
+using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.Graphics.Drawing
 {
@@ -48,10 +43,6 @@ namespace ConsoleLibrary.Graphics.Drawing
                     if (x + i >= 0 && x + i < width
                      && y + j >= 0 && y + j < height)
                     {
-                        //[x, y]
-                        //Draw(shape[i, j], a, x + i, y + j);
-
-                        //[y, x]
                         Draw(shape[j, i], a, x + i, y + j);
                     }
                 }
@@ -85,7 +76,7 @@ namespace ConsoleLibrary.Graphics.Drawing
 
         public void Draw(char c, int a, Location l)
         {
-            Draw(c, (ushort)a, l.x, l.y);
+            Draw(c, (short)a, l.x, l.y);
         }
         public void Draw(char c, ushort a, Location l)
         {
@@ -93,9 +84,9 @@ namespace ConsoleLibrary.Graphics.Drawing
         }
         public void Draw(char c, int a, int x = 0, int y = 0)
         {
-            Draw(c, (ushort)a, x, y);
+            Draw(c, (short)a, x, y);
         }
-        public void Draw(char c, ushort a, int x = 0, int y = 0)
+        public void Draw(char c, short a, int x = 0, int y = 0)
         {
             int index = y * width + x;
             content[index].UnicodeChar = c;

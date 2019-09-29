@@ -12,8 +12,12 @@ namespace ConsoleApiTest
     {
         static void Main(string[] args)
         {
-            var app = new Chess.ChessApp(86, 34);
-            app.Init();
+            var harness = new Harness();
+            harness.Strap(new TestApp(40, 40));
+            harness.Run();
+
+            //var app = new Chess.ChessApp(86, 34);
+            //app.Init();
         }
     }
 }
