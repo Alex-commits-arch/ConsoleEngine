@@ -24,12 +24,17 @@ namespace ConsoleLibrary.Graphics.Drawing
 
         public DrawingContext(int width, int height)
         {
-            this.width = width;
-            this.height = height;
-            buffer = new CharInfo[width * height];
+            Reset(width, height);
             consoleHandle = WinApi.CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Create, 0, IntPtr.Zero);
             buffers = new Dictionary<string, ScreenBuffer>();
             HideCursor();
+        }
+
+        public void Reset(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+            buffer = new CharInfo[width * height];
         }
 
         public void HideCursor() { Console.CursorVisible = false; }
@@ -117,7 +122,7 @@ namespace ConsoleLibrary.Graphics.Drawing
                     }
                 }
             }
-            
+
             return output;
         }
 
@@ -125,7 +130,16 @@ namespace ConsoleLibrary.Graphics.Drawing
         {
             int n = 0;
             //WinApi.WriteConsoleOutputCharacterW(consoleHandle, c.FormatUnicode().ToString().ToCharArray(), 1, new Coord((short)x, (short)y), out n);
-            WinApi.WriteConsoleOutputCharacterW(consoleHandle, c.ToString().FormatUnicode().ToCharArray(), 1, new COORD((short)x, (short)y), out n);
+            WinApi.WriteConsoleOutputCharacterW(
+                consoleHandle,
+                c.ToString().FormatUnicode().ToCharArray(),
+                1,
+                new COORD(
+                    (short)x,
+                    (short)y
+                ),
+                out n
+            );
             //WinApi.WriteConsoleOutputCharacterW(consoleHandle, c.FormatUnicode().ToString().FormatUnicode().ToCharArray(), 1, new Coord((short)x, (short)y), out n);
             //WinApi.WriteConsoleOutputCharacterW(consoleHandle, new char['\u2659'.FormatUnicode()], 1, new Coord((short)x, (short)y), out n);
             //WinApi.WriteConsoleOutputCharacterW(consoleHandle, new char['\u2659'.FormatUnicode()], 1, new Coord((short)x, (short)y), out n);

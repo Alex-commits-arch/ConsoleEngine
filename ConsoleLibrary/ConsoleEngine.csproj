@@ -45,6 +45,11 @@
     <Compile Include="App.cs" />
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="ConsoleExtensions\ConsoleExtensions.cs" />
+    <Compile Include="Forms\Components\Border.cs" />
+    <Compile Include="Forms\Components\Component.cs" />
+    <Compile Include="Forms\Components\Group.cs" />
+    <Compile Include="Forms\Form.cs" />
+    <Compile Include="Forms\Components\Text.cs" />
     <Compile Include="Graphics\Drawing\DrawingContext.cs" />
     <Compile Include="Graphics\Drawing\PixelType.cs" />
     <Compile Include="Graphics\Drawing\ScreenBuffer.cs" />

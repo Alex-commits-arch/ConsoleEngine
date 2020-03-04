@@ -69,10 +69,10 @@ namespace ConsoleLibrary
             }
             vy += 9.81f * 2 * deltaTime;
 
-            MyConsole.SetTitle($"FPS: {(int)(1 / deltaTime)}");
+            //MyConsole.SetTitle($"FPS: {(int)(1 / deltaTime)}");
             //MyConsole.SetTitle($"Mouse: {new { test = Input.GetMousePosition() }}");
             POINT mousePos = Input.GetMousePosition();
-            Debug.WriteLine(new { mousePos.X, mousePos.Y });
+            //Debug.WriteLine(new { mousePos.X, mousePos.Y });
 
             harness.RequestRedraw();
         }

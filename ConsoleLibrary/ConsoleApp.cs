@@ -1,5 +1,6 @@
 ﻿using ConsoleLibrary.Graphics.Drawing;
 using System;
+using System.Diagnostics;
 using WindowsWrapper;
 using WindowsWrapper.Constants;
 
@@ -19,7 +20,7 @@ namespace ConsoleLibrary
         {
             this.width = width;
             this.height = height;
-            SetupSize(width, height);
+            MyConsole.SetSize(width, height);
         }
 
         public virtual void Init()
@@ -38,23 +39,27 @@ namespace ConsoleLibrary
             inputManager.Init();
         }
 
-        public virtual void Loop(Action update)
+        protected void Loop(Action update)
         {
-            while (running)
-                update();
+            MyConsole.GetMessage();
+            //var windows = MyConsole.GetWindows();
+            
+            //foreach (var window in windows)
+            //{
+            //    //Debug.Write()
+            //    Debug.WriteLine(window);
+
+            //}
+            //while (running)
+            //{
+
+            //}
         }
 
         public void Exit()
         {
             running = false;
             inputManager.Exit();
-        }
-
-        private void SetupSize(int width, int height)
-        {
-            Console.SetWindowSize(width, height);
-            Console.SetBufferSize(width, height);
-            Console.SetWindowPosition(0, 0);
         }
     }
 }

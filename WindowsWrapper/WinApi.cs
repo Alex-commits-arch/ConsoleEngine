@@ -1,5 +1,6 @@
 ﻿using Microsoft.Win32.SafeHandles;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,7 +15,6 @@ namespace WindowsWrapper
     //public const uint ENABLE_QUICK_EDIT = 0x0040;
     public static class WinApi
     {
-
         [DllImport("user32.dll")]
         public static extern bool DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
@@ -154,5 +154,54 @@ namespace WindowsWrapper
             [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
             [MarshalAs(UnmanagedType.U4)] int flags,
             IntPtr template);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int GetMessage(
+            out MSG lpMsg,
+            IntPtr hWnd,
+            uint wMsgFilterMin,
+            uint wMsgFilterMax);
+
+        delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        static extern IntPtr CallWindowProc(
+            WndProcDelegate lpPrevWndFunc,
+            IntPtr hWnd,
+            uint Msg,
+            IntPtr wParam,
+            IntPtr lParam);
+
+        public static IntPtr SetWindowLongPtr(HandleRef hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            if (IntPtr.Size == 8)
+                return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
+            else
+                return new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(
+            HandleRef hWnd,
+            int nIndex,
+            int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(
+            HandleRef hWnd,
+            int nIndex,
+            IntPtr dwNewLong);
+
+        public delegate bool EnumedWindow(IntPtr handleWindow, ArrayList handles);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumWindows(EnumedWindow lpEnumFunc, ArrayList lParam);
+
+        public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern int GetClassName(IntPtr hWnd, StringBuilder buf, int nMaxCount);
+
     }
 }

@@ -151,8 +151,9 @@ namespace ConsoleLibrary
             {
                 currentTime = DateTime.Now;
                 TimeSpan deltaTime = currentTime - prevTime;
-                Debug.WriteLine(1.0f / deltaTime.TotalSeconds);
-
+                //Debug.WriteLine(1.0f / deltaTime.TotalMilliseconds);
+                //Debug.Print("hello");
+                //MyConsole.GetMessage();
                 foreach (var key in Enum.GetValues(typeof(KeyCode)))
                 {
                     KeyCode code = (KeyCode)key;

@@ -47,6 +47,7 @@
     <Compile Include="Chess\ChessApp.cs" />
     <Compile Include="Chess\ChessBoard.cs" />
     <Compile Include="Chess\ChessGame.cs" />
+    <Compile Include="GUI\GUIApp.cs" />
     <Compile Include="Hanoi\HanoiApp.cs" />
     <Compile Include="Hanoi\Peg.cs" />
     <Compile Include="Program.cs" />
