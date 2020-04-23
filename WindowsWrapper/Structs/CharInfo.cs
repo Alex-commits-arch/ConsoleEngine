@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using WindowsWrapper.Enums;
 
 namespace WindowsWrapper.Structs
 {
@@ -10,6 +11,11 @@ namespace WindowsWrapper.Structs
         [FieldOffset(0)]
         public byte AsciiChar;
         [FieldOffset(2)]
-        public short Attributes;
+        public CharAttribute Attributes;
+
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", UnicodeChar, Attributes);
+        }
     }
 }

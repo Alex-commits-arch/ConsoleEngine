@@ -1,6 +1,7 @@
 ﻿using ConsoleLibrary.Graphics.Shapes;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
+using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.Graphics.Drawing
@@ -32,7 +33,7 @@ namespace ConsoleLibrary.Graphics.Drawing
         {
             Draw(s, (ushort)a, x, y);
         }
-        public void Draw(IShape s, ushort a, int x = 0, int y = 0)
+        public void Draw(IShape s, CharAttribute a, int x = 0, int y = 0)
         {
             char[,] shape = s.GetData();
 
@@ -64,7 +65,7 @@ namespace ConsoleLibrary.Graphics.Drawing
             Draw(s, (ushort)a, x, y);
         }
 
-        public void Draw(string s, ushort a, int x = 0, int y = 0)
+        public void Draw(string s, CharAttribute a, int x = 0, int y = 0)
         {
             for (int i = 0; i < s.Length; i++)
             {
@@ -73,20 +74,12 @@ namespace ConsoleLibrary.Graphics.Drawing
         }
 
 
-
-        public void Draw(char c, int a, Location l)
-        {
-            Draw(c, (short)a, l.x, l.y);
-        }
-        public void Draw(char c, ushort a, Location l)
+        
+        public void Draw(char c, CharAttribute a, Location l)
         {
             Draw(c, a, l.x, l.y);
         }
-        public void Draw(char c, int a, int x = 0, int y = 0)
-        {
-            Draw(c, (short)a, x, y);
-        }
-        public void Draw(char c, short a, int x = 0, int y = 0)
+        public void Draw(char c, CharAttribute a, int x = 0, int y = 0)
         {
             int index = y * width + x;
             content[index].UnicodeChar = c;

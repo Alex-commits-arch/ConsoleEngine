@@ -13,5 +13,19 @@ namespace WindowsWrapper.Structs
             this.X = X;
             this.Y = Y;
         }
+
+        public void Deconstruct(out short x, out short y)
+        {
+            x = X;
+            y = Y;
+        }
+
+
+
+        public override string ToString()
+        {
+            return string.Format("X: {0}, Y: {1}", X, Y);
+            //return base.ToString();
+        }
     }
 }

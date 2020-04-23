@@ -1,22 +1,27 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using WindowsWrapper.Enums;
 
 namespace WindowsWrapper.Structs
 {
-    [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
+    [StructLayout(LayoutKind.Explicit)]
     public struct KEY_EVENT_RECORD
     {
-        [FieldOffset(0), MarshalAs(UnmanagedType.Bool)]
-        public bool bKeyDown;
-        [FieldOffset(4), MarshalAs(UnmanagedType.U2)]
-        public ushort wRepeatCount;
-        [FieldOffset(6), MarshalAs(UnmanagedType.U2)]
-        public VirtualKeys wVirtualKeyCode;
-        [FieldOffset(8), MarshalAs(UnmanagedType.U2)]
-        public ushort wVirtualScanCode;
+        [FieldOffset(0)]
+        [MarshalAs(UnmanagedType.Bool)]
+        public bool KeyDown;
+        [FieldOffset(4)]
+        public short RepeatCount;
+        [FieldOffset(6)]
+        public short VirtualKeyCode;
+        [FieldOffset(8)]
+        public short VirtualScanCode;
         [FieldOffset(10)]
         public char UnicodeChar;
-        [FieldOffset(12), MarshalAs(UnmanagedType.U4)]
-        public ControlKeyState dwControlKeyState;
-    }
+        [FieldOffset(10)]
+        public byte AsciiChar;
+        [FieldOffset(12)]
+        public ControlKeyState ControlKeyState;
+    };
 }

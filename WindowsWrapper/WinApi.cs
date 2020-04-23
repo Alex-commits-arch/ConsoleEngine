@@ -24,6 +24,9 @@ namespace WindowsWrapper
         [DllImport("kernel32.dll", ExactSpelling = true)]
         public static extern IntPtr GetConsoleWindow();
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern uint GetConsoleCP();
+
         [DllImport("kernel32.dll")]
         public static extern bool SetConsoleCP(int wCodePageID);
 
@@ -44,7 +47,7 @@ namespace WindowsWrapper
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetCurrentConsoleFontEx(
-            IntPtr ConsoleOutput,
+            ConsoleHandle ConsoleOutput,
             bool MaximumWindow,
             ref CONSOLE_FONT_INFO_EX ConsoleCurrentFontEx
         );
@@ -54,6 +57,19 @@ namespace WindowsWrapper
             IntPtr hConsoleOutput,
             bool bMaximumWindow,
             ref CONSOLE_FONT_INFO_EX lpConsoleCurrentFont
+        );
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public extern static bool GetCurrentConsoleFont(
+            ConsoleHandle hConsoleOutput,
+            bool bMaximumWindow,
+            out CONSOLE_FONT_INFO lpConsoleCurrentFont
+        );
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        public extern static COORD GetConsoleFontSize(
+            ConsoleHandle hConsoleOutput,
+            uint nFont
         );
 
         [DllImport("Kernel32.dll")]
@@ -70,20 +86,6 @@ namespace WindowsWrapper
             IntPtr hConsoleInput,
             out uint lpcNumberOfEvents
         );
-
-        [DllImport("kernel32.dll", EntryPoint = "ReadConsoleInputW", CharSet = CharSet.Unicode)]
-        public static extern bool ReadConsoleInput(
-            IntPtr hConsoleInput,
-            [Out] INPUT_RECORD[] lpBuffer,
-            uint nLength,
-            out uint lpNumberOfEventsRead
-        );
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern IntPtr GetStdHandle(int nStdHandle);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool SetConsoleMode(IntPtr hConsoleHandle, short dwMode);
 
         [DllImport("kernel32.dll")]
         public static extern uint GetLastError();
@@ -104,7 +106,7 @@ namespace WindowsWrapper
         public static extern bool SetConsoleWindowInfo(
             IntPtr hConsoleOutput,
             bool bAbsolute,
-            [In] ref SMALL_RECT lpConsoleWindow
+            [In] ref SmallRect lpConsoleWindow
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -114,13 +116,13 @@ namespace WindowsWrapper
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleScreenBufferSize(
-            IntPtr hConsoleOutput,
+            ConsoleHandle hConsoleOutput,
             COORD dwSize
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool WriteConsoleOutputCharacterW(
-            SafeFileHandle hConsoleOutput,
+            ConsoleHandle hConsoleOutput,
             char[] lpCharacter,
             int nLength,
             COORD dwWriteCoord,
@@ -129,38 +131,31 @@ namespace WindowsWrapper
 
         [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
         public static extern bool WriteConsoleOutputW(
-            SafeFileHandle hConsoleOutput,
-            CharInfo[,] lpBuffer,
+            ConsoleHandle hConsoleOutput,
+            [MarshalAs(UnmanagedType.LPArray), In] CharInfo[,] lpBuffer,
             COORD dwBufferSize,
             COORD dwBufferCoord,
-            ref SMALL_RECT lpWriteRegion
-        );
-
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
-        public static extern bool WriteConsoleOutputW(
-            SafeFileHandle hConsoleOutput,
-            CharInfo[] lpBuffer,
-            COORD dwBufferSize,
-            COORD dwBufferCoord,
-            ref SMALL_RECT lpWriteRegion
+            ref SmallRect lpWriteRegion
         );
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern SafeFileHandle CreateFile(
+        public static extern ConsoleHandle CreateFile(
             string fileName,
             [MarshalAs(UnmanagedType.U4)] uint fileAccess,
             [MarshalAs(UnmanagedType.U4)] uint fileShare,
             IntPtr securityAttributes,
             [MarshalAs(UnmanagedType.U4)] FileMode creationDisposition,
             [MarshalAs(UnmanagedType.U4)] int flags,
-            IntPtr template);
+            IntPtr template
+        );
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetMessage(
             out MSG lpMsg,
             IntPtr hWnd,
             uint wMsgFilterMin,
-            uint wMsgFilterMax);
+            uint wMsgFilterMax
+        );
 
         delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
 
@@ -170,9 +165,10 @@ namespace WindowsWrapper
             IntPtr hWnd,
             uint Msg,
             IntPtr wParam,
-            IntPtr lParam);
+            IntPtr lParam
+        );
 
-        public static IntPtr SetWindowLongPtr(HandleRef hWnd, int nIndex, IntPtr dwNewLong)
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
         {
             if (IntPtr.Size == 8)
                 return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
@@ -182,13 +178,13 @@ namespace WindowsWrapper
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
         private static extern int SetWindowLong32(
-            HandleRef hWnd,
+            IntPtr hWnd,
             int nIndex,
             int dwNewLong);
 
         [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
         private static extern IntPtr SetWindowLongPtr64(
-            HandleRef hWnd,
+            IntPtr hWnd,
             int nIndex,
             IntPtr dwNewLong);
 
@@ -203,5 +199,75 @@ namespace WindowsWrapper
         [DllImport("user32.dll")]
         public static extern int GetClassName(IntPtr hWnd, StringBuilder buf, int nMaxCount);
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern Boolean GetConsoleMode(ConsoleHandle hConsoleHandle, ref Int32 lpMode);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern ConsoleHandle GetStdHandle(Int32 nStdHandle);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern Boolean ReadConsoleInput(
+            ConsoleHandle hConsoleInput,
+            ref INPUT_RECORD lpBuffer,
+            UInt32 nLength,
+            ref UInt32 lpNumberOfEventsRead
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern Boolean SetConsoleMode(ConsoleHandle hConsoleHandle, Int32 dwMode);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr LoadCursor(IntPtr hInstance, IDC_STANDARD_CURSORS lpCursorName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetCursor(IntPtr handle);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool ReadConsoleOutputCharacter(
+            ConsoleHandle hConsoleOutput,
+            [Out] char[] lpCharacter,
+            uint nLength,
+            COORD dwReadCoord,
+            out uint lpNumberOfCharsRead
+        );
+
+        [DllImport("kernel32.dll")]
+        public static extern bool ReadConsoleOutput(
+            ConsoleHandle hConsoleOutput,
+            [Out] CharInfo[,] lpBuffer,
+            COORD dwBufferSize,
+            COORD dwBufferCoord,
+            ref SmallRect lpReadRegion
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool FillConsoleOutputAttribute(
+            ConsoleHandle hConsoleOutput,
+            CharAttribute wAttribute,
+            int nLength,
+            COORD dwWriteCoord,
+            out uint lpNumberOfAttrsWritten
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool FillConsoleOutputCharacter(
+            ConsoleHandle hConsoleOutput,
+            char cCharacter,
+            int nLength,
+            COORD dwWriteCoord,
+            out uint lpNumberOfCharsWritten
+        );
+    }
+    public class ConsoleHandle : SafeHandleMinusOneIsInvalid
+    {
+        public ConsoleHandle() : base(false) { }
+
+        protected override bool ReleaseHandle()
+        {
+            return true;
+        }
     }
 }

@@ -7,9 +7,9 @@ namespace ConsoleLibrary.Forms.Components
     {
         public string content;
 
-        public Text(DrawingContext context) : base(context) { }
+        public Text() : base() { }
 
-        public override void Render()
+        public override void Draw()
         {
             int xOffset = 0;
             int yOffset = 0;
@@ -24,7 +24,7 @@ namespace ConsoleLibrary.Forms.Components
                         break;
                     xOffset = 0;
                 }
-                context.DrawString(word, Left + xOffset, Top + yOffset);
+                //context.DrawString(word, Left + xOffset, Top + yOffset);
                 xOffset += word.Length + 1;
             }
         }
@@ -44,16 +44,16 @@ namespace ConsoleLibrary.Forms.Components
         private string content;
 
 
-        public BorderedText(DrawingContext context) : base(context)
+        public BorderedText() : base()
         {
-            border = new Border(context);
-            text = new Text(context);
+            border = new Border();
+            text = new Text();
         }
 
-        public override void Render()
+        public override void Draw()
         {
-            border.Render();
-            text.Render();
+            border.Draw();
+            text.Draw();
         }
 
         private void SetTop(int top)

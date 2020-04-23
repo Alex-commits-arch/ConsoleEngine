@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using WindowsWrapper;
 using WindowsWrapper.Constants;
+using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.TextExtensions
@@ -21,7 +22,7 @@ namespace ConsoleLibrary.TextExtensions
             {
                 output[i].UnicodeChar = s[i];
                 output[i].AsciiChar = (byte)s[i];
-                output[i].Attributes = (short)(Colors.FOREGROUND_GREEN | Colors.FOREGROUND_INTENSITY);
+                output[i].Attributes = CharAttribute.ForegroundGreen;
             }
             return output;
         }

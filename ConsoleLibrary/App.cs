@@ -31,7 +31,7 @@ namespace ConsoleLibrary
 
         public virtual void Update(float deltaTime) { }
 
-        public virtual void Draw(DrawingContext context) { }
+        //public virtual void Draw(DrawingContext context) { }
     }
 
 
@@ -53,12 +53,12 @@ namespace ConsoleLibrary
         {
             vx = 0;
 
-            if (Input.IsFirstPressed(VirtualKeys.Space))
-                vy = -15f;
-            if (Input.IsPressed(VirtualKeys.D))
-                vx = 15f;
-            if (Input.IsPressed(VirtualKeys.A))
-                vx -= 15f;
+            //if (ConsoleInput.IsFirstPressed(VirtualKeys.Space))
+            //    vy = -15f;
+            //if (ConsoleInput.IsPressed(VirtualKeys.D))
+            //    vx = 15f;
+            //if (ConsoleInput.IsPressed(VirtualKeys.A))
+            //    vx -= 15f;
 
             py += vy * deltaTime;
             px += vx * deltaTime;
@@ -71,18 +71,18 @@ namespace ConsoleLibrary
 
             //MyConsole.SetTitle($"FPS: {(int)(1 / deltaTime)}");
             //MyConsole.SetTitle($"Mouse: {new { test = Input.GetMousePosition() }}");
-            POINT mousePos = Input.GetMousePosition();
+            //POINT mousePos = ConsoleInput.GetMousePosition();
             //Debug.WriteLine(new { mousePos.X, mousePos.Y });
 
             harness.RequestRedraw();
         }
 
-        public override void Draw(DrawingContext context)
-        {
-            context.Clear(Color.BG_BLACK);
-            context.Draw((int)px, (int)py, (char)PixelType.Solid);
-            context.Render();
-        }
+        //public override void Draw(DrawingContext context)
+        //{
+        //    //context.Clear(Color.BG_BLACK);
+        //    //context.Draw((int)px, (int)py, (char)PixelType.Solid);
+        //    //context.Render();
+        //}
     }
 
 
@@ -93,13 +93,13 @@ namespace ConsoleLibrary
         bool pendingDraw = false;
 
         App app;
-        DrawingContext context;
+        //DrawingContext context;
 
         public void Strap(App app)
         {
             this.app = app;
 
-            context = new DrawingContext(app.width, app.height);
+            //context = new DrawingContext(app.width, app.height);
             MyConsole.SetFontSize(8, 8);
             MyConsole.SetSize(app.width, app.height);
             MyConsole.SetMode(ConsoleConstants.ENABLE_EXTENDED_FLAGS | ConsoleConstants.ENABLE_WINDOW_INPUT | ConsoleConstants.ENABLE_MOUSE_INPUT);
@@ -122,7 +122,7 @@ namespace ConsoleLibrary
                     app.Update(GetDeltaTime());
                     if (pendingDraw)
                     {
-                        app.Draw(context);
+                        //app.Draw(context);
                         pendingDraw = false;
                     }
                     System.Threading.Thread.Sleep(1);

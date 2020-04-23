@@ -50,6 +50,11 @@
     <Compile Include="GUI\GUIApp.cs" />
     <Compile Include="Hanoi\HanoiApp.cs" />
     <Compile Include="Hanoi\Peg.cs" />
+    <Compile Include="Poker\Card.cs" />
+    <Compile Include="Poker\Deck.cs" />
+    <Compile Include="Poker\PokerApp.cs" />
+    <Compile Include="Poker\PokerGame.cs" />
+    <Compile Include="Poker\Renderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

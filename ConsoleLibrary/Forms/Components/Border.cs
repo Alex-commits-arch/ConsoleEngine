@@ -1,5 +1,7 @@
 ﻿using ConsoleLibrary.Graphics.Drawing;
 using System;
+using WindowsWrapper.Enums;
+using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.Forms.Components
 {
@@ -13,47 +15,51 @@ namespace ConsoleLibrary.Forms.Components
         protected char upper = DEFAULT_CHAR;
         protected char right = DEFAULT_CHAR;
         protected char lower = DEFAULT_CHAR;
-        protected char left = DEFAULT_CHAR;
+        protected new char left = DEFAULT_CHAR;
 
-        public Border(DrawingContext context) : base(context) { }
+        public Border() : base() { }
 
-        public override void Render()
+        public override void Draw()
         {
-            context.DrawChar(upperLeftCorner, Left, Top);
-            context.DrawChar(upperRightCorner, Left + Width - 1, Top);
-            context.DrawChar(lowerRightCorner, Left + Width - 1, Top + Height - 1);
-            context.DrawChar(lowerLeftCorner, Left, Top + Height - 1);
+            var topSide = new CharInfo[1, Width];
+            var rightSide = new CharInfo[Height - 2, 1];
+            var bottomSide = new CharInfo[1, Width];
+            var leftSide = new CharInfo[Height - 2, 1];
 
+            topSide[0, 0] = new CharInfo { Attributes = Attributes, UnicodeChar = upperLeftCorner };
+            topSide[0, Width - 1] = new CharInfo { Attributes = Attributes, UnicodeChar = upperRightCorner };
 
-            for (int i = 1; i < Math.Max(Width, Height) - 1; i++)
+            bottomSide[0, 0] = new CharInfo { Attributes = Attributes, UnicodeChar = lowerLeftCorner };
+            bottomSide[0, Width - 1] = new CharInfo { Attributes = Attributes, UnicodeChar = lowerRightCorner };
+
+            for (int i = 1; i <= topSide.GetUpperBound(1) - 1; i++)
             {
-                if (i < Width - 1)
-                {
-                    context.DrawChar(upper, Left + i, Top);
-                    context.DrawChar(lower, Left + i, Top + Height - 1);
-                }
-
-                if (i < Height - 1)
-                {
-                    context.DrawChar(left, Left, Top + i);
-                    context.DrawChar(right, Left + Width - 1, Top + i);
-                }
+                topSide[0, i] = new CharInfo { Attributes = Attributes, UnicodeChar = upper };
+                bottomSide[0, i] = new CharInfo { Attributes = Attributes, UnicodeChar = lower };
             }
+            for (int i = 0; i <= leftSide.GetUpperBound(0); i++)
+            {
+                leftSide[i, 0] = new CharInfo { Attributes = Attributes, UnicodeChar = left };
+                rightSide[i, 0] = new CharInfo { Attributes = Attributes, UnicodeChar = right };
+            }
+
+            ConsoleRenderer.DrawCharInfos(topSide, Left, Top);
+            ConsoleRenderer.DrawCharInfos(rightSide, Left + Width - 1, Top + 1);
+            ConsoleRenderer.DrawCharInfos(bottomSide, Left, Top + Height - 1);
+            ConsoleRenderer.DrawCharInfos(leftSide, Left, Top + 1);
         }
     }
 
     public class SingleBorder : Border
     {
-        public SingleBorder(DrawingContext context) : base(context)
+        public SingleBorder(bool heavy = false) : base()
         {
-            upperLeftCorner = '┌';
-            upperRightCorner = '┐';
-            lowerRightCorner = '┘';
-            lowerLeftCorner = '└';
-            upper = '─';
-            right = '│';
-            lower = '─';
-            left = '│';
+            upperLeftCorner = heavy ? '┏' : '┌';
+            upperRightCorner = heavy ? '┓' : '┐';
+            lowerRightCorner = heavy ? '┛' : '┘';
+            lowerLeftCorner = heavy ? '┗' : '└';
+            upper = lower = heavy ? '━' : '─';
+            right = left = heavy ? '┃' : '│';
         }
     }
 
@@ -69,7 +75,7 @@ namespace ConsoleLibrary.Forms.Components
             All = ~0
         }
 
-        public RoundedBorder(DrawingContext context, Rounded rounded = Rounded.All) : base(context)
+        public RoundedBorder(Rounded rounded = Rounded.All) : base()
         {
             if (rounded.HasFlag(Rounded.UpperLeft)) upperLeftCorner = '╭';
             if (rounded.HasFlag(Rounded.UpperRight)) upperRightCorner = '╮';
@@ -80,16 +86,32 @@ namespace ConsoleLibrary.Forms.Components
 
     public class DoubleBorder : Border
     {
-        public DoubleBorder(DrawingContext context) : base(context)
+        public DoubleBorder() : base()
         {
             upperLeftCorner = '╔';
             upperRightCorner = '╗';
             lowerRightCorner = '╝';
             lowerLeftCorner = '╚';
-            upper = '═';
-            right = '║';
-            lower = '═';
-            left = '║';
+            upper = lower = '═';
+            right = left = '║';
+        }
+    }
+
+    public class DashedBorder : SingleBorder
+    {
+        public DashedBorder(bool heavy = false) : base(heavy)
+        {
+            upper = lower = heavy ? '┅' : '┄';
+            right = left = heavy ? '┇' : '┆';
+        }
+    }
+
+    public class SquigglyBorder : Border
+    {
+        public SquigglyBorder() : base()
+        {
+            left = 'ⸯ';
+            right = 'ⸯ';
         }
     }
 }

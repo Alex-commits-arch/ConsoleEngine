@@ -7,16 +7,16 @@ namespace ConsoleLibrary.Forms.Components
     {
         private List<Component> components;
 
-        public Group(DrawingContext context) : base(context)
+        public Group() : base()
         {
             components = new List<Component>();
         }
 
-        public override void Render()
+        public override void Draw()
         {
             foreach (var component in components)
             {
-                component.Render();
+                component.Draw();
             }
         }
 

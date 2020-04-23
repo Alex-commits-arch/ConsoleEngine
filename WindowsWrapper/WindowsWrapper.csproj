@@ -43,8 +43,12 @@
   <ItemGroup>
     <Compile Include="Constants\Colors.cs" />
     <Compile Include="Constants\ConsoleConstants.cs" />
-    <Compile Include="Constants\SECURITY_ATTRIBUTES.cs" />
-    <Compile Include="Constants\SECURITY_DESCRIPTOR.cs" />
+    <Compile Include="Enums\IDC_STANDARD_CURSORS.cs" />
+    <Compile Include="Enums\MouseButton.cs" />
+    <Compile Include="Enums\MouseState.cs" />
+    <Compile Include="Structs\CONSOLE_FONT_INFO.cs" />
+    <Compile Include="Structs\SECURITY_ATTRIBUTES.cs" />
+    <Compile Include="Structs\SECURITY_DESCRIPTOR.cs" />
     <Compile Include="Constants\Window.cs" />
     <Compile Include="Enums\ClassStyles.cs" />
     <Compile Include="Enums\Color.cs" />

@@ -18,6 +18,7 @@ namespace WindowsWrapper.Constants
         public static readonly ushort BACKGROUND_RED = 0x0040;
         public static readonly ushort BACKGROUND_INTENSITY = 0x0080;
         #endregion
+        #region Composite colors
         public static readonly ushort FOREGROUND_WHITE = (ushort)(FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
         public static readonly ushort FOREGROUND_CYAN = (ushort)(FOREGROUND_BLUE | FOREGROUND_GREEN);
         public static readonly ushort FOREGROUND_MAGENTA = (ushort)(FOREGROUND_BLUE | FOREGROUND_RED);
@@ -26,8 +27,6 @@ namespace WindowsWrapper.Constants
         public static readonly ushort BACKGROUND_CYAN = (ushort)(BACKGROUND_BLUE | BACKGROUND_GREEN);
         public static readonly ushort BACKGROUND_MAGENTA = (ushort)(BACKGROUND_BLUE | BACKGROUND_RED);
         public static readonly ushort BACKGROUND_YELLOW = (ushort)(BACKGROUND_GREEN | BACKGROUND_RED);
-        #region Composite colors
-
         #endregion
 
         public static readonly ushort COMMON_LVB_LEADING_BYTE = 0x0100;
