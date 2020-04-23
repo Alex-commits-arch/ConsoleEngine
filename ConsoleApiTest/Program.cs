@@ -1,4 +1,7 @@
 ﻿using ConsoleLibrary;
+using ConsoleLibrary.Forms;
+using ConsoleLibrary.Input;
+using ConsoleLibrary.Input.Events;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -12,8 +15,24 @@ namespace ConsoleApiTest
     {
         static void Main(string[] args)
         {
-            var app = new Chess.ChessApp(86, 34);
-            app.Init();
+            new Poker.PokerApp().Init();
+            ConsoleInput.ReadInput();
         }
     }
+
+    //class TestApp : ConsoleApp
+    //{
+    //    public TestApp(int width = 80, int height = 30) : base(width, height) { }
+
+    //    public override void Init()
+    //    {
+    //        base.Init();
+    //        ConsoleInput.KeyPressed += KeyPressed;
+    //    }
+
+    //    private void KeyPressed(KeyEventArgs args)
+    //    {
+    //        Debug.WriteLine(args.Key);
+    //    }
+    //}
 }

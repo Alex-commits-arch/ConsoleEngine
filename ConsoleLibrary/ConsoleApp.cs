@@ -1,61 +1,35 @@
-﻿using ConsoleLibrary.Api.WinApi;
-using ConsoleLibrary.Api.WinApi.Constants;
-using ConsoleLibrary.Graphics.Drawing;
+﻿using ConsoleLibrary.Graphics.Drawing;
 using ConsoleLibrary.Input;
 using System;
+using System.Diagnostics;
+using WindowsWrapper;
+using WindowsWrapper.Constants;
 
 namespace ConsoleLibrary
 {
     public abstract class ConsoleApp
     {
-        private const int MF_BYCOMMAND = 0x00000000;
+        //public int width, height;
 
-        public DrawingContext context;
-        public InputManager inputManager;
-
-        public int width, height;
-        public bool running = true;
-        
         public ConsoleApp(int width = 40, int height = 30)
         {
-            this.width = width;
-            this.height = height;
-            SetupSize(width, height);
+            MyConsole.SetSize(width, height);
+            //this.width = MyConsole.Width;
+            //this.height = MyConsole.Height;
         }
 
         public virtual void Init()
         {
-            IntPtr handle = WinApi.GetConsoleWindow();
-            IntPtr sysMenu = WinApi.GetSystemMenu(handle, false);
+            MyConsole.HideCursor();
+            MyConsole.DeleteMenu(Window.SC_MAXIMIZE, 0x0);
+            MyConsole.DeleteMenu(Window.SC_SIZE, 0x0);
 
-            if (handle != IntPtr.Zero)
-            {
-                WinApi.DeleteMenu(sysMenu, Window.SC_MAXIMIZE, MF_BYCOMMAND);
-                WinApi.DeleteMenu(sysMenu, Window.SC_SIZE, MF_BYCOMMAND);
-            }
-            context = new DrawingContext(width, height);
-            inputManager = new InputManager();
-
-            inputManager.Init();
-        }
-
-        public virtual void Loop(Action update)
-        {
-            while (running)
-                update();
-        }
-
-        public void Exit()
-        {
-            running = false;
-            inputManager.Exit();
-        }
-
-        private void SetupSize(int width, int height)
-        {
-            Console.SetWindowSize(width, height);
-            Console.SetBufferSize(width, height);
-            Console.SetWindowPosition(0, 0);
+            //int mode = 0;
+            //MyConsole.GetMode(ref mode);
+            //mode |= ConsoleConstants.ENABLE_MOUSE_INPUT;
+            //mode &= ~ConsoleConstants.ENABLE_QUICK_EDIT_MODE;
+            //mode |= ConsoleConstants.ENABLE_EXTENDED_FLAGS;
+            //MyConsole.SetMode(mode);
         }
     }
 }

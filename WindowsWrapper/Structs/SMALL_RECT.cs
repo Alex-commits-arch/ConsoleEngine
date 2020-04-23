@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace ConsoleLibrary.Api.WinApi.Structs
+namespace WindowsWrapper.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
     public struct SmallRect
@@ -16,6 +16,16 @@ namespace ConsoleLibrary.Api.WinApi.Structs
             this.Top = Top;
             this.Right = Right;
             this.Bottom = Bottom;
+        }
+
+        public SmallRect(COORD pos, COORD size)
+        {
+            Left = pos.X;
+            Top = pos.Y;
+            Right =  size.X;
+            Bottom = size.Y;
+            Right = (short)(Left + size.X);
+            Bottom = (short)(Top + size.Y);
         }
 
         public override string ToString()

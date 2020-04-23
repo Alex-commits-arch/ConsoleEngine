@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WindowsWrapper
+namespace ConsoleApiTest.GUI
 {
-    public static class Windows
+    class GUIApp
     {
-
     }
 }

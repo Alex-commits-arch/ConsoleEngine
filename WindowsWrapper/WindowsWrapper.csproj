@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>3af42a1f-fdea-4dbc-b2c7-06abca2dcea4</ProjectGuid>
+    <ProjectGuid>{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WindowsWrapper</RootNamespace>
@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,24 +31,47 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System"/>
-    
-    <Reference Include="System.Core"/>
-    <Reference Include="System.Xml.Linq"/>
-    <Reference Include="System.Data.DataSetExtensions"/>
-    
-    
-    <Reference Include="Microsoft.CSharp"/>
-    
-    <Reference Include="System.Data"/>
-    
-    <Reference Include="System.Net.Http"/>
-    
-    <Reference Include="System.Xml"/>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
+    <Compile Include="Constants\Colors.cs" />
+    <Compile Include="Constants\ConsoleConstants.cs" />
+    <Compile Include="Enums\IDC_STANDARD_CURSORS.cs" />
+    <Compile Include="Enums\MouseButton.cs" />
+    <Compile Include="Enums\MouseState.cs" />
+    <Compile Include="Structs\CONSOLE_FONT_INFO.cs" />
+    <Compile Include="Structs\SECURITY_ATTRIBUTES.cs" />
+    <Compile Include="Structs\SECURITY_DESCRIPTOR.cs" />
+    <Compile Include="Constants\Window.cs" />
+    <Compile Include="Enums\ClassStyles.cs" />
+    <Compile Include="Enums\Color.cs" />
+    <Compile Include="Enums\EventType.cs" />
+    <Compile Include="Enums\VirtualKeys.cs" />
+    <Compile Include="Enums\WindowLongFlags.cs" />
+    <Compile Include="Enums\WM.cs" />
+    <Compile Include="Structs\CharInfo.cs" />
+    <Compile Include="Structs\CONSOLE_FONT_INFOEX.cs" />
+    <Compile Include="Enums\ControlKeyState.cs" />
+    <Compile Include="Structs\COORD.cs" />
+    <Compile Include="Structs\FOCUS_EVENT_RECORD.cs" />
+    <Compile Include="Structs\INPUT_RECORD.cs" />
+    <Compile Include="Structs\KEY_EVENT_RECORD.cs" />
+    <Compile Include="Structs\MENU_EVENT_RECORD.cs" />
+    <Compile Include="Structs\MOUSE_EVENT_RECORD.cs" />
+    <Compile Include="Structs\MSG.cs" />
+    <Compile Include="Structs\POINT.cs" />
+    <Compile Include="Structs\SMALL_RECT.cs" />
+    <Compile Include="Structs\WINDOW_BUFFER_SIZE_RECORD.cs" />
+    <Compile Include="Structs\WNDCLASSEX.cs" />
+    <Compile Include="WinApi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
- </Project>
+</Project>

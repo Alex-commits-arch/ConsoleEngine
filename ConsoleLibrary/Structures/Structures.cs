@@ -18,6 +18,26 @@ namespace ConsoleLibrary.Structures
             initialized = true;
         }
 
+        public override string ToString()
+        {
+            return string.Format("X: {0}, Y: {1}", x, y);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is Location)
+            {
+                var other = (Location)obj;
+                return other.x == x && other.y == y && other.initialized && initialized;
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
         public static Location operator +(Location l1, Location l2) => new Location(l1.x + l2.x, l1.y + l2.y);
         public static Location operator -(Location l1, Location l2) => new Location(l1.x - l2.x, l1.y - l2.y);
         public static Location operator *(Location l1, Location l2) => new Location(l1.x * l2.x, l1.y * l2.y);

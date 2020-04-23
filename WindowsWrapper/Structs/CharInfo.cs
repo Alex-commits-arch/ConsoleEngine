@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
+using WindowsWrapper.Enums;
 
-namespace ConsoleLibrary.Api.WinApi.Structs
+namespace WindowsWrapper.Structs
 {
     [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Auto)]
     public struct CharInfo
@@ -10,6 +11,11 @@ namespace ConsoleLibrary.Api.WinApi.Structs
         [FieldOffset(0)]
         public byte AsciiChar;
         [FieldOffset(2)]
-        public ushort Attributes;
+        public CharAttribute Attributes;
+
+        public override string ToString()
+        {
+            return string.Format("{0}, {1}", UnicodeChar, Attributes);
+        }
     }
 }

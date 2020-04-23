@@ -1,6 +1,6 @@
-﻿namespace ConsoleLibrary.Api.WinApi.Constants
+﻿namespace WindowsWrapper.Constants
 {
-    class Window
+    public class Window
     {
         public static readonly int SC_CLOSE = 0xF060;
         public static readonly int SC_MINIMIZE = 0xF020;

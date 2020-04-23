@@ -1,12 +1,8 @@
-﻿using ConsoleLibrary.Api.WinApi.Structs;
-using ConsoleLibrary.Graphics.Shapes;
+﻿using ConsoleLibrary.Graphics.Shapes;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WindowsWrapper.Enums;
+using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.Graphics.Drawing
 {
@@ -37,7 +33,7 @@ namespace ConsoleLibrary.Graphics.Drawing
         {
             Draw(s, (ushort)a, x, y);
         }
-        public void Draw(IShape s, ushort a, int x = 0, int y = 0)
+        public void Draw(IShape s, CharAttribute a, int x = 0, int y = 0)
         {
             char[,] shape = s.GetData();
 
@@ -48,10 +44,6 @@ namespace ConsoleLibrary.Graphics.Drawing
                     if (x + i >= 0 && x + i < width
                      && y + j >= 0 && y + j < height)
                     {
-                        //[x, y]
-                        //Draw(shape[i, j], a, x + i, y + j);
-
-                        //[y, x]
                         Draw(shape[j, i], a, x + i, y + j);
                     }
                 }
@@ -73,7 +65,7 @@ namespace ConsoleLibrary.Graphics.Drawing
             Draw(s, (ushort)a, x, y);
         }
 
-        public void Draw(string s, ushort a, int x = 0, int y = 0)
+        public void Draw(string s, CharAttribute a, int x = 0, int y = 0)
         {
             for (int i = 0; i < s.Length; i++)
             {
@@ -82,20 +74,12 @@ namespace ConsoleLibrary.Graphics.Drawing
         }
 
 
-
-        public void Draw(char c, int a, Location l)
-        {
-            Draw(c, (ushort)a, l.x, l.y);
-        }
-        public void Draw(char c, ushort a, Location l)
+        
+        public void Draw(char c, CharAttribute a, Location l)
         {
             Draw(c, a, l.x, l.y);
         }
-        public void Draw(char c, int a, int x = 0, int y = 0)
-        {
-            Draw(c, (ushort)a, x, y);
-        }
-        public void Draw(char c, ushort a, int x = 0, int y = 0)
+        public void Draw(char c, CharAttribute a, int x = 0, int y = 0)
         {
             int index = y * width + x;
             content[index].UnicodeChar = c;

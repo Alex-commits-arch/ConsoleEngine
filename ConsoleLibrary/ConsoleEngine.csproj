@@ -20,6 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -41,27 +42,44 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Api\WinApi\Constants\Colors.cs" />
-    <Compile Include="Api\WinApi\Constants\Window.cs" />
-    <Compile Include="Api\WinApi\Structs\CharInfo.cs" />
-    <Compile Include="Api\WinApi\Structs\Coord.cs" />
-    <Compile Include="Api\WinApi\Structs\SmallRect.cs" />
+    <Compile Include="App.cs" />
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="ConsoleExtensions\ConsoleExtensions.cs" />
-    <Compile Include="Graphics\Drawing\DrawingContext.cs" />
+    <Compile Include="Forms\Components\Button.cs" />
+    <Compile Include="Forms\Components\ButtonBase.cs" />
+    <Compile Include="Forms\FormApp.cs" />
+    <Compile Include="Forms\Components\Border.cs" />
+    <Compile Include="Forms\Components\Component.cs" />
+    <Compile Include="Forms\Components\Group.cs" />
+    <Compile Include="Forms\Components\Text.cs" />
+    <Compile Include="Forms\Interfaces\IClickable.cs" />
+    <Compile Include="Forms\Interfaces\IDrawable.cs" />
+    <Compile Include="Forms\Interfaces\IMouseAction.cs" />
+    <Compile Include="Forms\Interfaces\IMouseOver.cs" />
+    <Compile Include="Graphics\Drawing\ConsoleRenderer.cs" />
+    <Compile Include="Graphics\Drawing\PixelType.cs" />
     <Compile Include="Graphics\Drawing\ScreenBuffer.cs" />
     <Compile Include="Graphics\Shapes\Rect.cs" />
     <Compile Include="Graphics\Shapes\IShape.cs" />
     <Compile Include="Graphics\Shapes\TextBox.cs" />
-    <Compile Include="Input\InputManager.cs" />
+    <Compile Include="Input\ConsoleInput.cs" />
+    <Compile Include="Input\Events\KeyEventArgs.cs" />
+    <Compile Include="Input\Events\MouseEventArgs.cs" />
+    <Compile Include="Input\Events\MouseEventHandler.cs" />
+    <Compile Include="MyConsole.cs" />
     <Compile Include="Structures\Structures.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TextExtensions\CharExtensions.cs" />
-    <Compile Include="Api\WinApi\WinApi.cs" />
     <Compile Include="TextExtensions\StringExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="ArrayExtensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\WindowsWrapper\WindowsWrapper.csproj">
+      <Project>{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}</Project>
+      <Name>WindowsWrapper</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
