@@ -29,8 +29,7 @@ namespace ConsoleLibrary.Input
             MouseButton prevMouseState = MouseButton.None;
             while (true)
             {
-                MyConsole.ReadInput(ref record, 1, ref recordLen);
-                //Console.SetCursorPosition(0, 0);
+                MyConsole.ReadClientInput(ref record, 1, ref recordLen);
                 switch (record.EventType)
                 {
                     case ConsoleConstants.MOUSE_EVENT:
@@ -88,10 +87,18 @@ namespace ConsoleLibrary.Input
                         }
                         break;
                     case ConsoleConstants.RESIZE_EVENT:
+                        (int wWidth, int wHeight) = MyConsole.GetWindowSize();
+                        (int fWidth, int fHeight) = MyConsole.GetFontSize();
+                        int cWidth = wWidth / fWidth;
+                        int cHeight = wHeight / fHeight;
+
+                        (int w, int h) = MyConsole.GetConsoleSize();
+
+                        if (w != cWidth || h != cHeight)
+                            MyConsole.SetSize(cWidth, cHeight);
+
+                        MyConsole.HideCursor();
                         break;
-                    //default:
-                    //    Debug.WriteLine(record.EventType);
-                    //    break;
                 }
             }
         }

@@ -49,7 +49,7 @@ namespace ConsoleApiTest.Poker
 
             DrawComponents();
             Renderer.DrawMainTitle();
-            Cursor = true;
+            //Cursor = true;
         }
 
         #region INITIALIZERS

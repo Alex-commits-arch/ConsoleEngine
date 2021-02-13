@@ -150,6 +150,12 @@ namespace WindowsWrapper
         );
 
         [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetClientRect(IntPtr hwnd, out RECT lpRect);
+
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern int GetMessage(
             out MSG lpMsg,
             IntPtr hWnd,
@@ -215,12 +221,31 @@ namespace WindowsWrapper
             ref UInt32 lpNumberOfEventsRead
         );
 
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, int wParam, IntPtr lParam);
+
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern Boolean SetConsoleMode(ConsoleHandle hConsoleHandle, Int32 dwMode);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr LoadCursor(IntPtr hInstance, IDC_STANDARD_CURSORS lpCursorName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr LoadCursor(IntPtr hInstance, string lpCursorName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetCursor();
+
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorInfo(ref CURSORINFO pci);
 
         [DllImport("user32.dll")]
         public static extern IntPtr SetCursor(IntPtr handle);

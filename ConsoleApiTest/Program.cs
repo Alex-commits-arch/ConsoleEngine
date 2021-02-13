@@ -15,8 +15,12 @@ namespace ConsoleApiTest
     {
         static void Main(string[] args)
         {
+            //new Poker.PokerApp().Init();
             new Poker.PokerApp().Init();
+            
+            //WindowsWrapper.WinApi.SetCursor();
             ConsoleInput.ReadInput();
+            
         }
     }
 

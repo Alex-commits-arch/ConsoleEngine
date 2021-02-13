@@ -47,6 +47,8 @@
     <Compile Include="Enums\MouseButton.cs" />
     <Compile Include="Enums\MouseState.cs" />
     <Compile Include="Structs\CONSOLE_FONT_INFO.cs" />
+    <Compile Include="Structs\CURSORINFO.cs" />
+    <Compile Include="Structs\RECT.cs" />
     <Compile Include="Structs\SECURITY_ATTRIBUTES.cs" />
     <Compile Include="Structs\SECURITY_DESCRIPTOR.cs" />
     <Compile Include="Constants\Window.cs" />

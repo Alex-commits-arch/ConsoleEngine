@@ -24,8 +24,6 @@ namespace ConsoleLibrary.Forms.Components
                     active = value;
                     Draw();
                 }
-                else
-                    active = value;
             }
         }
 
@@ -38,8 +36,6 @@ namespace ConsoleLibrary.Forms.Components
                     pressed = value;
                     Draw();
                 }
-                else
-                    pressed = value;
             }
         }
 
@@ -52,8 +48,6 @@ namespace ConsoleLibrary.Forms.Components
                     enabled = value;
                     Draw();
                 }
-                else
-                    enabled = value;
             }
         }
 

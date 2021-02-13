@@ -46,12 +46,12 @@ namespace ConsoleLibrary.Graphics.Drawing
 
         public static COORD GetWindowSize()
         {
-            return MyConsole.GetWindowSize();
+            return MyConsole.GetConsoleSize();
         }
 
         public static COORD GetWindowCenter()
         {
-            var (w, h) = MyConsole.GetWindowSize();
+            var (w, h) = MyConsole.GetConsoleSize();
             return new COORD((short)(w / 2), (short)(h / 2));
         }
 
@@ -172,6 +172,27 @@ namespace ConsoleLibrary.Graphics.Drawing
             }
 
             DrawOutput(chars, x, y);
+        }
+
+        public static void DrawCursor(int prevX, int prevY, int currX, int currY)
+        {
+                Draw(GetCharInfo(prevX, prevY), new DrawArgs
+                {
+                    x = prevX,
+                    y = prevY,
+                    skipBuffer = true
+                });
+                Draw(
+                    GetCharInfo(currX, currY).UnicodeChar,
+                    new DrawArgs
+                    {
+                        x = currX,
+                        y = currY,
+                        attributes = CharAttribute.BackgroundWhite | CharAttribute.ForegroundBlack,
+                        skipBuffer = true
+                    }
+                );
+            
         }
 
         private static void DrawOutput(CharInfo[,] chars, int x, int y, bool skipBuffer = false)

@@ -13,41 +13,41 @@ namespace ConsoleLibrary.Forms
 {
     public class FormApp : ConsoleApp
     {
-        private bool cursor;
-        private int prevMouseX;
-        private int prevMouseY;
+        private bool _cursor;
+        private int _prevMouseX;
+        private int _prevMouseY;
         private CharInfo prevCharInfo;
         private bool justLeftButton;
-        private string title;
+        private string _title;
 
         public ComponentCollection Components { get; set; }
         public bool Cursor
         {
-            get => cursor;
+            get => _cursor;
             set
             {
-                if (value && !cursor)
+                if (value && !_cursor)
                     ConsoleInput.MouseMoved += OnMouseMoved;
-                else if (cursor && !value)
+                else if (_cursor && !value)
                 {
-                    ConsoleRenderer.Draw(ConsoleRenderer.GetCharInfo(prevMouseX, prevMouseY), new DrawArgs
+                    ConsoleRenderer.Draw(ConsoleRenderer.GetCharInfo(_prevMouseX, _prevMouseY), new DrawArgs
                     {
-                        x = prevMouseX,
-                        y = prevMouseY,
+                        x = _prevMouseX,
+                        y = _prevMouseY,
                         skipBuffer = true
                     });
                     ConsoleInput.MouseMoved -= OnMouseMoved;
                 }
-                cursor = value;
+                _cursor = value;
             }
         }
         public string Title
         {
-            get => title;
+            get => _title;
             set
             {
                 MyConsole.SetTitle(value);
-                title = value;
+                _title = value;
             }
         }
 
@@ -57,6 +57,13 @@ namespace ConsoleLibrary.Forms
         {
             base.Init();
             Components = new ComponentCollection();
+            ConsoleInput.MouseMoved += OnMouseMoved;
+            ConsoleInput.KeyPressed += OnKeyPressed;
+        }
+
+        private void ChangeCursor()
+        {
+            MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_CROSS);
         }
 
         protected void DrawComponents()
@@ -68,34 +75,36 @@ namespace ConsoleLibrary.Forms
             }
         }
 
+        private void OnKeyPressed(KeyEventArgs keyEventArgs)
+        {
+            var key = keyEventArgs.Key;
 
+            if (key == System.ConsoleKey.A)
+            {
+                MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_ARROW);
+            }
+            if (key == System.ConsoleKey.S)
+            {
+                MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_WAIT);
+            }
+            if (key == System.ConsoleKey.D)
+            {
+                MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_HAND);
+            }
+            
+        }
 
         private void OnMouseMoved(object sender, MouseEventArgs args)
         {
-            if (cursor)
+            if (_cursor)
             {
                 var (currX, currY) = args.Location;
-                if (prevMouseX != currX || prevMouseY != currY)
+                if (_prevMouseX != currX || _prevMouseY != currY)
                 {
                     System.Threading.Thread.Sleep(40);
-                    ConsoleRenderer.Draw(ConsoleRenderer.GetCharInfo(prevMouseX, prevMouseY), new DrawArgs
-                    {
-                        x = prevMouseX,
-                        y = prevMouseY,
-                        skipBuffer = true
-                    });
-                    ConsoleRenderer.Draw(
-                        ConsoleRenderer.GetCharInfo(currX, currY).UnicodeChar,
-                        new DrawArgs
-                        {
-                            x = currX,
-                            y = currY,
-                            attributes = CharAttribute.BackgroundWhite | CharAttribute.ForegroundBlack,
-                            skipBuffer = true
-                        }
-                    );
-                    prevMouseX = currX;
-                    prevMouseY = currY;
+                    ConsoleRenderer.DrawCursor(_prevMouseX, _prevMouseY, currX, currY);
+                    _prevMouseX = currX;
+                    _prevMouseY = currY;
                 }
             }
         }

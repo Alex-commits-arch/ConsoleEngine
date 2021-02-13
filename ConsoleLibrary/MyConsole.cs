@@ -20,9 +20,21 @@ namespace ConsoleLibrary
         static int width;
         static int height;
 
-        public static COORD GetWindowSize()
+        public static COORD GetConsoleSize()
         {
             return new COORD((short)Width, (short)Height);
+        }
+
+        public static COORD GetWindowSize()
+        {
+            RECT rect;
+            WinApi.GetClientRect(handle, out rect);
+
+            return new COORD(
+                (short)(rect.Right - rect.Left),
+                (short)(rect.Bottom - rect.Top)
+            );
+            //return new COORD((short)Width, (short)Height);
         }
 
         //static ConsoleHandle consoleHandle = WinApi.CreateFile("CONOUT$", 0x80000000, 2, IntPtr.Zero, FileMode.Create, 0, IntPtr.Zero);
@@ -61,10 +73,28 @@ namespace ConsoleLibrary
             WinApi.FillConsoleOutputAttribute(handleOut, info.Attributes, Width * Height, new COORD(), out uint _);
         }
 
+        //public static void SetCursor(IDC_STANDARD_CURSORS cursor)
+        //{
+        //    IntPtr cursorHandle = WinApi.GetCursor();
+        //    Debug.WriteLine(cursorHandle);
+        //    cursorHandle = WinApi.SetCursor(WinApi.LoadCursor(handle, cursor));
+        //    Debug.WriteLine(cursorHandle);
+        //}
+
         public static void SetCursor(IDC_STANDARD_CURSORS cursor)
         {
-            WinApi.SetCursor(WinApi.LoadCursor(handle, cursor));
-            WinApi.SetCursor(IntPtr.Zero);
+            var sb = new System.Text.StringBuilder();
+            WinApi.GetClassName(handle, sb, sb.MaxCapacity);
+            Debug.WriteLine(sb.ToString());
+            //IntPtr cursorHandle = WinApi.LoadCursor(IntPtr.Zero, cursor);
+
+            //if(cursorHandle == IntPtr.Zero)
+            //    Debug.WriteLine(WinApi.GetLastError());
+
+            //WinApi.SetCursor(cursorHandle);
+
+            //HandleError( WinApi.PostMessage(IntPtr.Zero, WM.SETCURSOR, IntPtr.Zero, IntPtr.Zero));
+            //WinApi.SendMessage(handle, WM.SETCURSOR, 0, IntPtr.Zero);
         }
 
         public static void GetMode(ref int mode)
@@ -77,7 +107,7 @@ namespace ConsoleLibrary
             WinApi.SetConsoleMode(handleIn, mode);
         }
 
-        public static void ReadInput(ref INPUT_RECORD record, int length, ref uint recordLen)
+        public static void ReadClientInput(ref INPUT_RECORD record, int length, ref uint recordLen)
         {
             WinApi.ReadConsoleInput(handleIn, ref record, 1, ref recordLen);
         }
@@ -136,6 +166,8 @@ namespace ConsoleLibrary
         {
             WinApi.DeleteMenu(sysMenu, position, flags);
         }
+
+        //public static COORD GetWindow
 
         public static void SetSize(int width, int height)
         {

@@ -23,6 +23,8 @@ namespace ConsoleLibrary.Forms.Components
         public virtual bool Visible { get => visible; protected set => visible = value; }
         public CharAttribute Attributes { get => attributes; set => attributes = value; }
 
+
+
         public virtual void Draw() { }
         protected virtual void OnHide() { visible = false; }
         protected virtual void OnShow() { visible = true; }
@@ -36,6 +38,11 @@ namespace ConsoleLibrary.Forms.Components
             return x >= Left && x < Left + Width
                 && y >= Top && y < Top + Height;
         }
+    }
+
+    public class InputComponent : Component
+    {
+
     }
 
     public class ComponentCollection : IEnumerable<Component>
