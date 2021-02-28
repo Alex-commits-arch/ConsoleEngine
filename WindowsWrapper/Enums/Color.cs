@@ -27,7 +27,7 @@ namespace WindowsWrapper.Enums
         BackgroundDarkCyan = 0x0030,
         BackgroundDarkRed = 0x0040,
         BackgroundDarkMagenta = 0x0050,
-        BackgroundDARK_Yellow = 0x0060,
+        BackgroundDarkYellow = 0x0060,
         BackgroundGrey = 0x0070,
         BackgroundDarkGrey = 0x0080,
         BackgroundBlue = 0x0090,

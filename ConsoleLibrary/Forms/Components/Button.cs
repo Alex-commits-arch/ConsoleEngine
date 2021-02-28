@@ -9,7 +9,7 @@ using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.Forms.Components
 {
-    public class Button : ButtonBase
+    public class Button : InputComponent
     {
         private string text;
         private CharAttribute attributes = CharAttribute.ForegroundGrey;
@@ -41,21 +41,17 @@ namespace ConsoleLibrary.Forms.Components
 
         public override void Draw()
         {
-
             if (visible)
             {
-                CharAttribute color;
-                if (enabled)
-                {
-                    if (pressed)
-                        color = pressedAttributes;
-                    else if (active)
-                        color = activeAttributes;
-                    else
-                        color = attributes;
-                }
-                else
-                    color = disabledAttributes;
+                CharAttribute color = 
+                    enabled ?
+                        pressed ?
+                        pressedAttributes :
+                        active ?
+                        activeAttributes :
+                        attributes :
+                    disabledAttributes;
+
                 ConsoleRenderer.Draw(text, new DrawArgs(left, top, color));
             }
         }
