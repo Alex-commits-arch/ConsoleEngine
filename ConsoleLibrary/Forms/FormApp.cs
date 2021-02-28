@@ -6,6 +6,7 @@ using ConsoleLibrary.Input.Events;
 using System.Diagnostics;
 using System.Linq;
 using WindowsWrapper;
+using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
@@ -51,7 +52,10 @@ namespace ConsoleLibrary.Forms
             }
         }
 
-        public FormApp(int width, int height) : base(width, height) { }
+        public FormApp(int width, int height) : base(width, height)
+        {
+            MyConsole.SetMode(ConsoleConstants.ENABLE_EXTENDED_FLAGS | ConsoleConstants.ENABLE_WINDOW_INPUT | ConsoleConstants.ENABLE_MOUSE_INPUT);
+        }
 
         public override void Init()
         {
@@ -91,7 +95,7 @@ namespace ConsoleLibrary.Forms
             {
                 MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_HAND);
             }
-            
+
         }
 
         private void OnMouseMoved(object sender, MouseEventArgs args)

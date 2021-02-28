@@ -63,6 +63,7 @@
     <Compile Include="Graphics\Shapes\IShape.cs" />
     <Compile Include="Graphics\Shapes\TextBox.cs" />
     <Compile Include="Input\ConsoleInput.cs" />
+    <Compile Include="Input\Events\ResizedEventArgs.cs" />
     <Compile Include="Input\Events\KeyEventArgs.cs" />
     <Compile Include="Input\Events\MouseEventArgs.cs" />
     <Compile Include="Input\Events\MouseEventHandler.cs" />

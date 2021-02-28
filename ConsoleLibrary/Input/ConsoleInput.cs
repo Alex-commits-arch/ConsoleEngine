@@ -20,12 +20,16 @@ namespace ConsoleLibrary.Input
         public static event KeyEventHandler KeyReleased;
         public static event KeyEventHandler KeyHeld;
 
+        public delegate void ResizedEventHandler(ResizedEventArgs keyEventArgs);
+        public static event ResizedEventHandler Resized;
+
         private static bool[] keyStates = new bool[256];
 
         public static void ReadInput()
         {
             var record = new INPUT_RECORD();
             uint recordLen = 0;
+            int test = 0;
             MouseButton prevMouseState = MouseButton.None;
             while (true)
             {
@@ -95,9 +99,16 @@ namespace ConsoleLibrary.Input
                         (int w, int h) = MyConsole.GetConsoleSize();
 
                         if (w != cWidth || h != cHeight)
+                        {
                             MyConsole.SetSize(cWidth, cHeight);
+                            Resized?.Invoke(new ResizedEventArgs
+                            {
+                                Width = cWidth,
+                                Height = cHeight
+                            });
+                            MyConsole.HideCursor();
+                        }
 
-                        MyConsole.HideCursor();
                         break;
                 }
             }
