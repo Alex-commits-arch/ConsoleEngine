@@ -57,14 +57,23 @@ namespace ConsoleLibrary.Graphics.Drawing
 
         public static void SlowClear(CharAttribute col = CharAttribute.ForegroundWhite)
         {
+            var charInfo = new CharInfo
+            {
+                UnicodeChar = ' ',
+                Attributes = col
+            };
+            var charInfos = new CharInfo[MyConsole.Height, MyConsole.Width];
+
             for (int x = 0; x < MyConsole.Width; x++)
                 for (int y = 0; y < MyConsole.Height; y++)
-                    DrawChar(' ', x, y, col);
+                    charInfos[y, x] = charInfo;
+
+            DrawOutput(charInfos, 0, 0);
         }
 
         public static void FastClear(CharAttribute col = CharAttribute.ForegroundWhite)
         {
-            MyConsole.Clear();
+            MyConsole.Clear(col);
             Array.Clear(buffer, 0, (int)buffer.LongLength);
         }
 

@@ -47,7 +47,7 @@ namespace ConsoleApiTest.Poker
             ConsoleInput.MousePressed += OnMousePressed;
             ConsoleInput.MouseDoubleClick += OnMousePressed;
 
-            DrawComponents();
+            //DrawComponents();
             Renderer.DrawMainTitle();
             //Cursor = true;
         }
@@ -60,21 +60,21 @@ namespace ConsoleApiTest.Poker
             startButton.Left = width / 2 - startButton.Width / 2;
             startButton.Top = height / 2 - startButton.Height / 2;
             startButton.Click += OnStartPressed;
-            Components.Add(startButton);
+            //Components.Add(startButton);
 
             placeholder = new Button("[Multiplayer]");
             placeholder.Left = width / 2 - placeholder.Width / 2;
             placeholder.Top = height / 2 - placeholder.Height / 2 + 3;
             placeholder.Disable();
             //placeholder.Click += Placeholder_Click;
-            Components.Add(placeholder);
+            //Components.Add(placeholder);
 
             border = new DoubleBorder();
             border.Left = sideMargin;
             border.Width = width - border.Left * 2;
             border.Height = height;
             border.Attributes = CharAttribute.ForegroundDarkBlue;
-            Components.Add(border);
+            //Components.Add(border);
         }
 
         private void Placeholder_Click(object sender, MouseEventArgs e)
@@ -89,7 +89,7 @@ namespace ConsoleApiTest.Poker
         private void DrawStart()
         {
             Renderer.DrawMainTitle();
-            DrawComponents();
+            //DrawComponents();
         }
 
         private void DrawMain()
@@ -160,7 +160,7 @@ namespace ConsoleApiTest.Poker
             }
             else if (args.Key == ConsoleKey.Q && ctrlPressed)
             {
-                Cursor = !Cursor;
+                //Cursor = !Cursor;
             }
         }
         #endregion

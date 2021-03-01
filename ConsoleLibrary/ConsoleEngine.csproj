@@ -47,6 +47,10 @@
     <Compile Include="ConsoleExtensions\ConsoleExtensions.cs" />
     <Compile Include="Forms\Components\Button.cs" />
     <Compile Include="Forms\Components\ButtonBase.cs" />
+    <Compile Include="Forms\ControlManager.cs" />
+    <Compile Include="Forms\Controls\Control.cs" />
+    <Compile Include="Forms\Controls\TextBox.cs" />
+    <Compile Include="Forms\EventType.cs" />
     <Compile Include="Forms\FormApp.cs" />
     <Compile Include="Forms\Components\Border.cs" />
     <Compile Include="Forms\Components\Component.cs" />

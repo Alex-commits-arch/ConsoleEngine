@@ -26,9 +26,9 @@ namespace ConsoleApiTest.Test
             b.Click += B_Click;
             b.Hide();
 
-            Components.Add(b);
+            //Components.Add(b);
 
-            DrawComponents();
+            //DrawComponents();
         }
 
         private void B_Click(object sender, ConsoleLibrary.Input.Events.MouseEventArgs e)

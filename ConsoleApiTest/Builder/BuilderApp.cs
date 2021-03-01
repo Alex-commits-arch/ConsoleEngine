@@ -24,7 +24,6 @@ namespace ConsoleApiTest.Builder
         {
             base.Init();
 
-            Cursor = true;
 
             var (width, height) = ConsoleRenderer.GetWindowSize();
 
@@ -35,7 +34,7 @@ namespace ConsoleApiTest.Builder
             border.Height = height + 2;
             border.Hide();
 
-            Components.Add(border);
+            //Components.Add(border);
 
             ConsoleInput.KeyPressed += OnKeyPressed;
         }
@@ -63,7 +62,6 @@ namespace ConsoleApiTest.Builder
         private void Redraw()
         {
             ConsoleRenderer.FastClear();
-            DrawComponents();
         }
 
         private void ToggleToolbox()

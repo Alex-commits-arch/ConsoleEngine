@@ -62,9 +62,9 @@ namespace ConsoleLibrary
             Console.CursorVisible = true;
         }
 
-        public static void Clear()
+        public static void Clear(CharAttribute attributes = CharAttribute.ForegroundWhite)
         {
-            Fill(new CharInfo { Attributes = CharAttribute.ForegroundWhite, UnicodeChar = ' ' });
+            Fill(new CharInfo { Attributes = attributes, UnicodeChar = ' ' });
         }
 
         public static void Fill(CharInfo info)
