@@ -106,7 +106,7 @@ namespace WindowsWrapper
         public static extern bool SetConsoleWindowInfo(
             IntPtr hConsoleOutput,
             bool bAbsolute,
-            [In] ref SmallRect lpConsoleWindow
+            [In] ref SMALL_RECT lpConsoleWindow
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -135,7 +135,7 @@ namespace WindowsWrapper
             [MarshalAs(UnmanagedType.LPArray), In] CharInfo[,] lpBuffer,
             COORD dwBufferSize,
             COORD dwBufferCoord,
-            ref SmallRect lpWriteRegion
+            ref SMALL_RECT lpWriteRegion
         );
 
         [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -225,8 +225,14 @@ namespace WindowsWrapper
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, int wParam, IntPtr lParam);
+
+        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessageW(IntPtr hWnd, WM Msg, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool SetConsoleIcon(IntPtr hIcon);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
@@ -265,7 +271,7 @@ namespace WindowsWrapper
             [Out] CharInfo[,] lpBuffer,
             COORD dwBufferSize,
             COORD dwBufferCoord,
-            ref SmallRect lpReadRegion
+            ref SMALL_RECT lpReadRegion
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]

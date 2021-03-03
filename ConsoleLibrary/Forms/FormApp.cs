@@ -15,6 +15,7 @@ namespace ConsoleLibrary.Forms
     public class FormApp : ConsoleApp
     {
         private string title;
+        private System.Drawing.Icon icon;
         protected ControlManager controlManager;
 
         public ControlManager ControlManager { get => controlManager; set => controlManager = value; }
@@ -26,6 +27,16 @@ namespace ConsoleLibrary.Forms
             {
                 MyConsole.SetTitle(value);
                 title = value;
+            }
+        }
+
+        public System.Drawing.Icon Icon
+        {
+            get => Icon;
+            set
+            {
+                MyConsole.SetIcon(value);
+                icon = value;
             }
         }
 

@@ -35,9 +35,40 @@ namespace ConsoleLibrary.Graphics.Drawing
         }
     }
 
+
     public static class ConsoleRenderer
     {
+        private static readonly List<ScreenBuffer> buffers = new List<ScreenBuffer>();
         private static CharInfo[,] buffer = new CharInfo[MyConsole.Height, MyConsole.Width];
+        private static ScreenBuffer activeBuffer;
+
+        public const CharAttribute defaultAttributes = CharAttribute.BackgroundBlack | CharAttribute.ForegroundGrey;
+
+        public static ScreenBuffer ActiveBuffer { get => activeBuffer; }
+
+        public static ScreenBuffer CreateScreenBuffer()
+        {
+            var buffer = new ScreenBuffer(MyConsole.Width, MyConsole.Height);
+
+            buffers.Add(buffer);
+
+            return buffer;
+        }
+
+        public static void SetActiveBuffer(ScreenBuffer buffer)
+        {
+            activeBuffer = buffer;
+        }
+
+        public static void DrawBuffers()
+        {
+            foreach (var buffer in buffers)
+            {
+                var area = buffer.GetArea(0, 0, MyConsole.Width, MyConsole.Height);
+
+                DrawOutput(area, 0, 0);
+            }
+        }
 
         public static COORD GetFontSize()
         {
@@ -106,20 +137,20 @@ namespace ConsoleLibrary.Graphics.Drawing
             }
         }
 
-        public static void Draw(char c, DrawArgs args)
-        {
-            Draw(new CharInfo { Attributes = args.attributes, UnicodeChar = c }, args);
-        }
+        //public static void Draw(char c, DrawArgs args)
+        //{
+        //    Draw(new CharInfo { Attributes = args.attributes, UnicodeChar = c }, args);
+        //}
 
-        public static void Draw(CharInfo info, DrawArgs args)
-        {
-            DrawOutput(new CharInfo[,] { { info } }, args);
-        }
+        //public static void Draw(CharInfo info, DrawArgs args)
+        //{
+        //    DrawOutput(new CharInfo[,] { { info } }, args);
+        //}
 
-        public static void DrawChar(char c, int x, int y)
-        {
-            DrawString(c.ToString(), x, y);
-        }
+        //public static void DrawChar(char c, int x, int y)
+        //{
+        //    DrawString(c.ToString(), x, y);
+        //}
 
         public static void DrawChar(char c, int x, int y, CharAttribute attributes)
         {
@@ -147,10 +178,10 @@ namespace ConsoleLibrary.Graphics.Drawing
             return buffer[y, x];
         }
 
-        public static char GetChar(int x, int y)
-        {
-            return MyConsole.GetChar(x, y);
-        }
+        //public static char GetChar(int x, int y)
+        //{
+        //    return MyConsole.GetChar(x, y);
+        //}
 
         public static void FillRect(char fill, int x, int y, int width, int height, CharAttribute attributes)
         {
@@ -183,26 +214,26 @@ namespace ConsoleLibrary.Graphics.Drawing
             DrawOutput(chars, x, y);
         }
 
-        public static void DrawCursor(int prevX, int prevY, int currX, int currY)
-        {
-                Draw(GetCharInfo(prevX, prevY), new DrawArgs
-                {
-                    x = prevX,
-                    y = prevY,
-                    skipBuffer = true
-                });
-                Draw(
-                    GetCharInfo(currX, currY).UnicodeChar,
-                    new DrawArgs
-                    {
-                        x = currX,
-                        y = currY,
-                        attributes = CharAttribute.BackgroundWhite | CharAttribute.ForegroundBlack,
-                        skipBuffer = true
-                    }
-                );
+        //public static void DrawCursor(int prevX, int prevY, int currX, int currY)
+        //{
+        //        Draw(GetCharInfo(prevX, prevY), new DrawArgs
+        //        {
+        //            x = prevX,
+        //            y = prevY,
+        //            skipBuffer = true
+        //        });
+        //        Draw(
+        //            GetCharInfo(currX, currY).UnicodeChar,
+        //            new DrawArgs
+        //            {
+        //                x = currX,
+        //                y = currY,
+        //                attributes = CharAttribute.BackgroundWhite | CharAttribute.ForegroundBlack,
+        //                skipBuffer = true
+        //            }
+        //        );
             
-        }
+        //}
 
         private static void DrawOutput(CharInfo[,] chars, int x, int y, bool skipBuffer = false)
         {
@@ -214,23 +245,23 @@ namespace ConsoleLibrary.Graphics.Drawing
                 new COORD((short)x, (short)y)
             );
 
-            if (!skipBuffer)
-            {
-                var (w, h) = GetWindowSize();
-                for (int cy = 0; cy <= uy; cy++)
-                {
-                    int ry = cy + y;
-                    for (int cx = 0; cx <= ux; cx++)
-                    {
-                        int rx = cx + x;
-                        if (ry >= 0 && ry < h &&
-                            rx >= 0 && rx < w)
-                        {
-                            buffer[ry, rx] = chars[cy, cx];
-                        }
-                    }
-                }
-            }
+            //if (!skipBuffer)
+            //{
+            //    var (w, h) = GetWindowSize();
+            //    for (int cy = 0; cy <= uy; cy++)
+            //    {
+            //        int ry = cy + y;
+            //        for (int cx = 0; cx <= ux; cx++)
+            //        {
+            //            int rx = cx + x;
+            //            if (ry >= 0 && ry < h &&
+            //                rx >= 0 && rx < w)
+            //            {
+            //                buffer[ry, rx] = chars[cy, cx];
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         private static void DrawOutput(CharInfo[,] chars, DrawArgs args)
@@ -243,23 +274,23 @@ namespace ConsoleLibrary.Graphics.Drawing
                 new COORD((short)args.x, (short)args.y)
             );
 
-            if (!args.skipBuffer)
-            {
-                var (w, h) = GetWindowSize();
-                for (int cy = 0; cy <= uy; cy++)
-                {
-                    int ry = cy + args.y;
-                    for (int cx = 0; cx <= ux; cx++)
-                    {
-                        int rx = cx + args.x;
-                        if (ry >= 0 && ry < h &&
-                            rx >= 0 && rx < w)
-                        {
-                            buffer[ry, rx] = chars[cy, cx];
-                        }
-                    }
-                }
-            }
+            //if (!args.skipBuffer)
+            //{
+            //    var (w, h) = GetWindowSize();
+            //    for (int cy = 0; cy <= uy; cy++)
+            //    {
+            //        int ry = cy + args.y;
+            //        for (int cx = 0; cx <= ux; cx++)
+            //        {
+            //            int rx = cx + args.x;
+            //            if (ry >= 0 && ry < h &&
+            //                rx >= 0 && rx < w)
+            //            {
+            //                buffer[ry, rx] = chars[cy, cx];
+            //            }
+            //        }
+            //    }
+            //}
         }
     }
 }

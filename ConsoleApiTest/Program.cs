@@ -3,7 +3,9 @@ using ConsoleLibrary.Forms.Controls;
 using ConsoleLibrary.Graphics.Drawing;
 using ConsoleLibrary.Input;
 using ConsoleLibrary.Input.Events;
+using System;
 using System.Diagnostics;
+using System.Drawing;
 using WindowsWrapper.Enums;
 namespace ConsoleApiTest
 {
@@ -11,7 +13,7 @@ namespace ConsoleApiTest
     {
         static void Main(string[] args)
         {
-            new TestApp().Init();
+            new TestApp(20, 10).Init();
             ConsoleInput.ReadInput();
         }
     }
@@ -31,6 +33,11 @@ namespace ConsoleApiTest
         {
             base.Init();
 
+            var buffer = ConsoleRenderer.CreateScreenBuffer();
+            ConsoleRenderer.SetActiveBuffer(buffer);
+
+            
+
             text = new TextBox(controlManager)
             {
                 Left = Width / 2,
@@ -41,7 +48,12 @@ namespace ConsoleApiTest
                 Attributes = CharAttribute.ForegroundWhite
             };
 
-            Draw();
+            buffer.Clear(CharAttribute.BackgroundCyan);
+            var test = buffer.GetArea(0, 0, buffer.Width, buffer.Height);
+            buffer.Clear(CharAttribute.BackgroundBlack);
+            buffer.Draw(test, -3, 0);
+            ConsoleRenderer.DrawBuffers();
+            //Draw();
 
             ConsoleInput.KeyPressed += ConsoleInput_KeyPressed;
 

@@ -3,14 +3,14 @@
 namespace WindowsWrapper.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct SmallRect
+    public struct SMALL_RECT
     {
         public short Left;
         public short Top;
         public short Right;
         public short Bottom;
 
-        public SmallRect(short Left, short Top, short Right, short Bottom)
+        public SMALL_RECT(short Left, short Top, short Right, short Bottom)
         {
             this.Left = Left;
             this.Top = Top;
@@ -18,7 +18,7 @@ namespace WindowsWrapper.Structs
             this.Bottom = Bottom;
         }
 
-        public SmallRect(COORD pos, COORD size)
+        public SMALL_RECT(COORD pos, COORD size)
         {
             Left = pos.X;
             Top = pos.Y;

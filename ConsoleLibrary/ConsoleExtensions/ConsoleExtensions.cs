@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsWrapper;
 
 namespace ConsoleLibrary.ConsoleExtensions
 {
@@ -20,67 +21,68 @@ namespace ConsoleLibrary.ConsoleExtensions
         [DllImport("kernel32")]
         public static extern bool SetConsoleIcon(IntPtr hIcon);
 
-        public static bool SetConsoleIcon(Icon icon)
+        public static void SetConsoleIcon(Icon icon)
         {
-            return SetConsoleIcon(icon.Handle);
+            SetConsoleIcon(icon.Handle);
+            //WinApi.SendMessage(MyConsole)
         }
 
-        [DllImport("kernel32")]
-        private extern static bool SetConsoleFont(IntPtr hOutput, uint index);
+        //[DllImport("kernel32")]
+        //private extern static bool SetConsoleFont(IntPtr hOutput, uint index);
 
-        private enum StdHandle
-        {
-            OutputHandle = -11
-        }
+        //private enum StdHandle
+        //{
+        //    OutputHandle = -11
+        //}
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr CreateConsoleScreenBuffer(
-            UInt32 dwDesiredAccess,
-            UInt32 dwShareMode,
-            IntPtr secutiryAttributes,
-            UInt32 flags,
-            IntPtr screenBufferData
-        );
+        //[DllImport("kernel32.dll")]
+        //public static extern IntPtr CreateConsoleScreenBuffer(
+        //    UInt32 dwDesiredAccess,
+        //    UInt32 dwShareMode,
+        //    IntPtr secutiryAttributes,
+        //    UInt32 flags,
+        //    IntPtr screenBufferData
+        //);
 
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr SetConsoleActiveScreenBuffer(
-            IntPtr hConsoleOutput
-        );
+        //[DllImport("kernel32.dll")]
+        //public static extern IntPtr SetConsoleActiveScreenBuffer(
+        //    IntPtr hConsoleOutput
+        //);
 
-        [DllImport("kernel32")]
-        private static extern IntPtr GetStdHandle(StdHandle index);
+        //[DllImport("kernel32")]
+        //private static extern IntPtr GetStdHandle(StdHandle index);
 
-        public static bool SetConsoleFont(uint index)
-        {
-            return SetConsoleFont(GetStdHandle(StdHandle.OutputHandle), index);
-        }
+        //public static bool SetConsoleFont(uint index)
+        //{
+        //    return SetConsoleFont(GetStdHandle(StdHandle.OutputHandle), index);
+        //}
 
-        [DllImport("kernel32")]
-        private static extern bool GetConsoleFontInfo(IntPtr hOutput, [MarshalAs(UnmanagedType.Bool)]bool bMaximize,
-            uint count, [MarshalAs(UnmanagedType.LPArray), Out] ConsoleFont[] fonts);
+        //[DllImport("kernel32")]
+        //private static extern bool GetConsoleFontInfo(IntPtr hOutput, [MarshalAs(UnmanagedType.Bool)]bool bMaximize,
+        //    uint count, [MarshalAs(UnmanagedType.LPArray), Out] ConsoleFont[] fonts);
 
-        [DllImport("kernel32")]
-        private static extern uint GetNumberOfConsoleFonts();
+        //[DllImport("kernel32")]
+        //private static extern uint GetNumberOfConsoleFonts();
 
-        public static uint ConsoleFontsCount
-        {
-            get
-            {
-                return GetNumberOfConsoleFonts();
-            }
-        }
+        //public static uint ConsoleFontsCount
+        //{
+        //    get
+        //    {
+        //        return GetNumberOfConsoleFonts();
+        //    }
+        //}
 
-        public static ConsoleFont[] ConsoleFonts
-        {
-            get
-            {
-                var test = GetNumberOfConsoleFonts();
-                ConsoleFont[] fonts = new ConsoleFont[GetNumberOfConsoleFonts()];
-                if (fonts.Length > 0)
-                    GetConsoleFontInfo(GetStdHandle(StdHandle.OutputHandle), false, (uint)fonts.Length, fonts);
-                return fonts;
-            }
-        }
+        //public static ConsoleFont[] ConsoleFonts
+        //{
+        //    get
+        //    {
+        //        var test = GetNumberOfConsoleFonts();
+        //        ConsoleFont[] fonts = new ConsoleFont[GetNumberOfConsoleFonts()];
+        //        if (fonts.Length > 0)
+        //            GetConsoleFontInfo(GetStdHandle(StdHandle.OutputHandle), false, (uint)fonts.Length, fonts);
+        //        return fonts;
+        //    }
+        //}
 
     }
 }

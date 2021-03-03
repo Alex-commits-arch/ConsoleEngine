@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -27,8 +28,7 @@ namespace ConsoleLibrary
 
         public static COORD GetWindowSize()
         {
-            RECT rect;
-            WinApi.GetClientRect(handle, out rect);
+            WinApi.GetClientRect(handle, out RECT rect);
 
             return new COORD(
                 (short)(rect.Right - rect.Left),
@@ -119,14 +119,14 @@ namespace ConsoleLibrary
 
         public static void WriteOutput(CharInfo[,] chars, COORD bufferSize, COORD coord)
         {
-            SmallRect rect = new SmallRect(coord, bufferSize);
+            SMALL_RECT rect = new SMALL_RECT(coord, bufferSize);
             WinApi.WriteConsoleOutputW(consoleHandle, chars, bufferSize, new COORD(), ref rect);
         }
 
         public static CharInfo GetCharInfo(int x, int y)
         {
             COORD size = new COORD(1, 1);
-            SmallRect rect = new SmallRect(new COORD((short)x, (short)y), size);
+            SMALL_RECT rect = new SMALL_RECT(new COORD((short)x, (short)y), size);
             CharInfo[,] chars = new CharInfo[1, 1];
             WinApi.ReadConsoleOutput(
                 handleOut,
@@ -183,6 +183,12 @@ namespace ConsoleLibrary
             WinApi.SetConsoleTitle(s);
         }
 
+        public static void SetIcon(Icon icon)
+        {
+            WinApi.SetConsoleIcon(icon.Handle);
+            WinApi.SendMessage(handle, WM.SETICON, 0x80, icon.Handle);
+        }
+
         public static void SetFontSize(int width, int height)
         {
             CONSOLE_FONT_INFO_EX cfi = new CONSOLE_FONT_INFO_EX();
@@ -202,8 +208,7 @@ namespace ConsoleLibrary
 
         public static COORD GetFontSize()
         {
-            CONSOLE_FONT_INFO font;
-            WinApi.GetCurrentConsoleFont(handleOut, false, out font);
+            WinApi.GetCurrentConsoleFont(handleOut, false, out CONSOLE_FONT_INFO font);
             return WinApi.GetConsoleFontSize(handleOut, font.nFont);
         }
     }

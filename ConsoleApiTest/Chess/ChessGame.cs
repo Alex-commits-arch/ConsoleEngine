@@ -25,7 +25,7 @@ namespace ConsoleApiTest.Chess
                 ai = new ChessAi(this);
         }
 
-        public void Move(Location from, Location to)
+        public void Move(Point from, Point to)
         {
             if (board.IsKing(to))
             {
