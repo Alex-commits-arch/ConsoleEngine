@@ -15,7 +15,7 @@ namespace WindowsWrapper.Structs
 
         public override string ToString()
         {
-            return string.Format("{0}, {1}", UnicodeChar, Attributes);
+            return string.Format("{0}, {1}", UnicodeChar == 0 ? ' ' : UnicodeChar, Attributes);
         }
     }
 }

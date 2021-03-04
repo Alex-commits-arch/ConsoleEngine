@@ -29,7 +29,7 @@ namespace ConsoleApiTest.Chess
 
         public Point[] GetMoves(Point location)
         {
-            ChessPiece piece = board[location.x, location.y];
+            ChessPiece piece = board[location.X, location.Y];
             return ChessLogic.GetMoves(piece, location, board);
         }
 
@@ -57,7 +57,7 @@ namespace ConsoleApiTest.Chess
 
         public bool IsKing(Point location)
         {
-            return board[location.x, location.y].type == PieceType.King;
+            return board[location.X, location.Y].type == PieceType.King;
         }
 
         public bool CanMove(PieceColor player, Point location)
@@ -67,23 +67,23 @@ namespace ConsoleApiTest.Chess
 
         private PieceColor ColorAt(Point location)
         {
-            return board[location.x, location.y].color;
+            return board[location.X, location.Y].color;
         }
 
         public PieceType TypeAt(Point location)
         {
-            return board[location.x, location.y].type;
+            return board[location.X, location.Y].type;
         }
 
         private bool ContainsPieceAt(Point location)
         {
-            return board[location.x, location.y].type != PieceType.None;
+            return board[location.X, location.Y].type != PieceType.None;
         }
 
         public void Move(Point from, Point to)
         {
-            board[to.x, to.y] = board[from.x, from.y];
-            board[from.x, from.y] = new ChessPiece(PieceType.None, PieceColor.Black);
+            board[to.X, to.Y] = board[from.X, from.Y];
+            board[from.X, from.Y] = new ChessPiece(PieceType.None, PieceColor.Black);
         }
 
         public Point[] GetLocations(PieceColor color)
@@ -146,14 +146,14 @@ namespace ConsoleApiTest.Chess
 
                 Point dir = location + directions[0];
 
-                if (board.WithinBounds(dir) && board[dir.x, dir.y].type == PieceType.None)
+                if (board.WithinBounds(dir) && board[dir.X, dir.Y].type == PieceType.None)
                 {
                     locations.Add(dir);
                     dir = location + directions[1];
 
                     if (board.WithinBounds(dir)
-                     && board[dir.x, dir.y].type == PieceType.None
-                     && ((direction < 0 && location.y == 6) || location.y == 1) && !ContainsFriend(board, dir, color) && !ContainsEnemy(board, dir, color))
+                     && board[dir.X, dir.Y].type == PieceType.None
+                     && ((direction < 0 && location.Y == 6) || location.Y == 1) && !ContainsFriend(board, dir, color) && !ContainsEnemy(board, dir, color))
                         locations.Add(dir);
                 }
 
@@ -188,14 +188,14 @@ namespace ConsoleApiTest.Chess
 
             private static bool ContainsFriend(ChessPiece[,] board, Point location, PieceColor color)
             {
-                return board[location.x, location.y].type != PieceType.None
-                    && board[location.x, location.y].color == color;
+                return board[location.X, location.Y].type != PieceType.None
+                    && board[location.X, location.Y].color == color;
             }
 
             private static bool ContainsEnemy(ChessPiece[,] board, Point location, PieceColor color)
             {
-                return board[location.x, location.y].type != PieceType.None
-                    && board[location.x, location.y].color != color;
+                return board[location.X, location.Y].type != PieceType.None
+                    && board[location.X, location.Y].color != color;
             }
 
             private static Point[] GetJumps(Point location, Point[] offsets, ChessPiece[,] board, PieceColor color)
@@ -221,12 +221,12 @@ static class BoardExtensions
 {
     public static bool WithinBounds(this ChessPiece[,] board, Point location)
     {
-        if(location.y == -1)
+        if(location.Y == -1)
         {
 
         }
-        return location.x >= 0 && location.x <= board.GetUpperBound(0)
-            && location.y >= 0 && location.y <= board.GetUpperBound(1);
+        return location.X >= 0 && location.X <= board.GetUpperBound(0)
+            && location.Y >= 0 && location.Y <= board.GetUpperBound(1);
     }
 }
 

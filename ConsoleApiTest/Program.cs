@@ -13,7 +13,8 @@ namespace ConsoleApiTest
     {
         static void Main(string[] args)
         {
-            new TestApp(20, 10).Init();
+            int scale = 4;
+            new TestApp(9*scale, 4*scale).Init();
             ConsoleInput.ReadInput();
         }
     }
@@ -49,9 +50,10 @@ namespace ConsoleApiTest
             };
 
             buffer.Clear(CharAttribute.BackgroundCyan);
-            var test = buffer.GetArea(0, 0, buffer.Width, buffer.Height);
-            buffer.Clear(CharAttribute.BackgroundBlack);
-            buffer.Draw(test, -3, 0);
+            var area = buffer.GetArea(0, 0, buffer.Width/2, buffer.Height/2);
+            buffer.Clear(CharAttribute.ForegroundGrey);
+            buffer.Draw(area, buffer.Width / 2, buffer.Height / 2);
+            //buffer.Draw(area, area.Width, area.Height);
             ConsoleRenderer.DrawBuffers();
             //Draw();
 
@@ -67,7 +69,8 @@ namespace ConsoleApiTest
             //if (e.Key.HasFlag(System.ConsoleKey.D))
             //    text.Width++;
 
-
+            if (e.Key == ConsoleKey.Escape)
+                Environment.Exit(0);
 
 
             switch (e.Key)
@@ -97,7 +100,7 @@ namespace ConsoleApiTest
                     text.Top++;
                     break;
             }
-            Draw();
+            //Draw();
         }
 
         private void Draw()

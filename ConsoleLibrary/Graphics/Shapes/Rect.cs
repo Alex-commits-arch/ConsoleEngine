@@ -19,10 +19,10 @@ namespace ConsoleLibrary.Graphics.Shapes
         public char[,] GetData() => data;
         public void SetData(char[,] data) => this.data = data;
 
-        public Rect(Point l)
+        public Rect(Structures.Point l)
         {
-            width = l.x;
-            height = l.y;
+            width = l.X;
+            height = l.X;
             data = new char[width, height];
             data = new char[height, width];
         }

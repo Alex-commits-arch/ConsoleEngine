@@ -65,16 +65,16 @@ namespace ConsoleLibrary.Graphics.Shapes
             return bottommost;
         }
 
-        private Point GetLastNonEmpty()
+        private Structures.Point GetLastNonEmpty()
         {
-            Point last = new Point(0, 0);
+            Structures.Point last = new Structures.Point(0, 0);
 
             for (int y = data.GetLength(0) - 1; y >= 0; y--)
             {
                 for (int x = data.GetLength(1) - 1; x >= 0; x--)
                 {
                     if (data[y, x] != '\0')
-                        return new Point(x, y);
+                        return new Structures.Point(x, y);
                 }
             }
             return last;

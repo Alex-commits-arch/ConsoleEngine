@@ -32,90 +32,63 @@ namespace ConsoleLibrary.Graphics.Drawing
             };
 
             for (int i = 0; i < content.Length; i++)
-            {
                 content[i] = clearChar;
-            }
         }
 
-        public CharInfo[,] GetArea(int x, int y, int width, int height)
+        public BufferArea GetArea(Rectangle rect)
         {
-            (int mw, int mh) = MaxSize(x, y, width, height);
-            CharInfo[,] area = new CharInfo[mh, mw];
+            return GetArea(rect.X, rect.Y, rect.Width, rect.Height);
+        }
 
-            (int ux, int uy) = UpperBounds(x, y, width, height);
-            for (int ay = 0; ay <= uy; ay++)
-            {
-                for (int ax = 0; ax <= ux; ax++)
+        public BufferArea GetArea(int x, int y, int width, int height)
+        {
+            int safeX = Math.Max(0, Math.Min(this.width, x));
+            int safeY = Math.Max(0, Math.Min(this.height, y));
+
+            int safeWidth = Math.Min(this.width - safeX, Math.Min(width - (safeX - x), width));
+            int safeHeight = Math.Min(this.height - safeY, Math.Min(height - (safeY - y), height));
+
+            CharInfo[,] area = new CharInfo[safeHeight, safeWidth];
+
+            for (int areaY = 0; areaY < safeHeight; areaY++)
+                for (int areaX = 0; areaX < safeWidth; areaX++)
                 {
-                    int i = Index(x + ax, y + ay, this.width - width);
-                    area[ay, ax] = content[i];
+                    int index = (safeX + areaX) + (safeY + areaY) * safeWidth;
+                    area[areaY, areaX] = content[index];
                 }
-            }
 
-            return area;
+            return new BufferArea(area);
         }
 
-        private (int, int) MaxSize(int x, int y, int w, int h)
+        public void Draw(BufferArea bufferArea, int x, int y)
         {
-            return (Math.Min(w, width - x), Math.Min(h, height - y));
+            Draw(bufferArea.Area, x, y);
         }
 
-        private (int, int) LowerBounds(int x, int y)//, int w, int h)
-        {
-            return (
-                Math.Max(x, 0),
-                Math.Max(y, 0)
-            );
-        }
-
-        private (int, int) UpperBounds(int x, int y, int w, int h)
-        {
-            return (
-                Math.Min(x + w, width - x - 1),
-                Math.Min(y + h, height - y - 1)
-            );
-        }
-
-        private int Index(int x, int y, int w) => x + y * w;
-
-        public CharInfo this[int x, int y] => content[y * width + x];
-
-        public void Draw(CharInfo[,] info, int x, int y)
+        private void Draw(CharInfo[,] info, int x, int y, bool withTransparancy = false, char transparentCharacter = '\0')
         {
             int areaWidth = info.GetUpperBound(1) + 1;
             int areaHeight = info.GetUpperBound(0) + 1;
 
-            int areaMinX = Math.Max(-x, 0);
-            int areaMinY = Math.Max(-y, 0);
+            int safeX = Math.Max(-x, Math.Min(0, x));
+            int safeY = Math.Max(-y, Math.Min(0, y));
 
-            int areaMaxX = Math.Max(-x + areaWidth, width) - 1;
-            int areaMaxY = Math.Max(-y + areaHeight, height) - 1;
+            int safeWidth = Math.Min(width - x, areaWidth);
+            int safeHeight = Math.Min(height - y, areaHeight);
 
-            //int offsetX = -x + areaMinY;
-
-            for (int areaY = areaMinY; areaY <= areaMaxY; areaY++)
+            for (int areaY = safeY; areaY < safeHeight; areaY++)
             {
-                for (int areaX = areaMinX; areaX <= areaMaxX; areaX++)
+                for (int areaX = safeX; areaX < safeWidth; areaX++)
                 {
-                    int drawX = Math.Min(x + areaX, width - 1);
-                    int drawY = Math.Min(y + areaY, Height - 1);
-                    int index = drawX + drawY * width;
-                    content[index] = info[areaY, areaX];
+                    if (!withTransparancy || info[areaY, areaX].UnicodeChar != transparentCharacter)
+                    {
+                        int drawX = areaX + x;
+                        int drawY = areaY + y;
+                        int index = drawX + drawY * width;
+                        content[index] = info[areaY, areaX];
+                    }
                 }
             }
-            //int width = info.GetUpperBound(1) + 1;
-            //int height = info.GetUpperBound(0) + 1;
-
-            //(int lax, int lay) = LowerBounds(x, y);
-            //(int ux, int uy) = UpperBounds(x, y, width, height);
-            //for (int ay = lay; ay < uy; ay++)
-            //{
-            //    for (int ax = lax; ax < ux; ax++)
-            //    {
-            //        int i = Index(lax  + ax, lay + ay, this.width);
-            //        content[i] = info[ay, ax];
-            //    }
-            //}
         }
 
         //public void Draw(IShape s, int a, Location l)
@@ -195,8 +168,15 @@ namespace ConsoleLibrary.Graphics.Drawing
         //}
     }
 
-    class BufferArea
+    public class BufferArea
     {
+        public CharInfo[,] Area { get; private set; }
+        public int Width => Area.GetUpperBound(1) + 1;
+        public int Height => Area.GetUpperBound(0) + 1;
 
+        public BufferArea(CharInfo[,] area)
+        {
+            Area = area;
+        }
     }
 }

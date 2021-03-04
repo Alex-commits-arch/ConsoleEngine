@@ -1,4 +1,5 @@
 ﻿using ConsoleLibrary.Graphics.Shapes;
+using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
 using Microsoft.Win32.SafeHandles;
 using System;
@@ -66,6 +67,7 @@ namespace ConsoleLibrary.Graphics.Drawing
             {
                 var area = buffer.GetArea(0, 0, MyConsole.Width, MyConsole.Height);
 
+                //DrawOutput(area.Area, 0, 0);
                 DrawOutput(area, 0, 0);
             }
         }
@@ -232,8 +234,17 @@ namespace ConsoleLibrary.Graphics.Drawing
         //                skipBuffer = true
         //            }
         //        );
-            
+
         //}
+
+        private static void DrawOutput(BufferArea area, int x, int y, bool skipBuffer = false)
+        {
+            MyConsole.WriteOutput(
+                area.Area,
+                new Structures.Point(area.Width, area.Height),
+                new Structures.Point(x, y)
+            );
+        }
 
         private static void DrawOutput(CharInfo[,] chars, int x, int y, bool skipBuffer = false)
         {
@@ -244,24 +255,6 @@ namespace ConsoleLibrary.Graphics.Drawing
                 new COORD((short)(ux + 1), (short)(uy + 1)),
                 new COORD((short)x, (short)y)
             );
-
-            //if (!skipBuffer)
-            //{
-            //    var (w, h) = GetWindowSize();
-            //    for (int cy = 0; cy <= uy; cy++)
-            //    {
-            //        int ry = cy + y;
-            //        for (int cx = 0; cx <= ux; cx++)
-            //        {
-            //            int rx = cx + x;
-            //            if (ry >= 0 && ry < h &&
-            //                rx >= 0 && rx < w)
-            //            {
-            //                buffer[ry, rx] = chars[cy, cx];
-            //            }
-            //        }
-            //    }
-            //}
         }
 
         private static void DrawOutput(CharInfo[,] chars, DrawArgs args)
