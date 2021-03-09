@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleLibrary.Structures;
+using System;
 using WindowsWrapper.Constants;
 
 namespace ConsoleLibrary
@@ -7,6 +8,7 @@ namespace ConsoleLibrary
     {
         public int Width { get; set; }
         public int Height { get; set; }
+        public Point FontSize => new Point(MyConsole.GetFontSize());
 
         public ConsoleApp(int width = 40, int height = 30)
         {

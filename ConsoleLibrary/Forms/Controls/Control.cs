@@ -1,5 +1,5 @@
 ﻿using ConsoleLibrary.Forms;
-using ConsoleLibrary.Graphics.Drawing;
+using ConsoleLibrary.Drawing;
 using ConsoleLibrary.Input.Events;
 using System;
 using System.Collections.Generic;

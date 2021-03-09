@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -15,12 +16,8 @@ namespace WindowsWrapper
     //public const uint ENABLE_QUICK_EDIT = 0x0040;
     public static class WinApi
     {
-        [DllImport("user32.dll")]
-        public static extern bool DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
-
+        #region KERNEL32.DLL
         [DllImport("kernel32.dll", ExactSpelling = true)]
         public static extern IntPtr GetConsoleWindow();
 
@@ -74,10 +71,10 @@ namespace WindowsWrapper
 
         [DllImport("Kernel32.dll")]
         static extern IntPtr CreateConsoleScreenBuffer(
-            UInt32 dwDesiredAccess,
-            UInt32 dwShareMode,
+            uint dwDesiredAccess,
+            uint dwShareMode,
             IntPtr secutiryAttributes,
-            UInt32 flags,
+            uint flags,
             IntPtr screenBufferData
         );
 
@@ -149,112 +146,20 @@ namespace WindowsWrapper
             IntPtr template
         );
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool GetClientRect(IntPtr hwnd, out RECT lpRect);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern int GetMessage(
-            out MSG lpMsg,
-            IntPtr hWnd,
-            uint wMsgFilterMin,
-            uint wMsgFilterMax
-        );
-
-        delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        static extern IntPtr CallWindowProc(
-            WndProcDelegate lpPrevWndFunc,
-            IntPtr hWnd,
-            uint Msg,
-            IntPtr wParam,
-            IntPtr lParam
-        );
-
-        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
-        {
-            if (IntPtr.Size == 8)
-                return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
-            else
-                return new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
-        }
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
-        private static extern int SetWindowLong32(
-            IntPtr hWnd,
-            int nIndex,
-            int dwNewLong);
-
-        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
-        private static extern IntPtr SetWindowLongPtr64(
-            IntPtr hWnd,
-            int nIndex,
-            IntPtr dwNewLong);
-
-        public delegate bool EnumedWindow(IntPtr handleWindow, ArrayList handles);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool EnumWindows(EnumedWindow lpEnumFunc, ArrayList lParam);
-
-        public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll")]
-        public static extern int GetClassName(IntPtr hWnd, StringBuilder buf, int nMaxCount);
-
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern Boolean GetConsoleMode(ConsoleHandle hConsoleHandle, ref Int32 lpMode);
+        public static extern bool GetConsoleMode(ConsoleHandle hConsoleHandle, ref int lpMode);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern ConsoleHandle GetStdHandle(Int32 nStdHandle);
+        public static extern ConsoleHandle GetStdHandle(int nStdHandle);
 
         [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern Boolean ReadConsoleInput(
+        public static extern bool ReadConsoleInput(
             ConsoleHandle hConsoleInput,
             ref INPUT_RECORD lpBuffer,
-            UInt32 nLength,
-            ref UInt32 lpNumberOfEventsRead
+            uint nLength,
+            ref uint lpNumberOfEventsRead
         );
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
-
-        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, int wParam, IntPtr lParam);
-
-        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessageW(IntPtr hWnd, WM Msg, UIntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll")]
-        public static extern bool SetConsoleIcon(IntPtr hIcon);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern Boolean SetConsoleMode(ConsoleHandle hConsoleHandle, Int32 dwMode);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr LoadCursor(IntPtr hInstance, IDC_STANDARD_CURSORS lpCursorName);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr LoadCursor(IntPtr hInstance, string lpCursorName);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetCursor();
-
-        [DllImport("user32.dll")]
-        public static extern bool GetCursorInfo(ref CURSORINFO pci);
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr SetCursor(IntPtr handle);
 
         [DllImport("kernel32.dll")]
         public static extern bool ReadConsoleOutputCharacter(
@@ -291,6 +196,157 @@ namespace WindowsWrapper
             COORD dwWriteCoord,
             out uint lpNumberOfCharsWritten
         );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern IntPtr OpenProcess(
+            ProcessAccessFlags processAccess,
+            bool bInheritHandle,
+            int processId
+        );
+
+        public static IntPtr OpenProcess(Process proc, ProcessAccessFlags flags)
+        {
+            return OpenProcess(flags, false, proc.Id);
+        }
+
+        #endregion
+
+        #region USER32.DLL
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetClientRect(IntPtr hwnd, out RECT lpRect);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern int GetMessage(
+            out MSG lpMsg,
+            IntPtr hWnd,
+            uint wMsgFilterMin,
+            uint wMsgFilterMax
+        );
+
+        public delegate IntPtr WndProcDelegate(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CallWindowProc(
+            WndProcDelegate lpPrevWndFunc,
+            IntPtr hWnd,
+            WM Msg,
+            IntPtr wParam,
+            IntPtr lParam
+        );
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr CallWindowProc(
+            IntPtr lpPrevWndFunc,
+            IntPtr hWnd,
+            WM Msg,
+            IntPtr wParam,
+            IntPtr lParam
+        );
+
+        public static IntPtr SetWindowLongPtr(IntPtr hWnd, int nIndex, IntPtr dwNewLong)
+        {
+            if (IntPtr.Size == 8)
+                return SetWindowLongPtr64(hWnd, nIndex, dwNewLong);
+            else
+                return new IntPtr(SetWindowLong32(hWnd, nIndex, dwNewLong.ToInt32()));
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLong")]
+        private static extern int SetWindowLong32(
+            IntPtr hWnd,
+            int nIndex,
+            int dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowLongPtr")]
+        private static extern IntPtr SetWindowLongPtr64(
+            IntPtr hWnd,
+            int nIndex,
+            IntPtr dwNewLong);
+
+        public delegate bool EnumedWindow(IntPtr handleWindow, ArrayList handles);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumWindows(EnumedWindow lpEnumFunc, ArrayList lParam);
+
+        public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        public static extern int GetClassName(IntPtr hWnd, StringBuilder buf, int nMaxCount);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, int wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        public static extern IntPtr SendMessageW(IntPtr hWnd, WM Msg, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll")]
+        public static extern bool SetConsoleIcon(IntPtr hIcon);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetConsoleMode(ConsoleHandle hConsoleHandle, int dwMode);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr LoadCursor(IntPtr hInstance, IDC_STANDARD_CURSORS lpCursorName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr LoadCursor(IntPtr hInstance, string lpCursorName);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetCursor();
+
+        [DllImport("user32.dll")]
+        public static extern bool GetCursorInfo(ref CURSORINFO pci);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr SetCursor(IntPtr handle);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
+
+        [DllImport("user32.dll")]
+        public static extern bool DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
+
+        [DllImport("user32.dll")]
+        public static extern bool SetCursorPos(int x, int y);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int lpdwProcessId);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetClassInfoExA(IntPtr hInstance, string lpszClass, out WNDCLASSEX lpwcx);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        public static extern IntPtr GetWindowLongPtr(IntPtr hWnd, GWL nIndex);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern IntPtr GetDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern IntPtr GetWindowDC(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        public static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
+        #endregion
+
+        #region GDI32.DLL
+        [DllImport("gdi32.dll")]
+        public static extern uint SetPixel(IntPtr hdc, int X, int Y, COLORREF crColor);
+        #endregion
     }
     public class ConsoleHandle : SafeHandleMinusOneIsInvalid
     {

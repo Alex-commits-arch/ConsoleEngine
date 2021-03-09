@@ -9,13 +9,32 @@ using static WindowsWrapper.WinApi;
 
 namespace WindowsWrapper.Structs
 {
-    [StructLayout(LayoutKind.Sequential)]
+    //[StructLayout(LayoutKind.Sequential)]
+    //public struct WNDCLASSEX
+    //{
+    //    public uint cbSize;
+    //    public ClassStyles style;
+    //    [MarshalAs(UnmanagedType.FunctionPtr)]
+    //    public WndProc lpfnWndProc;
+    //    public int cbClsExtra;
+    //    public int cbWndExtra;
+    //    public IntPtr hInstance;
+    //    public IntPtr hIcon;
+    //    public IntPtr hCursor;
+    //    public IntPtr hbrBackground;
+    //    public string lpszMenuName;
+    //    public string lpszClassName;
+    //    public IntPtr hIconSm;
+    //}
+
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public struct WNDCLASSEX
     {
-        public uint cbSize;
-        public ClassStyles style;
-        [MarshalAs(UnmanagedType.FunctionPtr)]
-        public WndProc lpfnWndProc;
+        [MarshalAs(UnmanagedType.U4)]
+        public int cbSize;
+        [MarshalAs(UnmanagedType.U4)]
+        public int style;
+        public IntPtr lpfnWndProc; // not WndProc
         public int cbClsExtra;
         public int cbWndExtra;
         public IntPtr hInstance;
@@ -25,5 +44,14 @@ namespace WindowsWrapper.Structs
         public string lpszMenuName;
         public string lpszClassName;
         public IntPtr hIconSm;
+
+        public static WNDCLASSEX Build()
+        {
+            var nw = new WNDCLASSEX
+            {
+                cbSize = Marshal.SizeOf(typeof(WNDCLASSEX))
+            };
+            return nw;
+        }
     }
 }

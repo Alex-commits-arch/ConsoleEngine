@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -43,9 +44,12 @@
   <ItemGroup>
     <Compile Include="Constants\Colors.cs" />
     <Compile Include="Constants\ConsoleConstants.cs" />
+    <Compile Include="Enums\GWL.cs" />
     <Compile Include="Enums\IDC_STANDARD_CURSORS.cs" />
     <Compile Include="Enums\MouseButton.cs" />
     <Compile Include="Enums\MouseState.cs" />
+    <Compile Include="Enums\ProcessAccessFlags.cs" />
+    <Compile Include="Structs\COLORREF.cs" />
     <Compile Include="Structs\CONSOLE_FONT_INFO.cs" />
     <Compile Include="Structs\CURSORINFO.cs" />
     <Compile Include="Structs\RECT.cs" />

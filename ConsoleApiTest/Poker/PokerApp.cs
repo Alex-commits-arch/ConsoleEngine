@@ -1,7 +1,7 @@
 ﻿using ConsoleLibrary;
 using ConsoleLibrary.Forms;
 using ConsoleLibrary.Forms.Components;
-using ConsoleLibrary.Graphics.Drawing;
+using ConsoleLibrary.Drawing;
 using ConsoleLibrary.Input;
 using ConsoleLibrary.Input.Events;
 using System;

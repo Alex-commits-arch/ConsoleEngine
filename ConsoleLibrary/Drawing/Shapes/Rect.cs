@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleLibrary.Graphics.Shapes
+namespace ConsoleLibrary.Drawing.Shapes
 {
     public struct Rect : IShape
     {

@@ -1,4 +1,4 @@
-﻿using ConsoleLibrary.Graphics.Drawing;
+﻿using ConsoleLibrary.Drawing;
 using System;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;

@@ -1,6 +1,6 @@
 ﻿using ConsoleLibrary.Forms.Components;
 using ConsoleLibrary.Forms.Interfaces;
-using ConsoleLibrary.Graphics.Drawing;
+using ConsoleLibrary.Drawing;
 using ConsoleLibrary.Input;
 using ConsoleLibrary.Input.Events;
 using System.Diagnostics;
@@ -53,15 +53,6 @@ namespace ConsoleLibrary.Forms
             ConsoleInput.KeyPressed += OnKeyPressed;
         }
 
-        //protected void DrawComponents()
-        //{
-        //    foreach (var component in Components)
-        //    {
-        //        if (component.Visible)
-        //            component.Draw();
-        //    }
-        //}
-
         private void OnKeyPressed(KeyEventArgs keyEventArgs)
         {
 
@@ -69,17 +60,8 @@ namespace ConsoleLibrary.Forms
 
         private void OnMouseMoved(object sender, MouseEventArgs args)
         {
-            //if (_cursor)
-            //{
-            //    var (currX, currY) = args.Location;
-            //    if (_prevMouseX != currX || _prevMouseY != currY)
-            //    {
-            //        System.Threading.Thread.Sleep(40);
-            //        ConsoleRenderer.DrawCursor(_prevMouseX, _prevMouseY, currX, currY);
-            //        _prevMouseX = currX;
-            //        _prevMouseY = currY;
-            //    }
-            //}
+            MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_HAND);
+            //WinApi.SendMessage
         }
     }
 }

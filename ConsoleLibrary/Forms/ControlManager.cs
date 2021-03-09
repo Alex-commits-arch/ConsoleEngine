@@ -7,13 +7,13 @@ using System.ComponentModel;
 using System.Linq;
 namespace ConsoleLibrary.Forms
 {
-    public class ControlManager : IContainer
+    public class ControlManager
     {
-        private List<Control> controls;
-        private Control controlUnderMouse;
         private int prevMouseX;
         private int prevMouseY;
-        private Dictionary<EventType, EventHandlerList> events;
+        private Control controlUnderMouse;
+        private readonly List<Control> controls;
+        private readonly Dictionary<EventType, EventHandlerList> events;
 
         public ComponentCollection Components => new ComponentCollection(controls.ToArray());
 
@@ -23,13 +23,13 @@ namespace ConsoleLibrary.Forms
 
             events = new Dictionary<EventType, EventHandlerList>
             {
-                {EventType.MouseMoved,       new EventHandlerList() },
-                {EventType.MouseEnter,       new EventHandlerList() },
-                {EventType.MouseLeave,       new EventHandlerList() },
-                {EventType.MouseDragged,     new EventHandlerList() },
-                {EventType.MousePressed,     new EventHandlerList() },
-                {EventType.MouseReleased,    new EventHandlerList() },
-                {EventType.MouseDoubleClick, new EventHandlerList() }
+                {EventType.MouseMoved,       new EventHandlerList()},
+                {EventType.MouseEnter,       new EventHandlerList()},
+                {EventType.MouseLeave,       new EventHandlerList()},
+                {EventType.MouseDragged,     new EventHandlerList()},
+                {EventType.MousePressed,     new EventHandlerList()},
+                {EventType.MouseReleased,    new EventHandlerList()},
+                {EventType.MouseDoubleClick, new EventHandlerList()}
             };
 
             ConsoleInput.MouseMoved += ConsoleInput_MouseMoved;
@@ -38,6 +38,8 @@ namespace ConsoleLibrary.Forms
             ConsoleInput.MouseReleased += ConsoleInput_MouseReleased;
             ConsoleInput.MouseDoubleClick += ConsoleInput_MouseDoubleClick;
         }
+
+        ~ControlManager() => Dispose();
 
         public void SubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].AddHandler(subscriber, handler);
         public void UnsubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].RemoveHandler(subscriber, handler);
@@ -103,29 +105,13 @@ namespace ConsoleLibrary.Forms
                 control.Draw();
         }
 
-        #region Container Implementation
-        public void Add(IComponent component)
-        {
-            if (component is Control control)
-                controls.Add(control);
-        }
-
-        public void Add(IComponent component, string name)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void Remove(IComponent component)
-        {
-            if (component is Control control)
-                controls.Remove(control);
-        }
+        public void Add(Control control) => controls.Add(control);
+        public void Remove(Control control) => controls.Remove(control);
 
         public void Dispose()
         {
             foreach (var control in controls)
                 control.Dispose();
         }
-        #endregion
     }
 }

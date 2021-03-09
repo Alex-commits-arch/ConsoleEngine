@@ -45,6 +45,12 @@ namespace ConsoleLibrary.Structures
             return base.GetHashCode();
         }
 
+        public void Deconstruct(out int x, out int y)
+        {
+            x = X;
+            y = Y;
+        }
+
         public static implicit operator COORD(Point p) => new COORD((short)p.X, (short)p.Y);
         public static explicit operator Point(COORD c) => new Point(c);
 

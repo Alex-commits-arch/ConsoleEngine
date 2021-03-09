@@ -4,6 +4,8 @@ using System.Drawing;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
+using System.Windows.Interop;
 using WindowsWrapper;
 using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
@@ -14,10 +16,10 @@ namespace ConsoleLibrary
 {
     internal static class MyConsole
     {
-        static IntPtr handle = WinApi.GetConsoleWindow();
-        static ConsoleHandle handleIn = WinApi.GetStdHandle(ConsoleConstants.STD_INPUT_HANDLE);
-        static ConsoleHandle handleOut = WinApi.GetStdHandle(ConsoleConstants.STD_OUTPUT_HANDLE);
-        static ConsoleHandle consoleHandle = WinApi.CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Create, 0, IntPtr.Zero);
+        static readonly IntPtr handle = WinApi.GetConsoleWindow();
+        static readonly ConsoleHandle handleIn = WinApi.GetStdHandle(ConsoleConstants.STD_INPUT_HANDLE);
+        static readonly ConsoleHandle handleOut = WinApi.GetStdHandle(ConsoleConstants.STD_OUTPUT_HANDLE);
+        static readonly ConsoleHandle consoleHandle = WinApi.CreateFile("CONOUT$", 0x40000000, 2, IntPtr.Zero, FileMode.Create, 0, IntPtr.Zero);
         static int width;
         static int height;
 
@@ -81,20 +83,20 @@ namespace ConsoleLibrary
         //    Debug.WriteLine(cursorHandle);
         //}
 
+        static bool hasRun = false;
         public static void SetCursor(IDC_STANDARD_CURSORS cursor)
         {
-            var sb = new System.Text.StringBuilder();
-            WinApi.GetClassName(handle, sb, sb.MaxCapacity);
-            Debug.WriteLine(sb.ToString());
-            //IntPtr cursorHandle = WinApi.LoadCursor(IntPtr.Zero, cursor);
+            if (!hasRun)
+            {
+                hasRun = true;
 
-            //if(cursorHandle == IntPtr.Zero)
-            //    Debug.WriteLine(WinApi.GetLastError());
-
-            //WinApi.SetCursor(cursorHandle);
-
-            //HandleError( WinApi.PostMessage(IntPtr.Zero, WM.SETCURSOR, IntPtr.Zero, IntPtr.Zero));
-            //WinApi.SendMessage(handle, WM.SETCURSOR, 0, IntPtr.Zero);
+                using (Pen p = new Pen(Color.Red, 4))
+                using (var g = Graphics.FromHwnd(handle))
+                {
+                    (int w, int h) = GetWindowSize();
+                    g.DrawEllipse(p, 2, 2, w-4, h-4);
+                }
+            }
         }
 
         public static void GetMode(ref int mode)
@@ -211,5 +213,35 @@ namespace ConsoleLibrary
             WinApi.GetCurrentConsoleFont(handleOut, false, out CONSOLE_FONT_INFO font);
             return WinApi.GetConsoleFontSize(handleOut, font.nFont);
         }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct ConsoleWindow
+    {
+        public IntPtr EnableBothScrollBars;
+        public IntPtr UpdateScrollBar;
+        public IntPtr IsInFullscreen;
+        public IntPtr SetIsFullscreen;
+        public IntPtr SetViewportOrigin;
+        public IntPtr SetWindowHasMoved;
+        public IntPtr CaptureMouse;
+        public IntPtr ReleaseMouse;
+        public IntPtr GetWindowHandle;
+        public IntPtr SetOwner;
+        public IntPtr GetCursorPosition;
+        public IntPtr GetClientRectangle;
+        public IntPtr MapPoints;
+        public IntPtr ConvertScreenToClient;
+        public IntPtr SendNotifyBeep;
+        public IntPtr PostUpdateScrollBars;
+        public IntPtr PostUpdateTitleWithCopy;
+        public IntPtr PostUpdateWindowSize;
+        public IntPtr UpdateWindowSize;
+        public IntPtr UpdateWindowText;
+        public IntPtr HorizontalScroll;
+        public IntPtr VerticalScroll;
+        public IntPtr SignalUia;
+        public IntPtr UiaSetTextAreaFocus;
+        public IntPtr GetWindowRect;
     }
 }

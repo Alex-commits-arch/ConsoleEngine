@@ -1,4 +1,4 @@
-﻿using ConsoleLibrary.Graphics.Shapes;
+﻿using ConsoleLibrary.Drawing.Shapes;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
 using Microsoft.Win32.SafeHandles;
@@ -14,7 +14,7 @@ using WindowsWrapper;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
-namespace ConsoleLibrary.Graphics.Drawing
+namespace ConsoleLibrary.Drawing
 {
     public struct DrawArgs
     {

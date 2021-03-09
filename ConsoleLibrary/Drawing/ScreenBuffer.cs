@@ -1,17 +1,17 @@
-﻿using ConsoleLibrary.Graphics.Shapes;
+﻿using ConsoleLibrary.Drawing.Shapes;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
 using System;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
-namespace ConsoleLibrary.Graphics.Drawing
+namespace ConsoleLibrary.Drawing
 {
     public class ScreenBuffer
     {
         CharInfo[] content;
-        int width;
-        int height;
+        readonly int width;
+        readonly int height;
 
         public int Width { get => width; }
         public int Height { get => height; }
@@ -90,82 +90,6 @@ namespace ConsoleLibrary.Graphics.Drawing
                 }
             }
         }
-
-        //public void Draw(IShape s, int a, Location l)
-        //{
-        //    Draw(s, (ushort)a, l.x, l.y);
-        //}
-        //public void Draw(IShape s, ushort a, Location l)
-        //{
-        //    Draw(s, a, l.x, l.y);
-        //}
-        //public void Draw(IShape s, int a, int x = 0, int y = 0)
-        //{
-        //    Draw(s, (ushort)a, x, y);
-        //}
-        //public void Draw(IShape s, CharAttribute a, int x = 0, int y = 0)
-        //{
-        //    char[,] shape = s.GetData();
-
-        //    for (int i = 0; i < s.Width; i++)
-        //    {
-        //        for (int j = 0; j < s.Height; j++)
-        //        {
-        //            if (x + i >= 0 && x + i < width
-        //             && y + j >= 0 && y + j < height)
-        //            {
-        //                Draw(shape[j, i], a, x + i, y + j);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //public void Draw(string s, int a, Location l)
-        //{
-        //    Draw(s, (ushort)a, l.x, l.y);
-        //}
-
-        //public void Draw(string s, ushort a, Location l)
-        //{
-        //    Draw(s, a, l.x, l.y);
-        //}
-
-        //public void Draw(string s, int a, int x = 0, int y = 0)
-        //{
-        //    Draw(s, (ushort)a, x, y);
-        //}
-
-        //public void Draw(string s, CharAttribute a, int x = 0, int y = 0)
-        //{
-        //    for (int i = 0; i < s.Length; i++)
-        //    {
-        //        Draw(s[i], a, x+i, y);
-        //    }
-        //}
-
-
-
-        //public void Draw(char c, CharAttribute a, Location l)
-        //{
-        //    Draw(c, a, l.x, l.y);
-        //}
-        //public void Draw(char c, CharAttribute a, int x = 0, int y = 0)
-        //{
-        //    int index = y * width + x;
-        //    content[index].UnicodeChar = c;
-        //    content[index].AsciiChar = (byte)c;
-        //    content[index].Attributes = a;
-        //}
-
-        //public void Fill()
-        //{
-
-        //}
-
-        //public void Clear()
-        //{
-        //    content = '\0'.Repeat(width, height).ToCharInfoArray();
-        //}
     }
 
     public class BufferArea

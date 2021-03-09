@@ -1,4 +1,4 @@
-﻿namespace ConsoleLibrary.Graphics.Shapes
+﻿namespace ConsoleLibrary.Drawing.Shapes
 {
     public interface IShape
     {
