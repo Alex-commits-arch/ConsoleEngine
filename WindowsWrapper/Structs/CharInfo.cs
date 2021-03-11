@@ -3,7 +3,7 @@ using WindowsWrapper.Enums;
 
 namespace WindowsWrapper.Structs
 {
-    [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Auto)]
+    [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
     public struct CharInfo
     {
         [FieldOffset(0)]

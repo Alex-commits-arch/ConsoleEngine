@@ -1,7 +1,6 @@
 ﻿using ConsoleLibrary.Input.Events;
 using System;
 using System.Diagnostics;
-using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
@@ -23,20 +22,19 @@ namespace ConsoleLibrary.Input
         public delegate void ResizedEventHandler(ResizedEventArgs keyEventArgs);
         public static event ResizedEventHandler Resized;
 
-        private static bool[] keyStates = new bool[256];
+        private static readonly bool[] keyStates = new bool[65535];
 
-        public static void ReadInput()
+        public static void InputLoop()
         {
             var record = new INPUT_RECORD();
             uint recordLen = 0;
-            int test = 0;
             MouseButton prevMouseState = MouseButton.None;
             while (true)
             {
                 MyConsole.ReadClientInput(ref record, 1, ref recordLen);
                 switch (record.EventType)
                 {
-                    case ConsoleConstants.MOUSE_EVENT:
+                    case EventType.Mouse:
                         {
                             var mouseEvent = record.MouseEvent;
                             var button = mouseEvent.ButtonState;
@@ -67,7 +65,7 @@ namespace ConsoleLibrary.Input
                         }
                         break;
 
-                    case ConsoleConstants.KEY_EVENT:
+                    case EventType.Key:
                         {
                             var keyEvent = record.KeyEvent;
 
@@ -90,25 +88,30 @@ namespace ConsoleLibrary.Input
                             keyStates[keyEvent.VirtualKeyCode] = keyEvent.KeyDown;
                         }
                         break;
-                    case ConsoleConstants.RESIZE_EVENT:
-                        (int wWidth, int wHeight) = MyConsole.GetWindowSize();
-                        (int fWidth, int fHeight) = MyConsole.GetFontSize();
-                        int cWidth = wWidth / fWidth;
-                        int cHeight = wHeight / fHeight;
 
-                        (int w, int h) = MyConsole.GetConsoleSize();
-
-                        if (w != cWidth || h != cHeight)
+                    case EventType.Resize:
                         {
-                            MyConsole.SetSize(cWidth, cHeight);
-                            Resized?.Invoke(new ResizedEventArgs
-                            {
-                                Width = cWidth,
-                                Height = cHeight
-                            });
-                            MyConsole.HideCursor();
-                        }
+                            (int wWidth, int wHeight) = MyConsole.GetWindowSize();
+                            (int fWidth, int fHeight) = MyConsole.GetFontSize();
+                            int cWidth = wWidth / fWidth;
+                            int cHeight = wHeight / fHeight;
 
+                            (int w, int h) = MyConsole.GetConsoleSize();
+
+                            if (w != cWidth || h != cHeight)
+                            {
+                                MyConsole.SetSize(cWidth, cHeight);
+                                Resized?.Invoke(new ResizedEventArgs
+                                {
+                                    Width = cWidth,
+                                    Height = cHeight
+                                });
+                                MyConsole.HideCursor();
+                            }
+                        }
+                        break;
+                    default:
+                        Debug.WriteLine("Unhandled event: " + record.EventType);
                         break;
                 }
             }

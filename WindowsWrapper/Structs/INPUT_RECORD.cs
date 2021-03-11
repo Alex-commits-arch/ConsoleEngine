@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using WindowsWrapper.Enums;
 
 namespace WindowsWrapper.Structs
 {
@@ -9,7 +10,7 @@ namespace WindowsWrapper.Structs
     public struct INPUT_RECORD
     {
         [FieldOffset(0)]
-        public int EventType;
+        public EventType EventType;
         [FieldOffset(4)]
         public KEY_EVENT_RECORD KeyEvent;
         [FieldOffset(4)]

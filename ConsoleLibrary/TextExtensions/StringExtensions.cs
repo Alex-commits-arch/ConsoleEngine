@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using ConsoleLibrary.Drawing;
+using System.Text;
 using WindowsWrapper;
 using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
@@ -14,15 +15,14 @@ namespace ConsoleLibrary.TextExtensions
             return Encoding.ASCII.GetString(bytes);
         }
 
-        public static CharInfo[] ToCharInfoArray(this string s)
+        public static CharInfo[] ToCharInfoArray(this string s, CharAttribute attributes = ConsoleRenderer.defaultAttributes)
         {
             CharInfo[] output = new CharInfo[s.Length];
 
             for (int i = 0; i < s.Length; i++)
             {
                 output[i].UnicodeChar = s[i];
-                output[i].AsciiChar = (byte)s[i];
-                output[i].Attributes = CharAttribute.ForegroundGreen;
+                output[i].Attributes = attributes;
             }
             return output;
         }

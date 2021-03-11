@@ -237,12 +237,12 @@ namespace ConsoleLibrary.Drawing
 
         //}
 
-        private static void DrawOutput(BufferArea area, int x, int y, bool skipBuffer = false)
+        private static void DrawOutput(ScreenBuffer area, int x, int y, bool skipBuffer = false)
         {
             MyConsole.WriteOutput(
-                area.Area,
-                new Structures.Point(area.Width, area.Height),
-                new Structures.Point(x, y)
+                area.Content,
+                new Point(area.Width, area.Height),
+                new Point(x, y)
             );
         }
 
@@ -259,8 +259,8 @@ namespace ConsoleLibrary.Drawing
 
         private static void DrawOutput(CharInfo[,] chars, DrawArgs args)
         {
-            int ux = chars.GetUpperBound(1);
-            int uy = chars.GetUpperBound(0);
+            int ux = chars.GetLength(1);
+            int uy = chars.GetLength(0);
             MyConsole.WriteOutput(
                 chars,
                 new COORD((short)(ux + 1), (short)(uy + 1)),

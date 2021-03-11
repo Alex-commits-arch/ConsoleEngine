@@ -90,12 +90,12 @@ namespace ConsoleLibrary
             {
                 hasRun = true;
 
-                using (Pen p = new Pen(Color.Red, 4))
-                using (var g = Graphics.FromHwnd(handle))
-                {
-                    (int w, int h) = GetWindowSize();
-                    g.DrawEllipse(p, 2, 2, w-4, h-4);
-                }
+                //using (Pen p = new Pen(Color.Red, 4))
+                //using (var g = Graphics.FromHwnd(handle))
+                //{
+                //    (int w, int h) = GetWindowSize();
+                //    g.DrawEllipse(p, 2, 2, w-4, h-4);
+                //}
             }
         }
 

@@ -126,7 +126,7 @@ namespace WindowsWrapper
             out int lpumberOfCharsWritten
         );
 
-        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true, CharSet = CharSet.Unicode)]
         public static extern bool WriteConsoleOutputW(
             ConsoleHandle hConsoleOutput,
             [MarshalAs(UnmanagedType.LPArray), In] CharInfo[,] lpBuffer,

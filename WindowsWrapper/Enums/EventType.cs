@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace WindowsWrapper.Enums
 {
-   public enum EventType
+    public enum EventType
     {
-        FOCUS_EVENT = 0x0010,
-        KEY_EVENT = 0x0001,
-        MENU_EVENT = 0x0008,
-        MOUSE_EVENT = 0x0002,
-        WINDOW_BUFFER_SIZE_EVENT = 0x0004
+        Key = 0x0001,
+        Mouse = 0x0002,
+        Resize = 0x0004,
+        Menu = 0x0008,
+        Focus = 0x0010
     }
 }
