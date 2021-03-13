@@ -49,8 +49,13 @@
     <Compile Include="Enums\MouseButton.cs" />
     <Compile Include="Enums\MouseState.cs" />
     <Compile Include="Enums\ProcessAccessFlags.cs" />
+    <Compile Include="Enums\ScrollBar.cs" />
+    <Compile Include="Enums\SystemMetric.cs" />
     <Compile Include="Structs\COLORREF.cs" />
+    <Compile Include="Structs\CONSOLE_CURSOR_INFO.cs" />
     <Compile Include="Structs\CONSOLE_FONT_INFO.cs" />
+    <Compile Include="Structs\CONSOLE_SCREEN_BUFFER_INFO.cs" />
+    <Compile Include="Structs\CONSOLE_SCREEN_BUFFER_INFO_EX.cs" />
     <Compile Include="Structs\CURSORINFO.cs" />
     <Compile Include="Structs\RECT.cs" />
     <Compile Include="Structs\SECURITY_ATTRIBUTES.cs" />

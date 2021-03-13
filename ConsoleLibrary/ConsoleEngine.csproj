@@ -37,17 +37,32 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Telerik.WinControls, Version=2020.3.915.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWF\2020.3.915.40\Telerik.WinControls.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Telerik.WinControls.UI, Version=2020.3.915.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWF\2020.3.915.40\Telerik.WinControls.UI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="TelerikCommon, Version=2020.3.915.40, Culture=neutral, PublicKeyToken=5bb2a467cbec794e, processorArchitecture=MSIL">
+      <HintPath>..\lib\RCWF\2020.3.915.40\TelerikCommon.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="ConsoleExtensions\ConsoleExtensions.cs" />
+    <Compile Include="Drawing\DrawArgs.cs" />
+    <Compile Include="Drawing\ShadingCharacter.cs" />
     <Compile Include="Forms\Components\Button.cs" />
     <Compile Include="Forms\Components\ButtonBase.cs" />
     <Compile Include="Forms\ControlManager.cs" />
@@ -64,7 +79,7 @@
     <Compile Include="Forms\Interfaces\IMouseAction.cs" />
     <Compile Include="Forms\Interfaces\IMouseOver.cs" />
     <Compile Include="Drawing\ConsoleRenderer.cs" />
-    <Compile Include="Drawing\ScreenBuffer.cs" />
+    <Compile Include="Drawing\BufferArea.cs" />
     <Compile Include="Drawing\Shapes\Rect.cs" />
     <Compile Include="Drawing\Shapes\IShape.cs" />
     <Compile Include="Drawing\Shapes\TextBox.cs" />

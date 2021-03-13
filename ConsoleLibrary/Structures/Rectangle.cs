@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.Structures
 {
@@ -35,5 +36,8 @@ namespace ConsoleLibrary.Structures
             Width = p2.X;
             Height = p2.Y;
         }
+
+        public static implicit operator SMALL_RECT(Rectangle rect) => new SMALL_RECT((short)rect.X, (short)rect.Y, (short)rect.Right, (short)rect.Bottom);
+        public static implicit operator Rectangle(SMALL_RECT rect) => new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
     }
 }

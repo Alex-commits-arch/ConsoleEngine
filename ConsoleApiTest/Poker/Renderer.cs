@@ -29,7 +29,7 @@ namespace ConsoleApiTest.Poker
             if (width <= 0)
                 width = GetCardWidth(height);
 
-            ConsoleRenderer.FillRect(' ', x + 1, y + 1, width - 2, height - 2, CharAttribute.BackgroundBlack);
+            //ConsoleRenderer.FillRect(' ', x + 1, y + 1, width - 2, height - 2, CharAttribute.BackgroundBlack);
 
             Border border = new RoundedBorder();
             border.Width = width;
@@ -44,17 +44,17 @@ namespace ConsoleApiTest.Poker
 
             bool isRed = card.Suit == Suit.Diamonds || card.Suit == Suit.Hearts;
 
-            ConsoleRenderer.DrawChar(
-                suit,
-                x + width / 2,
-                y + height / 2,
-                isRed ?
-                CharAttribute.ForegroundRed :
-                CharAttribute.ForegroundWhite
-            );
+            //ConsoleRenderer.DrawChar(
+            //    suit,
+            //    x + width / 2,
+            //    y + height / 2,
+            //    isRed ?
+            //    CharAttribute.ForegroundRed :
+            //    CharAttribute.ForegroundWhite
+            //);
 
-            ConsoleRenderer.DrawString(rank, x + 1, y + 1, CharAttribute.ForegroundWhite);
-            ConsoleRenderer.DrawString(rank, x + width - 1 - rank.Length, y + height - 2, CharAttribute.ForegroundWhite);
+            //ConsoleRenderer.DrawString(rank, x + 1, y + 1, CharAttribute.ForegroundWhite);
+            //ConsoleRenderer.DrawString(rank, x + width - 1 - rank.Length, y + height - 2, CharAttribute.ForegroundWhite);
         }
 
         public static void DrawTable(int x, int y, int w, int h)
@@ -100,14 +100,14 @@ namespace ConsoleApiTest.Poker
                 " \\______/  \\______/ |__/  |__/|_______/  \\______/ |__/ \\_______/      |__/      \\______/ |__/  \\__/ \\_______/|__/      ",
             };
 
-            var (windowWidth, windowHeight) = ConsoleRenderer.GetWindowSize();
+            var (windowWidth, windowHeight) = ConsoleRenderer.GetConsoleSize();
             //var sw = Stopwatch.StartNew();
-            ConsoleRenderer.Draw(title, new DrawArgs(
-                windowWidth / 2 - title[0].Length / 2,
-                windowHeight / 4 - title.Length / 2,
-                CharAttribute.ForegroundGreen,
-                true
-            ));
+            //ConsoleRenderer.Draw(title, new DrawArgs(
+            //    windowWidth / 2 - title[0].Length / 2,
+            //    windowHeight / 4 - title.Length / 2,
+            //    CharAttribute.ForegroundGreen,
+            //    true
+            //));
             //sw.Stop();
             //Debug.WriteLine(sw.ElapsedMilliseconds);
             //ConsoleRenderer.DrawStrings(

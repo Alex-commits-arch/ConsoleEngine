@@ -8,6 +8,8 @@ using System.Diagnostics;
 using System.Drawing;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
+using ConsoleLibrary;
+using WindowsWrapper;
 
 namespace ConsoleApiTest
 {
@@ -15,7 +17,15 @@ namespace ConsoleApiTest
     {
         static void Main(string[] args)
         {
+            //var t = (SystemMetric[])Enum.GetValues(typeof(SystemMetric));
+
+            //foreach (var metric in t)
+            //{
+            //    Console.WriteLine($"{metric} = {WinApi.GetSystemMetrics(metric)}");
+            //}
+            //WinApi
             new TestApp(84, 42).Init();
+            //new TestApp(52, 40).Init();
             ConsoleInput.InputLoop();
         }
     }
@@ -24,13 +34,14 @@ namespace ConsoleApiTest
     {
         private readonly string lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-        ScreenBuffer buffer;
-        ScreenBuffer backface;
+        BufferArea buffer;
+        BufferArea backface;
         CharInfo[,] square;
         int squareX = 2;
         int squareY = 1;
         TextBox text;
         ColorfulString colorfulString;
+        string[] strings;
 
         public TestApp(int width = 90, int height = 40) : base(width, height)
         {
@@ -41,10 +52,7 @@ namespace ConsoleApiTest
         {
             base.Init();
 
-            buffer = ConsoleRenderer.CreateScreenBuffer();
-            ConsoleRenderer.SetActiveBuffer(buffer);
-
-
+            buffer = ConsoleRenderer.ActiveBuffer;
 
             text = new TextBox(controlManager)
             {
@@ -58,7 +66,7 @@ namespace ConsoleApiTest
 
             colorfulString = new ColorfulString
             {
-                Value = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+                Value = "LMAAAAAAOOOOOOOOOOO",
                 ColorThing = ColorThing.Bounce,
                 Attributes = new CharAttribute[] {
                     CharAttribute.ForegroundRed,
@@ -71,6 +79,14 @@ namespace ConsoleApiTest
                 }
             };
 
+            strings = new string[]
+            {
+                "Haha",
+                "Strings",
+                "Go",
+                "Brrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+            };
+
             int ratioX = 2;
             int ratioY = 1;
             int scale = 2;
@@ -81,26 +97,40 @@ namespace ConsoleApiTest
             int tileWidth = pieceWidth + spacingX * 2;
             int tileHeight = pieceHeight + spacingY * 2;
             square = new CharInfo[8 * tileHeight, 8 * tileWidth];
-            //backface = new ScreenBuffer()
+
             for (int y = 0; y < square.GetLength(0); y++)
-            {
+                for (int x = 0; x < square.GetLength(1); x++)
+                    square[y, x].Attributes |= ((x / tileWidth + y / tileHeight) % 2 == 0
+                        ? CharAttribute.BackgroundGrey | CharAttribute.ForegroundBlack
+                        : CharAttribute.BackgroundBlack | CharAttribute.ForegroundWhite);
+
+            for (int y = 0; y < square.GetLength(0); y++)
                 for (int x = 0; x < square.GetLength(1); x++)
                 {
                     if (x % tileWidth == 0 && y % tileHeight == 0)
-                        square[y + spacingY, x + spacingX] = new CharInfo
+                    {
+                        int px = x + spacingX;
+                        int py = y + spacingY;
+                        square[py, px].UnicodeChar = '♕';
+                        square[py, px].Attributes |= CharAttribute.LeadingByte;
+
+                        var yellow = CharAttribute.BackgroundYellow | CharAttribute.ForegroundBlack;
+                        var marker = new CharInfo
                         {
-                            UnicodeChar = '♕',
-                            Attributes = CharAttribute.ForegroundGreen | CharAttribute.LeadingByte | CharAttribute.BackgroundBlack
+                            UnicodeChar = ShadingCharacter.Light,
+                            Attributes = yellow
                         };
-                    square[y, x].Attributes |= ((x / tileWidth + y / tileHeight ) % 2 == 0
-                        ? CharAttribute.BackgroundWhite 
-                        : CharAttribute.BackgroundBlack);
-
+                    }
                 }
-            }
 
-            backface = new ScreenBuffer(square.GetLength(1) + 4, square.GetLength(0) + 2);
-            backface.Clear(CharAttribute.BackgroundDarkGrey);
+            backface = new BufferArea(square.GetLength(1) + 4, square.GetLength(0) + 2);
+            CharInfo backChar = new CharInfo
+            {
+                UnicodeChar = ShadingCharacter.Dark,
+                Attributes = CharAttribute.BackgroundDarkGrey
+            };
+            backface.Fill(backChar);
+
 
             Draw();
 
@@ -109,6 +139,13 @@ namespace ConsoleApiTest
             ConsoleInput.KeyHeld += ConsoleInput_KeyPressed;
 
             ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
+
+            ConsoleInput.Resized += delegate
+            {
+                Draw();
+                //Debug.WriteLine("aaaaa");
+            };
+            Draw();
             //ConsoleInput.MouseMoved += ConsoleInput_MouseDragged;
         }
 
@@ -133,28 +170,34 @@ namespace ConsoleApiTest
             if (e.Key == ConsoleKey.Escape)
                 Environment.Exit(0);
 
-            switch (e.Key)
-            {
-                case ConsoleKey.A:
-                case ConsoleKey.LeftArrow:
-                    squareX--;
-                    break;
-                case ConsoleKey.W:
-                case ConsoleKey.UpArrow:
-                    squareY--;
-                    break;
-                case ConsoleKey.D:
-                case ConsoleKey.RightArrow:
-                    squareX++;
-                    break;
-                case ConsoleKey.S:
-                case ConsoleKey.DownArrow:
-                    squareY++;
-                    break;
-                default:
-                    break;
-            }
-            Draw();
+            //switch (e.Key)
+            //{
+            //    case ConsoleKey.A:
+            //    case ConsoleKey.LeftArrow:
+            //        squareX--;
+            //        break;
+            //    case ConsoleKey.W:
+            //    case ConsoleKey.UpArrow:
+            //        squareY--;
+            //        break;
+            //    case ConsoleKey.D:
+            //    case ConsoleKey.RightArrow:
+            //        squareX++;
+            //        break;
+            //    case ConsoleKey.S:
+            //    case ConsoleKey.DownArrow:
+            //        squareY++;
+            //        break;
+            //    default:
+            //        break;
+            //}
+            //Draw();
+
+            //Draw();
+            //if (e.Key == ConsoleKey.F)
+                //MyConsole.Fill(new CharInfo());
+                //ConsoleRenderer.Clear();
+            //    buffer.Clear();
         }
 
         private void Draw()
@@ -162,7 +205,9 @@ namespace ConsoleApiTest
             buffer.Clear();
             buffer.Draw(backface, squareX - 2, squareY - 1);
             buffer.Draw(square, squareX, squareY);
-            ConsoleRenderer.DrawBuffers();
+            buffer.Draw(colorfulString, 0, strings.Length);
+            buffer.Draw(strings, 0, 0);
+            ConsoleRenderer.RenderOutput();
         }
 
         private void Control_MousePressed(object sender, MouseEventArgs e)
@@ -184,13 +229,5 @@ namespace ConsoleApiTest
         {
             Debug.WriteLine((sender as Control)?.Name + " entered");
         }
-    }
-
-    public enum BackgroundShade
-    {
-        None,
-        Light,
-        Medium,
-        Dark
     }
 }

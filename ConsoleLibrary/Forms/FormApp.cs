@@ -55,7 +55,7 @@ namespace ConsoleLibrary.Forms
 
         private void OnKeyPressed(KeyEventArgs keyEventArgs)
         {
-
+            //MyConsole.SetSize(Width, Height);
         }
 
         private void OnMouseMoved(object sender, MouseEventArgs args)

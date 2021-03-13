@@ -51,7 +51,7 @@ namespace ConsoleLibrary.Forms.Controls
             for (int i = 0; i < renderedLines.Length; i++)
                 renderedLines[i] = new string(lines[i]);
 
-            ConsoleRenderer.Draw(renderedLines, new DrawArgs(left, top, attributes));
+            //ConsoleRenderer.Draw(renderedLines, new DrawArgs(left, top, attributes));
         }
     }
 }

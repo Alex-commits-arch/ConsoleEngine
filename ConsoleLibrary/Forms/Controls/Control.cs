@@ -85,7 +85,7 @@ namespace ConsoleLibrary.Forms.Controls
 
         public virtual void Draw()
         {
-            ConsoleRenderer.FillRect(' ', left, top, width, height, attributes);
+            //ConsoleRenderer.FillRect(' ', left, top, width, height, attributes);
         }
     }
 }

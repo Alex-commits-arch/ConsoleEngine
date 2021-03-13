@@ -52,7 +52,7 @@ namespace ConsoleLibrary.Forms.Components
                         attributes :
                     disabledAttributes;
 
-                ConsoleRenderer.Draw(text, new DrawArgs(left, top, color));
+                //ConsoleRenderer.Draw(text, new DrawArgs(left, top, color));
             }
         }
     }

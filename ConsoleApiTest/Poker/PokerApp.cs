@@ -39,7 +39,7 @@ namespace ConsoleApiTest.Poker
         {
             base.Init();
 
-            (width, height) = ConsoleRenderer.GetWindowSize();
+            (width, height) = ConsoleRenderer.GetConsoleSize();
             (centerX, centerY) = ConsoleRenderer.GetWindowCenter();
 
             InitStart();
@@ -124,7 +124,7 @@ namespace ConsoleApiTest.Poker
 
         private void OnStartPressed(object sender, MouseEventArgs e)
         {
-            ConsoleRenderer.FastClear();
+            ConsoleRenderer.Clear();
             startButton.HideAndDisable();
             placeholder.Hide();
             DrawMain();
@@ -153,7 +153,7 @@ namespace ConsoleApiTest.Poker
             bool ctrlPressed = args.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed);
             if (args.Key == ConsoleKey.R && ctrlPressed)
             {
-                ConsoleRenderer.FastClear();
+                ConsoleRenderer.Clear();
                 startButton.ShowAndEnable();
                 placeholder.Show();
                 DrawStart();

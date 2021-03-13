@@ -29,6 +29,8 @@ namespace ConsoleLibrary.Input
             var record = new INPUT_RECORD();
             uint recordLen = 0;
             MouseButton prevMouseState = MouseButton.None;
+            int prevWidth = MyConsole.Width;
+            int prevHeight = MyConsole.Height;
             while (true)
             {
                 MyConsole.ReadClientInput(ref record, 1, ref recordLen);
@@ -36,7 +38,7 @@ namespace ConsoleLibrary.Input
                 {
                     case EventType.Mouse:
                         {
-                            var mouseEvent = record.MouseEvent;
+                            var mouseEvent = record.Event.MouseEvent;
                             var button = mouseEvent.ButtonState;
                             var flags = mouseEvent.EventFlags;
 
@@ -67,7 +69,7 @@ namespace ConsoleLibrary.Input
 
                     case EventType.Key:
                         {
-                            var keyEvent = record.KeyEvent;
+                            var keyEvent = record.Event.KeyEvent;
 
                             var eventArgs = new KeyEventArgs
                             {
@@ -91,23 +93,74 @@ namespace ConsoleLibrary.Input
 
                     case EventType.Resize:
                         {
-                            (int wWidth, int wHeight) = MyConsole.GetWindowSize();
-                            (int fWidth, int fHeight) = MyConsole.GetFontSize();
-                            int cWidth = wWidth / fWidth;
-                            int cHeight = wHeight / fHeight;
+                            var resizeEvent = record.Event.ResizeEvent;
 
-                            (int w, int h) = MyConsole.GetConsoleSize();
+                            (int newWidth, int newHeight) = resizeEvent.dwSize;
 
-                            if (w != cWidth || h != cHeight)
+                            Debug.WriteLine(new Structures.Point(newWidth, newHeight));
+
+                            if(prevWidth == MyConsole.MaximumWidth && prevHeight == MyConsole.MaximumHeight)
                             {
-                                MyConsole.SetSize(cWidth, cHeight);
+                                (int wWidth, int wHeight) = MyConsole.GetWindowSize();
+                                (int cWidth, int cHeight) = MyConsole.GetClientSize();
+                                (int fWidth, int fHeight) = MyConsole.GetFontSize();
+                                newWidth = (wWidth - MyConsole.BorderWidth*2) / fWidth;
+                                newHeight = (wHeight - MyConsole.TitleBarHeight) / fHeight;
+                            }
+
+                            if (newWidth != prevWidth || newHeight != prevHeight)
+                            {
+                                prevWidth = newWidth;
+                                prevHeight = newHeight;
+                                MyConsole.Fill(new CharInfo());
+                                MyConsole.SetSize(newWidth, newHeight);
+                                MyConsole.HideCursor();
+                                Drawing.ConsoleRenderer.Resize(newWidth, newHeight);
                                 Resized?.Invoke(new ResizedEventArgs
                                 {
-                                    Width = cWidth,
-                                    Height = cHeight
+                                    Width = newWidth,
+                                    Height = newHeight
                                 });
-                                MyConsole.HideCursor();
                             }
+
+                            //(int wWidth, int wHeight) = MyConsole.GetWindowSize();
+                            //(int fWidth, int fHeight) = MyConsole.GetFontSize();
+                            //int cWidth = wWidth / fWidth;
+                            //int cHeight = wHeight / fHeight;
+
+                            //(int w, int h) = MyConsole.GetConsoleSize();
+
+                            //Debug.WriteLine($"Event: {resizeEvent.dwSize}, Current: {new Structures.Point(w, h)}, Target: {new Structures.Point(cWidth, cHeight)}");
+
+                            //if (w != cWidth || h != cHeight)
+                            //{
+                            //    //Drawing.ConsoleRenderer.Clear(Drawing.ConsoleRenderer.DefaultAttributes);
+                            //    MyConsole.Fill(new CharInfo());
+                            //    //System.Threading.Thread.Sleep(10);
+                            //    MyConsole.SetSize(cWidth, cHeight);
+                            //    MyConsole.HideCursor();
+                            //    Drawing.ConsoleRenderer.Resize(cWidth, cHeight);
+                            //    Resized?.Invoke(new ResizedEventArgs
+                            //    {
+                            //        Width = cWidth,
+                            //        Height = cHeight
+                            //    });
+                            //}
+                        }
+                        break;
+
+                    case EventType.Menu:
+                        {
+                            var id = record.Event.MenuEvent.dwCommandId;
+                            Debug.WriteLine(id);
+                        }
+                        break;
+                    case EventType.Focus:
+                        {
+                            var focused = record.Event.FocusEvent.bSetFocus;
+
+                            if (focused == 1)
+                                MyConsole.UpdateMinimumSize();
                         }
                         break;
                     default:

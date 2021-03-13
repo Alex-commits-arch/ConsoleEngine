@@ -25,7 +25,7 @@ namespace ConsoleApiTest.Builder
             base.Init();
 
 
-            var (width, height) = ConsoleRenderer.GetWindowSize();
+            var (width, height) = ConsoleRenderer.GetConsoleSize();
 
             border = new SingleBorder();
             border.Left = -1;
@@ -61,7 +61,7 @@ namespace ConsoleApiTest.Builder
 
         private void Redraw()
         {
-            ConsoleRenderer.FastClear();
+            ConsoleRenderer.Clear();
         }
 
         private void ToggleToolbox()

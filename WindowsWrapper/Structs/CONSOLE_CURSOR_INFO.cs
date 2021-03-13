@@ -3,8 +3,9 @@
 namespace WindowsWrapper.Structs
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct FOCUS_EVENT_RECORD
+    public struct CONSOLE_CURSOR_INFO
     {
-        public int bSetFocus;
+        public int dwSize;
+        public bool bVisible;
     }
 }

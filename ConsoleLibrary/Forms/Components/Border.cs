@@ -43,10 +43,10 @@ namespace ConsoleLibrary.Forms.Components
                 rightSide[i, 0] = new CharInfo { Attributes = Attributes, UnicodeChar = right };
             }
 
-            ConsoleRenderer.DrawCharInfos(topSide, Left, Top);
-            ConsoleRenderer.DrawCharInfos(rightSide, Left + Width - 1, Top + 1);
-            ConsoleRenderer.DrawCharInfos(bottomSide, Left, Top + Height - 1);
-            ConsoleRenderer.DrawCharInfos(leftSide, Left, Top + 1);
+            //ConsoleRenderer.DrawCharInfos(topSide, Left, Top);
+            //ConsoleRenderer.DrawCharInfos(rightSide, Left + Width - 1, Top + 1);
+            //ConsoleRenderer.DrawCharInfos(bottomSide, Left, Top + Height - 1);
+            //ConsoleRenderer.DrawCharInfos(leftSide, Left, Top + 1);
         }
     }
 

@@ -101,9 +101,9 @@ namespace WindowsWrapper
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleWindowInfo(
-            IntPtr hConsoleOutput,
+            ConsoleHandle hConsoleOutput,
             bool bAbsolute,
-            [In] ref SMALL_RECT lpConsoleWindow
+            ref SMALL_RECT lpConsoleWindow
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -202,6 +202,35 @@ namespace WindowsWrapper
             ProcessAccessFlags processAccess,
             bool bInheritHandle,
             int processId
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool GetConsoleScreenBufferInfo(
+            ConsoleHandle hConsoleOutput,
+            out CONSOLE_SCREEN_BUFFER_INFO ConsoleScreenBufferInfo
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool GetConsoleScreenBufferInfoEx(
+            ConsoleHandle hConsoleOutput,
+            ref CONSOLE_SCREEN_BUFFER_INFO_EX ConsoleScreenBufferInfo
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool SetConsoleCursorInfo(
+            ConsoleHandle hConsoleOutput,
+            [In] ref CONSOLE_CURSOR_INFO lpConsoleCursorInfo
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool GetConsoleCursorInfo(
+            ConsoleHandle hConsoleOutput,
+            out CONSOLE_CURSOR_INFO lpConsoleCursorInfo
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern COORD GetLargestConsoleWindowSize(
+            ConsoleHandle hConsoleOutput
         );
 
         public static IntPtr OpenProcess(Process proc, ProcessAccessFlags flags)
@@ -341,6 +370,12 @@ namespace WindowsWrapper
 
         [DllImport("user32.dll")]
         public static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
+
+        [DllImport("user32.dll")]
+        public static extern int GetSystemMetrics(SystemMetric smIndex);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool ShowScrollBar(IntPtr hWnd, ScrollBar wBar, bool bShow);
         #endregion
 
         #region GDI32.DLL

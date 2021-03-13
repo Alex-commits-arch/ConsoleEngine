@@ -7,38 +7,38 @@ using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.Drawing
 {
-    public class ScreenBuffer
+    public class BufferArea
     {
-        CharInfo[,] content;
-        readonly int width;
-        readonly int height;
+        protected CharInfo[,] content;
+        protected int width;
+        protected int height;
 
         public CharInfo[,] Content => content;
-        public int Width { get => width; }
-        public int Height { get => height; }
+        public int Width => width;
+        public int Height => height;
 
-        public ScreenBuffer(int width, int height)
+        public BufferArea(int width, int height)
         {
             this.width = width;
             this.height = height;
             content = new CharInfo[height, width];
         }
 
-        public ScreenBuffer(CharInfo[,] content)
+        public BufferArea(CharInfo[,] content)
         {
             width = content.GetLength(1);
             height = content.GetLength(0);
             this.content = content;
         }
 
-        public ScreenBuffer GetBuffer(Rectangle rect)
+        public BufferArea GetBuffer(Rectangle rect)
         {
             return GetBuffer(rect.X, rect.Y, rect.Width, rect.Height);
         }
 
-        public ScreenBuffer GetBuffer(int x, int y, int w, int h)
+        public BufferArea GetBuffer(int x, int y, int w, int h)
         {
-            return new ScreenBuffer(GetArea(x, y, w, h));
+            return new BufferArea(GetArea(x, y, w, h));
         }
 
         public CharInfo[,] GetArea(Rectangle rect)
@@ -65,7 +65,7 @@ namespace ConsoleLibrary.Drawing
             return area;
         }
 
-        public void Clear(CharAttribute attributes = ConsoleRenderer.defaultAttributes)
+        public void Clear(CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
         {
             CharInfo clearChar = new CharInfo
             {
@@ -73,12 +73,17 @@ namespace ConsoleLibrary.Drawing
                 UnicodeChar = '\0'
             };
 
-            for (int y = 0; y < content.GetLength(0); y++)
-                for (int x = 0; x < content.GetLength(1); x++)
-                    content[y, x] = clearChar;
+            Fill(clearChar);
         }
 
-        public void Draw(char c, int x, int y, CharAttribute attributes = ConsoleRenderer.defaultAttributes)
+        public void Fill(CharInfo charInfo)
+        {
+            for (int y = 0; y < content.GetLength(0); y++)
+                for (int x = 0; x < content.GetLength(1); x++)
+                    content[y, x] = charInfo;
+        }
+
+        public void Draw(char c, int x, int y, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
         {
             if (IsBoundedIndex(x, width) && IsBoundedIndex(y, height))
                 content[y, x] = new CharInfo
@@ -88,7 +93,7 @@ namespace ConsoleLibrary.Drawing
                 };
         }
 
-        public void Draw(string s, int x, int y, CharAttribute attributes = ConsoleRenderer.defaultAttributes)
+        public void Draw(string s, int x, int y, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
         {
             int safeHeight = SafeSourceEnd(y, 1, height);
 
@@ -102,6 +107,31 @@ namespace ConsoleLibrary.Drawing
                 for (int index = safeStart; index < safeEnd; index++)
                 {
                     content[y, x + index] = infos[index];
+                }
+            }
+        }
+
+        public void Draw(string[] strings, int x, int y, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
+        {
+            int safeHeight = SafeSourceEnd(y, strings.Length, height);
+
+            if (safeHeight > 0)
+            {
+                int safeStartX = SafeSourceStart(x);
+                int safeStartY = SafeSourceStart(y);
+
+                int safeEndY = SafeSourceEnd(y, strings.Length, height);
+
+                var infos = strings.ToCharInfoArray(attributes);
+
+                for (int indexY = safeStartY; indexY < safeEndY; indexY++)
+                {
+                    int safeEndX = SafeSourceEnd(x, infos[indexY].Length, width);
+
+                    for (int indexX = safeStartX; indexX < safeEndX; indexX++)
+                    {
+                        content[y + indexY, x + indexX] = infos[indexY][indexX];
+                    }
                 }
             }
         }
@@ -124,7 +154,7 @@ namespace ConsoleLibrary.Drawing
             }
         }
 
-        public void Draw(ScreenBuffer bufferArea, int x, int y)
+        public void Draw(BufferArea bufferArea, int x, int y)
         {
             Draw(bufferArea.Content, x, y);
         }
@@ -163,6 +193,23 @@ namespace ConsoleLibrary.Drawing
         #endregion
     }
 
+    public class ScreenBuffer : BufferArea
+    {
+        public string Name { get; }
+
+        public ScreenBuffer(string name) : base(MyConsole.Width, MyConsole.Height)
+        {
+            Name = name;
+        }
+
+        public void Resize(int width, int height)
+        {
+            //this.width = width;
+            (this.width, this.height) = (width, height);
+            content = new CharInfo[height, width];
+        }
+    }
+
     public class ColorfulString
     {
         public string Value { get; set; }
@@ -174,36 +221,73 @@ namespace ConsoleLibrary.Drawing
         {
             CharInfo[] infos = new CharInfo[Value.Length];
 
+            Func<int, CharAttribute> getRepeat = i => Attributes[i % Attributes.Length];
+
+            Func<int, CharAttribute> colorGetter = (i) => ConsoleRenderer.DefaultAttributes;
+
+            switch (ColorThing)
+            {
+                case ColorThing.Repeat:
+                    colorGetter = i => Attributes[i % Attributes.Length];
+                    break;
+                case ColorThing.Drag:
+                    colorGetter = i => i < Attributes.Length
+                        ? Attributes[i]
+                        : Attributes[Attributes.Length - 1];
+                    break;
+                case ColorThing.Bounce:
+                    colorGetter = i =>
+                    {
+                        int x = i % Attributes.Length;
+                        int xx = i % (Attributes.Length * 2);
+
+                        if (xx > x)
+                            return Attributes[Attributes.Length - 1 - (xx % Attributes.Length)];
+                        else
+                            return Attributes[x];
+                    };
+                    break;
+                case ColorThing.Default:
+                    colorGetter = i =>
+                    {
+                        if (i < Attributes.Length)
+                            return Attributes[i];
+                        return ConsoleRenderer.DefaultAttributes;
+                    };
+                    break;
+
+            }
 
             for (int i = 0; i < Value.Length; i++)
             {
-                CharAttribute attribute = ConsoleRenderer.defaultAttributes;
+                CharAttribute attribute = ConsoleRenderer.DefaultAttributes;
                 if (Attributes != null && Attributes.Length > 0)
-                    switch (ColorThing)
-                    {
-                        case ColorThing.Repeat:
-                            attribute = Attributes[i % Attributes.Length];
-                            break;
-                        case ColorThing.Drag:
-                            attribute = i < Attributes.Length
-                                ? Attributes[i]
-                                : Attributes[Attributes.Length - 1];
-                            break;
-                        case ColorThing.Bounce:
-                            int x = i % Attributes.Length;
-                            int xx = i % (Attributes.Length * 2);
+                    attribute = colorGetter(i);
+                //switch (ColorThing)
+                //{
+                //    case ColorThing.Repeat:
+                //        attribute = Attributes[i % Attributes.Length];
+                //        break;
+                //    case ColorThing.Drag:
+                //        attribute = i < Attributes.Length
+                //            ? Attributes[i]
+                //            : Attributes[Attributes.Length - 1];
+                //        break;
+                //    case ColorThing.Bounce:
+                //        int x = i % Attributes.Length;
+                //        int xx = i % (Attributes.Length * 2);
 
-                            if (xx > x)
-                                attribute = Attributes[Attributes.Length - 1 - (xx % Attributes.Length)];
-                            else
-                                attribute = Attributes[x];
-                            break;
-                        case ColorThing.Default:
-                            if (i < Attributes.Length)
-                                attribute = Attributes[i];
-                            break;
+                //        if (xx > x)
+                //            attribute = Attributes[Attributes.Length - 1 - (xx % Attributes.Length)];
+                //        else
+                //            attribute = Attributes[x];
+                //        break;
+                //    case ColorThing.Default:
+                //        if (i < Attributes.Length)
+                //            attribute = Attributes[i];
+                //        break;
 
-                    }
+                //}
 
                 infos[i] = new CharInfo
                 {
@@ -213,9 +297,6 @@ namespace ConsoleLibrary.Drawing
             }
 
             return infos;
-
-            //CharInfo[][] test = new CharInfo[1][];
-            //test[0] = infos;
         }
     }
 

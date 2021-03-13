@@ -12,6 +12,7 @@ namespace ConsoleLibrary
 
         public ConsoleApp(int width = 40, int height = 30)
         {
+            MyConsole.HideCursor();
             MyConsole.SetSize(
                 Math.Min(width, Console.LargestWindowWidth),
                 Math.Min(height, Console.LargestWindowHeight)
@@ -20,11 +21,16 @@ namespace ConsoleLibrary
             (Width, Height) = MyConsole.GetConsoleSize();
         }
 
+        ~ConsoleApp()
+        {
+            Console.WriteLine("Hello");
+        }
+
         public virtual void Init()
         {
             MyConsole.HideCursor();
             MyConsole.DeleteMenu(Window.SC_MAXIMIZE, 0x0);
-            MyConsole.DeleteMenu(Window.SC_SIZE, 0x0);
+            //MyConsole.DeleteMenu(Window.SC_SIZE, 0x0);
         }
     }
 }

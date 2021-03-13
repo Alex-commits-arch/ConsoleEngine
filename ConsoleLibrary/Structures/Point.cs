@@ -52,7 +52,7 @@ namespace ConsoleLibrary.Structures
         }
 
         public static implicit operator COORD(Point p) => new COORD((short)p.X, (short)p.Y);
-        public static explicit operator Point(COORD c) => new Point(c);
+        public static implicit operator Point(COORD c) => new Point(c);
 
         public static Point operator +(Point l1, Point l2) => new Point(l1.X + l2.X, l1.Y + l2.Y);
         public static Point operator -(Point l1, Point l2) => new Point(l1.X - l2.X, l1.Y - l2.Y);
