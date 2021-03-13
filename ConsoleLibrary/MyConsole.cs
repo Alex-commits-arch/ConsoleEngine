@@ -51,6 +51,9 @@ namespace ConsoleLibrary
 
         public static COORD GetConsoleSize()
         {
+            WinApi.GetConsoleScreenBufferInfo(handleOut, out CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
+            return bufferInfo.dwSize;
+            Debug.WriteLine($"{new COORD((short)Width, (short)Height)}, {bufferInfo.dwSize}");
             return new COORD((short)Width, (short)Height);
         }
 
@@ -188,9 +191,10 @@ namespace ConsoleLibrary
             if (width > 0 && width <= MaximumWidth && height > 0 && height <= MaximumHeight)
             {
                 WinApi.GetConsoleScreenBufferInfo(handleOut, out CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
-                SMALL_RECT winInfo = bufferInfo.srWindow;
+                //SMALL_RECT winInfo = bufferInfo.srWindow;
 
-                COORD windowSize = new COORD((short)(winInfo.Right - winInfo.Left + 1), (short)(winInfo.Bottom - winInfo.Top + 1));
+                //COORD windowSize = new COORD((short)(winInfo.Right - winInfo.Left + 1), (short)(winInfo.Bottom - winInfo.Top + 1));
+                COORD windowSize = bufferInfo.dwSize;
 
                 SMALL_RECT info;
                 if (windowSize.X > width || windowSize.Y > height)
@@ -201,95 +205,18 @@ namespace ConsoleLibrary
                         (short)(Math.Min(height, windowSize.Y) - 1)
                     );
 
-                    WinApi.SetConsoleWindowInfo(handleOut, true, ref info);
+                    HandleError(!WinApi.SetConsoleWindowInfo(handleOut, true, ref info));
                 }
 
                 COORD size = new COORD((short)width, (short)height);
                 HandleError(!WinApi.SetConsoleScreenBufferSize(handleOut, size));
 
                 info = new SMALL_RECT(0, 0, (short)(width - 1), (short)(height - 1));
-                WinApi.SetConsoleWindowInfo(handleOut, true, ref info);
+                HandleError(!WinApi.SetConsoleWindowInfo(handleOut, true, ref info));
 
                 MyConsole.width = width;
                 MyConsole.height = height;
             }
-           //HandleError(!WinApi.ShowScrollBar(handleIn.DangerousGetHandle(), ScrollBar.SB_VERT, false));
-        }
-
-        public static void SetSizeDosBox(int width, int height)
-        {
-            CONSOLE_SCREEN_BUFFER_INFO csbi;
-            SMALL_RECT rect;
-            COORD window_dims, win_coords;
-
-            WinApi.GetConsoleScreenBufferInfo(handleOut, out csbi);
-
-            win_coords = WinApi.GetLargestConsoleWindowSize(handleOut);
-            window_dims = csbi.dwSize;
-
-            rect.Right = (short)(Math.Min(width, win_coords.X) - 1);
-            rect.Bottom = (short)(Math.Min(height, win_coords.Y) - 1);
-            rect.Left = rect.Top = 0;
-
-            win_coords.X = (short)width;
-            win_coords.Y = (short)height;
-
-            if (window_dims.X * window_dims.Y > width * height)
-            {
-                WinApi.SetConsoleWindowInfo(handleOut, true, ref rect);
-                WinApi.SetConsoleScreenBufferSize(handleOut, win_coords);
-            }
-            if (window_dims.X * window_dims.Y < width * height)
-            {
-                WinApi.SetConsoleScreenBufferSize(handleOut, win_coords);
-                WinApi.SetConsoleWindowInfo(handleOut, true, ref rect);
-            }
-        }
-
-        public static void SetSizeSaved(int width, int height)
-        {
-            WinApi.GetConsoleScreenBufferInfo(handleOut, out CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
-
-            //if (width > bufferInfo.dwMaximumWindowSize.X)
-            //    Debug.WriteLine($"Max: {bufferInfo.dwMaximumWindowSize}, Target: {new Point(width, height)}");
-
-            //if (width > bufferInfo.dwMaximumWindowSize.X)
-            //    width = bufferInfo.dwMaximumWindowSize.X;
-            //if (height > bufferInfo.dwMaximumWindowSize.Y)
-            //    height = bufferInfo.dwMaximumWindowSize.Y;
-
-            if (width < minConsoleWidth)
-                width = minConsoleWidth;
-            if (height < minConsoleHeight)
-                height = minConsoleHeight;
-
-            var rect = new SMALL_RECT(0, 0, (short)(width - 1), (short)(height - 1));
-            //var smallest = new SMALL_RECT(0, 0, 1, 1);
-            var smallest = new SMALL_RECT(0, 0, (short)(rect.Right - 1), (short)(rect.Bottom - 1));
-            //if (width < Width)
-            //{
-            //    HandleError(!WinApi.SetConsoleWindowInfo(handleOut, true, ref rect));
-            //    HandleError(!WinApi.SetConsoleScreenBufferSize(handleOut, new COORD((short)width, (short)height)));
-            //}
-            //else
-            //{
-            //    HandleError(!WinApi.SetConsoleScreenBufferSize(handleOut, new COORD((short)width, (short)height)));
-            //    HandleError(!WinApi.SetConsoleWindowInfo(handleOut, true, ref rect));
-            //}
-            HandleError(!WinApi.SetConsoleWindowInfo(handleOut, true, ref smallest));
-            if (!WinApi.SetConsoleScreenBufferSize(handleOut, new COORD((short)width, (short)height)))
-            {
-                Debug.WriteLine($"{width}, {height}");
-            }
-            HandleError(!WinApi.SetConsoleWindowInfo(handleOut, true, ref rect));
-
-            MyConsole.width = width;
-            MyConsole.height = height;
-            //bufferError = WinApi.SetConsoleScreenBufferSize(handleOut, new COORD((short)width, (short)height));
-            //if (bufferError)
-            //    HandleError(!(bufferError = WinApi.SetConsoleScreenBufferSize(handleOut, bufferInfo.dwMaximumWindowSize)));
-            //if (bufferError)
-            //    Debug.WriteLine($"{rect}, {width}, {height}");
         }
 
         public static void SetTitle(string s)

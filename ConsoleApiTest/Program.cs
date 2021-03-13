@@ -145,7 +145,7 @@ namespace ConsoleApiTest
                 Draw();
                 //Debug.WriteLine("aaaaa");
             };
-            Draw();
+            //Draw();
             //ConsoleInput.MouseMoved += ConsoleInput_MouseDragged;
         }
 

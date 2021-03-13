@@ -30,6 +30,7 @@ namespace ConsoleLibrary.Input
             uint recordLen = 0;
             MouseButton prevMouseState = MouseButton.None;
             int prevWidth = MyConsole.Width;
+            int widthBeforeFullscreen = 0;
             int prevHeight = MyConsole.Height;
             while (true)
             {
@@ -95,57 +96,35 @@ namespace ConsoleLibrary.Input
                         {
                             var resizeEvent = record.Event.ResizeEvent;
 
-                            (int newWidth, int newHeight) = resizeEvent.dwSize;
+                            (int currentWidth, int currentHeight) = MyConsole.GetConsoleSize();
 
-                            Debug.WriteLine(new Structures.Point(newWidth, newHeight));
-
-                            if(prevWidth == MyConsole.MaximumWidth && prevHeight == MyConsole.MaximumHeight)
+                            if (currentWidth != prevWidth || currentHeight != prevHeight)
                             {
-                                (int wWidth, int wHeight) = MyConsole.GetWindowSize();
-                                (int cWidth, int cHeight) = MyConsole.GetClientSize();
-                                (int fWidth, int fHeight) = MyConsole.GetFontSize();
-                                newWidth = (wWidth - MyConsole.BorderWidth*2) / fWidth;
-                                newHeight = (wHeight - MyConsole.TitleBarHeight) / fHeight;
-                            }
+                                int clientHeight = MyConsole.GetClientSize().Y;
+                                int fontHeight = MyConsole.GetFontSize().Y;
+                                int newHeight = clientHeight / fontHeight;
 
-                            if (newWidth != prevWidth || newHeight != prevHeight)
-                            {
-                                prevWidth = newWidth;
-                                prevHeight = newHeight;
-                                MyConsole.Fill(new CharInfo());
-                                MyConsole.SetSize(newWidth, newHeight);
+                                if (currentWidth == MyConsole.MaximumWidth && currentHeight == MyConsole.MaximumHeight)
+                                    widthBeforeFullscreen = prevWidth;
+
+                                if (newHeight < currentHeight)
+                                {
+                                    if (currentWidth < prevWidth)
+                                        currentWidth = prevWidth == MyConsole.MaximumWidth ? widthBeforeFullscreen : prevWidth;
+                                    currentHeight = newHeight;
+                                    MyConsole.SetSize(currentWidth, newHeight);
+                                }
                                 MyConsole.HideCursor();
-                                Drawing.ConsoleRenderer.Resize(newWidth, newHeight);
+                                MyConsole.Fill(new CharInfo());
+                                Drawing.ConsoleRenderer.Resize(currentWidth, newHeight);
                                 Resized?.Invoke(new ResizedEventArgs
                                 {
-                                    Width = newWidth,
-                                    Height = newHeight
+                                    Width = currentWidth,
+                                    Height = currentHeight
                                 });
                             }
-
-                            //(int wWidth, int wHeight) = MyConsole.GetWindowSize();
-                            //(int fWidth, int fHeight) = MyConsole.GetFontSize();
-                            //int cWidth = wWidth / fWidth;
-                            //int cHeight = wHeight / fHeight;
-
-                            //(int w, int h) = MyConsole.GetConsoleSize();
-
-                            //Debug.WriteLine($"Event: {resizeEvent.dwSize}, Current: {new Structures.Point(w, h)}, Target: {new Structures.Point(cWidth, cHeight)}");
-
-                            //if (w != cWidth || h != cHeight)
-                            //{
-                            //    //Drawing.ConsoleRenderer.Clear(Drawing.ConsoleRenderer.DefaultAttributes);
-                            //    MyConsole.Fill(new CharInfo());
-                            //    //System.Threading.Thread.Sleep(10);
-                            //    MyConsole.SetSize(cWidth, cHeight);
-                            //    MyConsole.HideCursor();
-                            //    Drawing.ConsoleRenderer.Resize(cWidth, cHeight);
-                            //    Resized?.Invoke(new ResizedEventArgs
-                            //    {
-                            //        Width = cWidth,
-                            //        Height = cHeight
-                            //    });
-                            //}
+                            prevWidth = currentWidth;
+                            prevHeight = currentHeight;
                         }
                         break;
 

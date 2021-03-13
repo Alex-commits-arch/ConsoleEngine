@@ -29,7 +29,7 @@ namespace ConsoleLibrary
         public virtual void Init()
         {
             MyConsole.HideCursor();
-            MyConsole.DeleteMenu(Window.SC_MAXIMIZE, 0x0);
+            //MyConsole.DeleteMenu(Window.SC_MAXIMIZE, 0x0);
             //MyConsole.DeleteMenu(Window.SC_SIZE, 0x0);
         }
     }
