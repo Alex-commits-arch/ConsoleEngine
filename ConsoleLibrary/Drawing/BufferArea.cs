@@ -2,6 +2,7 @@
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
 using System;
+using System.Runtime.CompilerServices;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
@@ -31,9 +32,25 @@ namespace ConsoleLibrary.Drawing
             this.content = content;
         }
 
+        public void Resize(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+            content = new CharInfo[height, width];
+        }
+
+        public void ResizePreserve(int width, int height)
+        {
+            this.width = width;
+            this.height = height;
+            var oldContent = content;
+            content = new CharInfo[height, width];
+            Draw(oldContent, 0, 0);
+        }
+
         public BufferArea GetBuffer(Rectangle rect)
         {
-            return GetBuffer(rect.X, rect.Y, rect.Width, rect.Height);
+            return GetBuffer(rect.Left, rect.Top, rect.Width, rect.Height);
         }
 
         public BufferArea GetBuffer(int x, int y, int w, int h)
@@ -43,7 +60,7 @@ namespace ConsoleLibrary.Drawing
 
         public CharInfo[,] GetArea(Rectangle rect)
         {
-            return GetArea(rect.X, rect.Y, rect.Width, rect.Height);
+            return GetArea(rect.Left, rect.Top, rect.Width, rect.Height);
         }
 
         public CharInfo[,] GetArea(int x, int y, int w, int h)
@@ -78,9 +95,23 @@ namespace ConsoleLibrary.Drawing
 
         public void Fill(CharInfo charInfo)
         {
-            for (int y = 0; y < content.GetLength(0); y++)
-                for (int x = 0; x < content.GetLength(1); x++)
+            int ux = content.GetLength(1);
+            int uy = content.GetLength(0);
+            for (int y = 0; y < uy; y++)
+                for (int x = 0; x < ux; x++)
                     content[y, x] = charInfo;
+        }
+
+        public void FillRect(int x, int y, int width, int height, CharInfo charInfo)
+        {
+            int startX = SafeSourceStart(x);
+            int startY = SafeSourceStart(y);
+            int endX = SafeSourceEnd(x, width, this.width);
+            int endY = SafeSourceEnd(y, height, this.height);
+
+            for (int yy = startY; yy < endY; yy++)
+                for (int xx = startX; xx < endX; xx++)
+                    content[y + yy, x + xx] = charInfo;
         }
 
         public void Draw(char c, int x, int y, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
@@ -201,110 +232,5 @@ namespace ConsoleLibrary.Drawing
         {
             Name = name;
         }
-
-        public void Resize(int width, int height)
-        {
-            //this.width = width;
-            (this.width, this.height) = (width, height);
-            content = new CharInfo[height, width];
-        }
-    }
-
-    public class ColorfulString
-    {
-        public string Value { get; set; }
-        public int Length => Value?.Length ?? 0;
-        public ColorThing ColorThing { get; set; }
-        public CharAttribute[] Attributes { get; set; }
-
-        public CharInfo[] ToCharInfoArray()
-        {
-            CharInfo[] infos = new CharInfo[Value.Length];
-
-            Func<int, CharAttribute> getRepeat = i => Attributes[i % Attributes.Length];
-
-            Func<int, CharAttribute> colorGetter = (i) => ConsoleRenderer.DefaultAttributes;
-
-            switch (ColorThing)
-            {
-                case ColorThing.Repeat:
-                    colorGetter = i => Attributes[i % Attributes.Length];
-                    break;
-                case ColorThing.Drag:
-                    colorGetter = i => i < Attributes.Length
-                        ? Attributes[i]
-                        : Attributes[Attributes.Length - 1];
-                    break;
-                case ColorThing.Bounce:
-                    colorGetter = i =>
-                    {
-                        int x = i % Attributes.Length;
-                        int xx = i % (Attributes.Length * 2);
-
-                        if (xx > x)
-                            return Attributes[Attributes.Length - 1 - (xx % Attributes.Length)];
-                        else
-                            return Attributes[x];
-                    };
-                    break;
-                case ColorThing.Default:
-                    colorGetter = i =>
-                    {
-                        if (i < Attributes.Length)
-                            return Attributes[i];
-                        return ConsoleRenderer.DefaultAttributes;
-                    };
-                    break;
-
-            }
-
-            for (int i = 0; i < Value.Length; i++)
-            {
-                CharAttribute attribute = ConsoleRenderer.DefaultAttributes;
-                if (Attributes != null && Attributes.Length > 0)
-                    attribute = colorGetter(i);
-                //switch (ColorThing)
-                //{
-                //    case ColorThing.Repeat:
-                //        attribute = Attributes[i % Attributes.Length];
-                //        break;
-                //    case ColorThing.Drag:
-                //        attribute = i < Attributes.Length
-                //            ? Attributes[i]
-                //            : Attributes[Attributes.Length - 1];
-                //        break;
-                //    case ColorThing.Bounce:
-                //        int x = i % Attributes.Length;
-                //        int xx = i % (Attributes.Length * 2);
-
-                //        if (xx > x)
-                //            attribute = Attributes[Attributes.Length - 1 - (xx % Attributes.Length)];
-                //        else
-                //            attribute = Attributes[x];
-                //        break;
-                //    case ColorThing.Default:
-                //        if (i < Attributes.Length)
-                //            attribute = Attributes[i];
-                //        break;
-
-                //}
-
-                infos[i] = new CharInfo
-                {
-                    UnicodeChar = Value[i],
-                    Attributes = attribute
-                };
-            }
-
-            return infos;
-        }
-    }
-
-    public enum ColorThing
-    {
-        Default,
-        Drag,
-        Repeat,
-        Bounce
     }
 }

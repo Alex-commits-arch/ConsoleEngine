@@ -1,21 +1,19 @@
 ﻿using ConsoleLibrary.Structures;
 using System;
 using System.Diagnostics;
-//using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Interop;
 using WindowsWrapper;
 using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
-//using static WindowsWrapper.WinApi;
 
 namespace ConsoleLibrary
 {
+    /// <summary>
+    /// A wrapper for console functionality
+    /// </summary>
     internal static class MyConsole
     {
         static readonly IntPtr handle = WinApi.GetConsoleWindow();
@@ -33,55 +31,37 @@ namespace ConsoleLibrary
         static readonly int edgeWidth = WinApi.GetSystemMetrics(SystemMetric.SM_CXEDGE);
         static readonly int edgeHeight = WinApi.GetSystemMetrics(SystemMetric.SM_CYEDGE);
         static readonly int titleBarHeight = captionHeight + frameHeight + edgeHeight * 2;
-        static int minConsoleWidth = minWindowWidth / GetFontSize().X;
-        static int minConsoleHeight = minWindowHeight / GetFontSize().Y;
-        static int maxConsoleWidth = screenWidth / GetFontSize().X;
-        static int maxConsoleHeight = screenHeight / GetFontSize().Y;
-        static int width;
-        static int height;
 
-        private static COORD MaxSize => WinApi.GetLargestConsoleWindowSize(handleOut);
-
-        public static int Width { get => width; private set => width = value; }
-        public static int Height { get => height; private set => height = value; }
-        public static int MaximumWidth => maxConsoleWidth;
-        public static int MaximumHeight => maxConsoleHeight;
+        public static int Width => GetConsoleSize().X;
+        public static int Height => GetConsoleSize().Y;
+        public static int MaximumWidth => screenWidth / GetFontSize().X;
+        public static int MaximumHeight => screenHeight / GetFontSize().Y;
         public static int TitleBarHeight => titleBarHeight;
         public static int BorderWidth => frameWidth + edgeWidth;
 
-        public static COORD GetConsoleSize()
+        public static Point GetConsoleSize()
         {
-            WinApi.GetConsoleScreenBufferInfo(handleOut, out CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
+            HandleError(!WinApi.GetConsoleScreenBufferInfo(handleOut, out CONSOLE_SCREEN_BUFFER_INFO bufferInfo));
             return bufferInfo.dwSize;
-            Debug.WriteLine($"{new COORD((short)Width, (short)Height)}, {bufferInfo.dwSize}");
-            return new COORD((short)Width, (short)Height);
         }
 
-        public static COORD GetClientSize()
+        public static Point GetClientSize()
         {
-            WinApi.GetClientRect(handle, out RECT rect);
-
-            return new COORD(
-                (short)(rect.Right - rect.Left),
-                (short)(rect.Bottom - rect.Top)
-            );
+            HandleError(!WinApi.GetClientRect(handle, out RECT rect));
+            return new Point(rect.Width, rect.Height);
         }
 
-        public static COORD GetWindowSize()
+        public static Point GetWindowSize()
         {
-            WinApi.GetWindowRect(handle, out RECT rect);
-
-            return new COORD(
-                (short)(rect.Right - rect.Left),
-                (short)(rect.Bottom - rect.Top)
-            );
+            HandleError(!WinApi.GetWindowRect(handle, out RECT rect));
+            return new Point(rect.Width, rect.Height);
         }
 
         private static bool HandleError(bool errorOccurred, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string callerName = "", [CallerFilePath] string filePath = "")
         {
             if (errorOccurred)
             {
-                uint errorCode = WinApi.GetLastError();
+                int errorCode = Marshal.GetLastWin32Error();
                 Debug.WriteLine($"Error {errorCode} occurred on line {lineNumber} in file {filePath}");
             }
             return errorOccurred;
@@ -97,10 +77,9 @@ namespace ConsoleLibrary
         {
             CONSOLE_CURSOR_INFO cursorInfo = new CONSOLE_CURSOR_INFO { bVisible = false, dwSize = 25 };
             HandleError(!WinApi.SetConsoleCursorInfo(handleOut, ref cursorInfo));
-            //Console.CursorVisible = true;
         }
 
-        public static void Clear(CharAttribute attributes = CharAttribute.ForegroundWhite)
+        public static void Clear(CharAttribute attributes = Drawing.ConsoleRenderer.DefaultAttributes)
         {
             Fill(new CharInfo { Attributes = attributes, UnicodeChar = '\0' });
         }
@@ -176,24 +155,21 @@ namespace ConsoleLibrary
             WinApi.DeleteMenu(sysMenu, position, flags);
         }
 
-        public static void UpdateMinimumSize()
-        {
-            (int fw, int fh) = GetFontSize();
-            if (minConsoleWidth != minWindowWidth / fw)
-                minConsoleWidth = minWindowWidth / fw;
-            if (minConsoleHeight != minWindowHeight / fh)
-                minConsoleHeight = minWindowHeight / fh;
-        }
+        //public static void UpdateMinimumSize()
+        //{
+        //    (int fw, int fh) = GetFontSize();
+        //    if (minConsoleWidth != minWindowWidth / fw)
+        //        minConsoleWidth = minWindowWidth / fw;
+        //    if (minConsoleHeight != minWindowHeight / fh)
+        //        minConsoleHeight = minWindowHeight / fh;
+        //}
 
         public static void SetSize(int width, int height)
         {
-            //Debug.WriteLine(width);
             if (width > 0 && width <= MaximumWidth && height > 0 && height <= MaximumHeight)
             {
                 WinApi.GetConsoleScreenBufferInfo(handleOut, out CONSOLE_SCREEN_BUFFER_INFO bufferInfo);
-                //SMALL_RECT winInfo = bufferInfo.srWindow;
 
-                //COORD windowSize = new COORD((short)(winInfo.Right - winInfo.Left + 1), (short)(winInfo.Bottom - winInfo.Top + 1));
                 COORD windowSize = bufferInfo.dwSize;
 
                 SMALL_RECT info;
@@ -213,20 +189,17 @@ namespace ConsoleLibrary
 
                 info = new SMALL_RECT(0, 0, (short)(width - 1), (short)(height - 1));
                 HandleError(!WinApi.SetConsoleWindowInfo(handleOut, true, ref info));
-
-                MyConsole.width = width;
-                MyConsole.height = height;
             }
         }
 
         public static void SetTitle(string s)
         {
-            WinApi.SetConsoleTitle(s);
+            HandleError(!WinApi.SetConsoleTitle(s));
         }
 
         public static void SetIcon(System.Drawing.Icon icon)
         {
-            WinApi.SetConsoleIcon(icon.Handle);
+            HandleError(!WinApi.SetConsoleIcon(icon.Handle));
             WinApi.SendMessage(handle, WM.SETICON, 0x80, icon.Handle);
         }
 
@@ -243,13 +216,12 @@ namespace ConsoleLibrary
             cfi.FontWeight = 400;
             cfi.FaceName = "Consolas";
 
-            if (!WinApi.SetCurrentConsoleFontEx(handleOut, false, ref cfi))
-                Debug.WriteLine(WinApi.GetLastError());
+            HandleError(!WinApi.SetCurrentConsoleFontEx(handleOut, false, ref cfi));
         }
 
         public static COORD GetFontSize()
         {
-            WinApi.GetCurrentConsoleFont(handleOut, false, out CONSOLE_FONT_INFO font);
+            HandleError(!WinApi.GetCurrentConsoleFont(handleOut, false, out CONSOLE_FONT_INFO font));
             return WinApi.GetConsoleFontSize(handleOut, font.nFont);
         }
     }

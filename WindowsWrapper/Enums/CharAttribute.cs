@@ -38,7 +38,7 @@ namespace WindowsWrapper.Enums
         BackgroundYellow = 0x00E0,
         BackgroundWhite = 0x00F0,
         LeadingByte = 0x0100,
-        TrailingByte = 0x0200,
+        TrailingByte = 0x0200, // Culprit for strange crashes
         TopHorizontal = 0x0400,
         LeftVertical = 0x0800,
         RightVertical = 0x1000,

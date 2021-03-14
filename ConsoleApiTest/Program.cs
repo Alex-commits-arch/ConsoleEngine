@@ -10,6 +10,8 @@ using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 using ConsoleLibrary;
 using WindowsWrapper;
+using ConsoleLibrary.TextExtensions;
+using System.Linq;
 
 namespace ConsoleApiTest
 {
@@ -39,7 +41,7 @@ namespace ConsoleApiTest
         CharInfo[,] square;
         int squareX = 2;
         int squareY = 1;
-        TextBox text;
+        TextBox textBox;
         ColorfulString colorfulString;
         string[] strings;
 
@@ -54,7 +56,10 @@ namespace ConsoleApiTest
 
             buffer = ConsoleRenderer.ActiveBuffer;
 
-            text = new TextBox(controlManager)
+            var t1 = new BufferArea(20, 20);
+            t1.ResizePreserve(40, 40);
+
+            textBox = new TextBox(controlManager)
             {
                 Left = Width / 2,
                 Top = Height / 2,
@@ -66,18 +71,11 @@ namespace ConsoleApiTest
 
             colorfulString = new ColorfulString
             {
-                Value = "LMAAAAAAOOOOOOOOOOO",
-                ColorThing = ColorThing.Bounce,
-                Attributes = new CharAttribute[] {
-                    CharAttribute.ForegroundRed,
-                    CharAttribute.ForegroundYellow,
-                    CharAttribute.ForegroundGreen,
-                    CharAttribute.ForegroundCyan,
-                    CharAttribute.ForegroundBlue,
-                    CharAttribute.ForegroundMagenta,
-                    CharAttribute.ForegroundRed
-                }
+                Value = new string(Enumerable.Repeat('A', Enum.GetValues(typeof(CharAttribute)).Length - 0).ToArray()),
+                ColorThing = ColorSelectMode.Repeat,
+                Attributes = (CharAttribute[])Enum.GetValues(typeof(CharAttribute))
             };
+
 
             strings = new string[]
             {
@@ -85,7 +83,8 @@ namespace ConsoleApiTest
                 "Strings",
                 "Go",
                 "Brrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
-            };
+            }.NormalizeLengths()
+            .PadAround(1);
 
             int ratioX = 2;
             int ratioY = 1;
@@ -131,7 +130,7 @@ namespace ConsoleApiTest
             };
             backface.Fill(backChar);
 
-
+            
             Draw();
 
             ConsoleInput.KeyPressed += ConsoleInput_KeyPressed;
@@ -153,6 +152,7 @@ namespace ConsoleApiTest
         int prevY = 0;
         private void ConsoleInput_MouseDragged(object sender, MouseEventArgs e)
         {
+            //Debug.WriteLine("Drag");
             (int x, int y) = e.Location;
 
             if (x != prevX || y != prevY)
@@ -202,11 +202,26 @@ namespace ConsoleApiTest
 
         private void Draw()
         {
-            buffer.Clear();
-            buffer.Draw(backface, squareX - 2, squareY - 1);
-            buffer.Draw(square, squareX, squareY);
-            buffer.Draw(colorfulString, 0, strings.Length);
-            buffer.Draw(strings, 0, 0);
+            buffer.Clear(CharAttribute.BackgroundDarkGrey);
+            int w = 10;
+            buffer.FillRect(w * 0, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            buffer.FillRect(w * 1, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            buffer.FillRect(w * 2, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            buffer.FillRect(w * 3, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            buffer.FillRect(w * 4, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
+            buffer.FillRect(w * 5, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
+            buffer.FillRect(w * 6, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
+
+            //buffer.Draw(backface, squareX - 2, squareY - 1);
+            //buffer.Draw(square, squareX, squareY);
+            //buffer.Draw(colorfulString, 0, strings.Length);
+            //buffer.Draw('\u2020', 35, 0, CharAttribute.LeadingByte);
+            //buffer.Draw('♕', 34, 10, CharAttribute.ForegroundCyan | CharAttribute.LeadingByte);
+            //buffer.Draw('♕', 35, 10, CharAttribute.ForegroundCyan | CharAttribute.TrailingByte);
+            //buffer.Draw('A', 35, 10, CharAttribute.ForegroundCyan | CharAttribute.TrailingByte);
+            buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height / 2 - strings.Length / 2, CharAttribute.ForegroundWhite);
+            //buffer.Draw()
+            //controlManager.DrawControls();
             ConsoleRenderer.RenderOutput();
         }
 

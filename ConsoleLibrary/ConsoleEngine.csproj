@@ -60,9 +60,10 @@
   <ItemGroup>
     <Compile Include="App.cs" />
     <Compile Include="ConsoleApp.cs" />
-    <Compile Include="ConsoleExtensions\ConsoleExtensions.cs" />
+    <Compile Include="Drawing\ColorfulString.cs" />
     <Compile Include="Drawing\DrawArgs.cs" />
     <Compile Include="Drawing\ShadingCharacter.cs" />
+    <Compile Include="Drawing\TextAlign.cs" />
     <Compile Include="Forms\Components\Button.cs" />
     <Compile Include="Forms\Components\ButtonBase.cs" />
     <Compile Include="Forms\ControlManager.cs" />
@@ -95,9 +96,7 @@
     <Compile Include="TextExtensions\CharExtensions.cs" />
     <Compile Include="TextExtensions\StringExtensions.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ArrayExtensions\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\WindowsWrapper\WindowsWrapper.csproj">
       <Project>{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}</Project>

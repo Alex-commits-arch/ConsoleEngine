@@ -1,44 +1,69 @@
-﻿using ConsoleLibrary.Forms;
-using ConsoleLibrary.Drawing;
-using ConsoleLibrary.Input.Events;
+﻿using ConsoleLibrary.Input.Events;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using WindowsWrapper.Enums;
+using ConsoleLibrary.Structures;
+using System.Runtime.CompilerServices;
+
 namespace ConsoleLibrary.Forms.Controls
 {
-    [DesignerCategory("")]
-    public abstract class Control : Component
+    public abstract class Control// : Component
     {
-        //private static readonly Dictionary<BackgroundShade, char> shades = new Dictionary<BackgroundShade, char>
-        //{
-        //    { BackgroundShade.None, '\u0020' },
-        //    { BackgroundShade.Light, '\u2591' },
-        //    { BackgroundShade.Medium, '\u2592' },
-        //    { BackgroundShade.Dark, '\u2593' },
-        //};
-
-        protected int left;
-        protected int top;
-        protected int width;
-        protected int height;
-        protected CharAttribute attributes = CharAttribute.BackgroundBlack;
-        private bool focused;
-        private bool visible = true;
-        private bool enabled = true;
-        private string name;
         protected ControlManager container;
 
-        public int Left { get => left; set => left = value; }
-        public int Top { get => top; set => top = value; }
-        public int Width { get => width; set => width = Math.Max(0, value); }
-        public int Height { get => height; set => height = Math.Max(0, value); }
-        public int Right => left + width;
-        public int Bottom => top + height;
-        public CharAttribute Attributes { get => attributes; set => attributes = value; }
+        protected Rectangle rectangle;
+        protected string name;
+        protected bool visible = true;
+        protected bool enabled = true;
+        protected bool isInvalid = true;
+        protected CharAttribute attributes = CharAttribute.BackgroundBlack;
+
+        protected Rectangle Rectangle { get => rectangle; set => rectangle = value; }
+
+        public int Left
+        {
+            get => rectangle.Left;
+            set
+            {
+                if (value != rectangle.Left) Invalidate();
+                rectangle.Left = value;
+            }
+        }
+        public int Top
+        {
+            get => rectangle.Top;
+            set
+            {
+                if (value != rectangle.Top) Invalidate();
+                rectangle.Top = value;
+            }
+        }
+        public int Width
+        {
+            get => rectangle.Width;
+            set
+            {
+                if (value != rectangle.Width) Invalidate();
+                rectangle.Width = Math.Max(0, value);
+            }
+        }
+        public int Height
+        {
+            get => rectangle.Height;
+            set
+            {
+                if (value != rectangle.Height) Invalidate();
+                rectangle.Height = Math.Max(0, value);
+            }
+        }
+
+        public int Right => rectangle.Right;
+        public int Bottom => rectangle.Bottom;
+
         public string Name { get => name; set => name = value; }
         public bool Visible { get => visible; set => visible = value; }
         public bool Enabled { get => enabled; set => enabled = value; }
+        public CharAttribute Attributes { get => attributes; set => attributes = value; }
 
         public event MouseEventHandler MousePressed
         {
@@ -76,16 +101,22 @@ namespace ConsoleLibrary.Forms.Controls
             container.Add(this);
         }
 
-        public bool ContainsPoint(int mx, int my)
+        public void Invalidate()
         {
-            return width > 0 && height > 0 &&
-                   mx >= left && mx < left + width &&
-                   my >= top && my < top + height;
+            isInvalid = true;
         }
 
-        public virtual void Draw()
+        public bool ContainsPoint(Point p)
         {
-            //ConsoleRenderer.FillRect(' ', left, top, width, height, attributes);
+            return ContainsPoint(p.X, p.Y);
         }
+
+        public bool ContainsPoint(int mx, int my)
+        {
+            return mx >= rectangle.Left && mx < rectangle.Right &&
+                   my >= rectangle.Top && my < rectangle.Bottom;
+        }
+
+        public virtual void Draw() { }
     }
 }

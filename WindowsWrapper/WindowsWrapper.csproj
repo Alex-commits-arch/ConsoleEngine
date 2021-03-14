@@ -62,7 +62,7 @@
     <Compile Include="Structs\SECURITY_DESCRIPTOR.cs" />
     <Compile Include="Constants\Window.cs" />
     <Compile Include="Enums\ClassStyles.cs" />
-    <Compile Include="Enums\Color.cs" />
+    <Compile Include="Enums\CharAttribute.cs" />
     <Compile Include="Enums\EventType.cs" />
     <Compile Include="Enums\VirtualKeys.cs" />
     <Compile Include="Enums\WindowLongFlags.cs" />

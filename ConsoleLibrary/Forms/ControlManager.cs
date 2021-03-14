@@ -15,7 +15,7 @@ namespace ConsoleLibrary.Forms
         private readonly List<Control> controls;
         private readonly Dictionary<EventType, EventHandlerList> events;
 
-        public ComponentCollection Components => new ComponentCollection(controls.ToArray());
+        public List<Control> Controls => controls;
 
         public ControlManager()
         {
@@ -38,8 +38,6 @@ namespace ConsoleLibrary.Forms
             ConsoleInput.MouseReleased += ConsoleInput_MouseReleased;
             ConsoleInput.MouseDoubleClick += ConsoleInput_MouseDoubleClick;
         }
-
-        ~ControlManager() => Dispose();
 
         public void SubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].AddHandler(subscriber, handler);
         public void UnsubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].RemoveHandler(subscriber, handler);
@@ -107,11 +105,5 @@ namespace ConsoleLibrary.Forms
 
         public void Add(Control control) => controls.Add(control);
         public void Remove(Control control) => controls.Remove(control);
-
-        public void Dispose()
-        {
-            foreach (var control in controls)
-                control.Dispose();
-        }
     }
 }

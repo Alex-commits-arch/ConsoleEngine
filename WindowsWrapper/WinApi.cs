@@ -24,10 +24,10 @@ namespace WindowsWrapper
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern uint GetConsoleCP();
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleCP(int wCodePageID);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleOutputCP(int wCodePageID);
 
         [DllImport("kernel32.dll")]
@@ -39,7 +39,7 @@ namespace WindowsWrapper
         [DllImport("user32.dll")]
         public static extern short GetAsyncKeyState(VirtualKeys vKey);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetCursorPos(out POINT lpPoint);
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -161,7 +161,7 @@ namespace WindowsWrapper
             ref uint lpNumberOfEventsRead
         );
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool ReadConsoleOutputCharacter(
             ConsoleHandle hConsoleOutput,
             [Out] char[] lpCharacter,
@@ -170,7 +170,7 @@ namespace WindowsWrapper
             out uint lpNumberOfCharsRead
         );
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool ReadConsoleOutput(
             ConsoleHandle hConsoleOutput,
             [Out] CharInfo[,] lpBuffer,
@@ -298,7 +298,6 @@ namespace WindowsWrapper
         public delegate bool EnumedWindow(IntPtr handleWindow, ArrayList handles);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumWindows(EnumedWindow lpEnumFunc, ArrayList lParam);
 
         public delegate IntPtr WndProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
@@ -307,7 +306,6 @@ namespace WindowsWrapper
         public static extern int GetClassName(IntPtr hWnd, StringBuilder buf, int nMaxCount);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool PostMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
@@ -319,7 +317,7 @@ namespace WindowsWrapper
         [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessageW(IntPtr hWnd, WM Msg, UIntPtr wParam, IntPtr lParam);
 
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleIcon(IntPtr hIcon);
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -338,7 +336,7 @@ namespace WindowsWrapper
         [DllImport("user32.dll")]
         public static extern IntPtr GetCursor();
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetCursorInfo(ref CURSORINFO pci);
 
         [DllImport("user32.dll")]
@@ -347,10 +345,10 @@ namespace WindowsWrapper
         [DllImport("user32.dll")]
         public static extern IntPtr GetSystemMenu(IntPtr hWnd, bool bRevert);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool DeleteMenu(IntPtr hMenu, int nPosition, int wFlags);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool SetCursorPos(int x, int y);
 
         [DllImport("user32.dll", SetLastError = true)]
@@ -368,7 +366,7 @@ namespace WindowsWrapper
         [DllImport("user32.dll")]
         public static extern IntPtr GetWindowDC(IntPtr hWnd);
 
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
         [DllImport("user32.dll")]

@@ -32,6 +32,7 @@ namespace ConsoleLibrary.Input
             int prevWidth = MyConsole.Width;
             int widthBeforeFullscreen = 0;
             int prevHeight = MyConsole.Height;
+            COORD prevMouseLocation = new COORD();
             while (true)
             {
                 MyConsole.ReadClientInput(ref record, 1, ref recordLen);
@@ -42,6 +43,7 @@ namespace ConsoleLibrary.Input
                             var mouseEvent = record.Event.MouseEvent;
                             var button = mouseEvent.ButtonState;
                             var flags = mouseEvent.EventFlags;
+                            var location = mouseEvent.MousePosition;
 
                             bool mousePressed = prevMouseState == MouseButton.None && button != MouseButton.None;
                             bool mouseReleased = prevMouseState != MouseButton.None && button == MouseButton.None;
@@ -50,8 +52,10 @@ namespace ConsoleLibrary.Input
                             var args = new MouseEventArgs
                             {
                                 Button = button,
-                                Location = mouseEvent.MousePosition
+                                Location = location
                             };
+
+                            bool sameLocation = location.Equals(prevMouseLocation);
 
                             if (mousePressed && flags.HasFlag(MouseState.DoubleClick))
                                 MouseDoubleClick?.Invoke(null, args);
@@ -59,12 +63,13 @@ namespace ConsoleLibrary.Input
                                 MousePressed?.Invoke(null, args);
                             else if (mouseReleased)
                                 MouseReleased?.Invoke(null, args);
-                            else if (mouseHeld && flags.HasFlag(MouseState.Moved))
+                            else if (mouseHeld && flags.HasFlag(MouseState.Moved) && !sameLocation)
                                 MouseDragged?.Invoke(null, args);
-                            else if (flags.HasFlag(MouseState.Moved))
+                            else if (flags.HasFlag(MouseState.Moved) && !sameLocation)
                                 MouseMoved?.Invoke(null, args);
 
                             prevMouseState = button;
+                            prevMouseLocation = location;
                         }
                         break;
 
@@ -96,10 +101,12 @@ namespace ConsoleLibrary.Input
                         {
                             var resizeEvent = record.Event.ResizeEvent;
 
-                            (int currentWidth, int currentHeight) = MyConsole.GetConsoleSize();
+                            //(int currentWidth, int currentHeight) = MyConsole.GetConsoleSize();
+                            (int currentWidth, int currentHeight) = resizeEvent.dwSize;
 
                             if (currentWidth != prevWidth || currentHeight != prevHeight)
                             {
+                                //Debug.WriteLine($"Resize, {new Structures.Point(currentWidth, currentHeight)}, {new Structures.Point(prevWidth, prevHeight)}");
                                 int clientHeight = MyConsole.GetClientSize().Y;
                                 int fontHeight = MyConsole.GetFontSize().Y;
                                 int newHeight = clientHeight / fontHeight;
@@ -114,8 +121,18 @@ namespace ConsoleLibrary.Input
                                     currentHeight = newHeight;
                                     MyConsole.SetSize(currentWidth, newHeight);
                                 }
+
+                                MyConsole.SetTitle(new Structures.Point(currentWidth, currentHeight).ToString());
+                                //Debug.WriteLine(new Structures.Point(currentWidth, currentHeight));
+                                //if (MyConsole.GetConsoleSize().X < 80)
+                                //{
+                                //    MyConsole.SetBufferSize(80, currentHeight);
+                                //    //currentWidth = 80;
+                                //}
+
                                 MyConsole.HideCursor();
-                                MyConsole.Fill(new CharInfo());
+                                //MyConsole.Clear();
+                                //MyConsole.Fill(new CharInfo());
                                 Drawing.ConsoleRenderer.Resize(currentWidth, newHeight);
                                 Resized?.Invoke(new ResizedEventArgs
                                 {
@@ -138,8 +155,8 @@ namespace ConsoleLibrary.Input
                         {
                             var focused = record.Event.FocusEvent.bSetFocus;
 
-                            if (focused == 1)
-                                MyConsole.UpdateMinimumSize();
+                            //if (focused == 1)
+                            //    MyConsole.UpdateMinimumSize();
                         }
                         break;
                     default:
