@@ -80,11 +80,11 @@ namespace ConsoleApiTest
             strings = new string[]
             {
                 "Haha",
-                "Strings",
+                "Console",
                 "Go",
-                "Brrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
+                "Brrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr"
             }.NormalizeLengths()
-            .PadAround(1);
+            .PadAround(2);
 
             int ratioX = 2;
             int ratioY = 1;
@@ -130,7 +130,7 @@ namespace ConsoleApiTest
             };
             backface.Fill(backChar);
 
-            
+
             Draw();
 
             ConsoleInput.KeyPressed += ConsoleInput_KeyPressed;
@@ -170,6 +170,28 @@ namespace ConsoleApiTest
             if (e.Key == ConsoleKey.Escape)
                 Environment.Exit(0);
 
+
+            //if (e.Key == ConsoleKey.S && e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed))
+            //{
+            //    var h = Process.GetCurrentProcess().MainWindowHandle;
+            //    //using (var image = )
+            //    (int ww, int wh) = ClientSize;
+            //    using (Bitmap b = new Bitmap(ww, wh))
+            //    {
+            //        using (var p = Brushes.CornflowerBlue)
+            //        {
+            //            using (Graphics g = Graphics.FromImage(b))
+            //            {
+            //                //g.draw
+            //                var points = MapToScreen(new Point[] { new Point(0, 0) });
+            //                //g.CopyFromScreen(new Point(0, 0), new Point(0, 0), new Size((int)g.VisibleClipBounds.Width, (int)g.VisibleClipBounds.Height));
+            //                //g.
+            //                b.Save("Test.png");
+            //            }
+            //            //g.FillEllipse(p, 0, 0, g.VisibleClipBounds.Width, g.VisibleClipBounds.Height);
+            //        }
+            //    }
+            //}
             //switch (e.Key)
             //{
             //    case ConsoleKey.A:
@@ -195,22 +217,38 @@ namespace ConsoleApiTest
 
             //Draw();
             //if (e.Key == ConsoleKey.F)
-                //MyConsole.Fill(new CharInfo());
-                //ConsoleRenderer.Clear();
+            //MyConsole.Fill(new CharInfo());
+            //ConsoleRenderer.Clear();
             //    buffer.Clear();
         }
 
         private void Draw()
         {
-            buffer.Clear(CharAttribute.BackgroundDarkGrey);
-            int w = 10;
-            buffer.FillRect(w * 0, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            buffer.FillRect(w * 1, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            buffer.FillRect(w * 2, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            buffer.FillRect(w * 3, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            buffer.FillRect(w * 4, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
-            buffer.FillRect(w * 5, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
-            buffer.FillRect(w * 6, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
+            //buffer.Clear(CharAttribute.BackgroundDarkYellow);
+            int i = 0;
+            Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
+            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
+            //int w = (int)Math.Ceiling(Width / (double)gradient.Pallette.Length);
+            //float w = Width / (float)gradient.Pallette.Length;
+
+            //foreach (var color in gradient.Pallette)
+            //{
+            //    //buffer.FillRect((int)(w * i), 0, (int)(w * i++), Height, color);
+            //    buffer.FillRect((int)(w * i), 0, (int)Math.Ceiling(w * i++), Height, color);
+            //}
+
+            buffer.Draw(gradient, 0, 0, Width, Height/2);
+            gradient.Reverse();
+            buffer.Draw(gradient, 0, Height/2, Width, Height);
+            //buffer.FillRect(w * 0, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            //buffer.FillRect(w * 1, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            //buffer.FillRect(w * 2, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            //buffer.FillRect(w * 3, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
+            //buffer.FillRect(w * 4, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
+            ////w += 3;
+            //buffer.FillRect(w * 4, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
+            //buffer.FillRect(w * 5, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
+            //buffer.FillRect(w * 6, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
 
             //buffer.Draw(backface, squareX - 2, squareY - 1);
             //buffer.Draw(square, squareX, squareY);

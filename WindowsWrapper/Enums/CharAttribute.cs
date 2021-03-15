@@ -21,6 +21,7 @@ namespace WindowsWrapper.Enums
         ForegroundMagenta = 0x000D,
         ForegroundYellow = 0x000E,
         ForegroundWhite = 0x000F,
+
         BackgroundBlack = 0x0000,
         BackgroundDarkBlue = 0x0010,
         BackgroundDarkGreen = 0x0020,
@@ -37,6 +38,7 @@ namespace WindowsWrapper.Enums
         BackgroundMagenta = 0x00D0,
         BackgroundYellow = 0x00E0,
         BackgroundWhite = 0x00F0,
+
         LeadingByte = 0x0100,
         TrailingByte = 0x0200, // Culprit for strange crashes
         TopHorizontal = 0x0400,

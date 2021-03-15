@@ -374,6 +374,9 @@ namespace WindowsWrapper
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool ShowScrollBar(IntPtr hWnd, ScrollBar wBar, bool bShow);
+
+        [DllImport("user32", ExactSpelling = true, SetLastError = true)]
+        public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, ref System.Drawing.Point[] pt, [MarshalAs(UnmanagedType.U4)] int cPoints);
         #endregion
 
         #region GDI32.DLL

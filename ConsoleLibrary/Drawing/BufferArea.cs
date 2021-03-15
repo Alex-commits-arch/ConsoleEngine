@@ -185,6 +185,23 @@ namespace ConsoleLibrary.Drawing
             }
         }
 
+        public void Draw(Gradient gradient, int x, int y, int width, int height)
+        {
+            int startX = SafeSourceStart(x);
+            int startY = SafeSourceStart(y);
+            int endX = SafeSourceEnd(x, width, this.width);
+            int endY = SafeSourceEnd(y, height, this.height);
+
+            for (int xx = startX; xx < endX; xx++)
+            {
+                CharInfo color = gradient.Pallette[(int)(xx / (width / (float)gradient.Pallette.Length)) % gradient.Pallette.Length];
+                for (int yy = startY; yy < endY; yy++)
+                {
+                    content[y + yy, x + xx] = color;
+                }
+            }
+        }
+
         public void Draw(BufferArea bufferArea, int x, int y)
         {
             Draw(bufferArea.Content, x, y);

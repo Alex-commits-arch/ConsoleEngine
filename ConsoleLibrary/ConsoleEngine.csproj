@@ -62,6 +62,7 @@
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="Drawing\ColorfulString.cs" />
     <Compile Include="Drawing\DrawArgs.cs" />
+    <Compile Include="Drawing\Gradient.cs" />
     <Compile Include="Drawing\ShadingCharacter.cs" />
     <Compile Include="Drawing\TextAlign.cs" />
     <Compile Include="Forms\Components\Button.cs" />

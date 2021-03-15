@@ -28,6 +28,13 @@ namespace ConsoleLibrary.Structures
             initialized = true;
         }
 
+        public Point(System.Drawing.Point point)
+        {
+            X = point.X;
+            Y = point.Y;
+            initialized = true;
+        }
+
         public override string ToString()
         {
             return string.Format("X: {0}, Y: {1}", X, Y);
@@ -50,6 +57,9 @@ namespace ConsoleLibrary.Structures
             x = X;
             y = Y;
         }
+
+        public static implicit operator System.Drawing.Point(Point p) => new System.Drawing.Point(p.X, p.Y);
+        public static implicit operator Point(System.Drawing.Point p) => new Point(p);
 
         public static implicit operator COORD(Point p) => new COORD((short)p.X, (short)p.Y);
         public static implicit operator Point(COORD c) => new Point(c);

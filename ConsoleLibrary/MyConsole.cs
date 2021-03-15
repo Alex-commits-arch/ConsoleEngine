@@ -84,6 +84,11 @@ namespace ConsoleLibrary
             Fill(new CharInfo { Attributes = attributes, UnicodeChar = '\0' });
         }
 
+        public static void MapToScreen(ref System.Drawing.Point[] points)
+        {
+            WinApi.MapWindowPoints(consoleHandle.DangerousGetHandle(), IntPtr.Zero, ref points, points.Length);
+        }
+
         public static void Fill(CharInfo info)
         {
             HandleError(!WinApi.FillConsoleOutputCharacter(handleOut, info.UnicodeChar, Width * Height, new COORD(), out uint _));
@@ -219,7 +224,7 @@ namespace ConsoleLibrary
             HandleError(!WinApi.SetCurrentConsoleFontEx(handleOut, false, ref cfi));
         }
 
-        public static COORD GetFontSize()
+        public static Point GetFontSize()
         {
             HandleError(!WinApi.GetCurrentConsoleFont(handleOut, false, out CONSOLE_FONT_INFO font));
             return WinApi.GetConsoleFontSize(handleOut, font.nFont);
