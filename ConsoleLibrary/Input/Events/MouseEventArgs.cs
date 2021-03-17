@@ -8,5 +8,6 @@ namespace ConsoleLibrary.Input.Events
     {
         public MouseButton Button { get; set; }
         public COORD Location { get; set; }
+        public ControlKeyState ControlKeyState { get; set; }
     }
 }

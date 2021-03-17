@@ -47,11 +47,12 @@ namespace ConsoleLibrary.Input
                             bool mousePressed = prevMouseState == MouseButton.None && button != MouseButton.None;
                             bool mouseReleased = prevMouseState != MouseButton.None && button == MouseButton.None;
                             bool mouseHeld = prevMouseState != MouseButton.None && button != MouseButton.None;
-
+                            //mouseEvent.co
                             var args = new MouseEventArgs
                             {
                                 Button = button,
-                                Location = location
+                                Location = location,
+                                ControlKeyState = mouseEvent.ControlKeyState
                             };
 
                             bool sameLocation = location.Equals(prevMouseLocation);

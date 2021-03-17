@@ -61,6 +61,12 @@ namespace ConsoleApiTest
         string[] strings;
         Graphics g = Graphics.FromHwnd(Process.GetCurrentProcess().MainWindowHandle);
 
+        int anchorX = 0;
+        int anchorY = 0;
+        bool active = false;
+        bool scalingX = false;
+        bool scalingY = false;
+
         public TestApp(int width = 90, int height = 40) : base(width, height)
         {
             Title = "Control Testing";
@@ -90,8 +96,12 @@ namespace ConsoleApiTest
                 Width = "Hello".Length + 6,
                 Height = 10,
                 Text = "Hello there",
-                Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundCyan
+                Attributes = CharAttribute.ForegroundWhite | CharAttribute.BackgroundDarkRed,
+                WordBreak = WordBreak.Hard,
+                TextAlign = TextAlign.Center
             };
+            textBox.MousePressed += TextBox_MousePressed;
+            textBox.MouseReleased += TextBox_MouseReleased;
 
             colorfulString = new ColorfulString
             {
@@ -159,9 +169,11 @@ namespace ConsoleApiTest
 
             ConsoleInput.KeyPressed += ConsoleInput_KeyPressed;
 
-            //ConsoleInput.KeyHeld += ConsoleInput_KeyPressed;
+            ConsoleInput.KeyHeld += ConsoleInput_KeyPressed;
 
-            //ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
+
+
+            ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
 
             ConsoleInput.Resized += delegate
             {
@@ -170,21 +182,69 @@ namespace ConsoleApiTest
             Draw();
         }
 
+        private void TextBox_MousePressed(object sender, MouseEventArgs e)
+        {
+            (int x, int y) = e.Location;
+            scalingX = x == textBox.Right - 1 && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed);
+            scalingY = y == textBox.Bottom - 1 && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed);
+
+            if (scalingX || scalingY)
+            {
+                anchorX = textBox.Width;
+                anchorY = textBox.Height;
+            }
+            else
+            {
+                anchorX = x - textBox.Left;
+                anchorY = y - textBox.Top;
+            }
+            active = true;
+
+            //Console.WriteLine(e.Location);
+        }
+
+        private void TextBox_MouseReleased(object sender, MouseEventArgs e)
+        {
+            active = false;
+        }
+
         int prevX = 0;
         int prevY = 0;
         private void ConsoleInput_MouseDragged(object sender, MouseEventArgs e)
         {
             //Debug.WriteLine("Drag");
-            (int x, int y) = e.Location;
-
-            if (x != prevX || y != prevY)
+            if (active)
             {
-                prevX = x;
-                prevY = y;
-                squareX = x - square.GetLength(1) / 2;
-                squareY = y - square.GetLength(0) / 2;
-                Draw();
+                (int x, int y) = e.Location;
+                var old = textBox.Rectangle;
+                buffer.Clear();
+
+                if ((scalingX || scalingY) && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed))
+                {
+                    if (scalingX)
+                        textBox.Width = x - textBox.Left + 1;
+                    if (scalingY)
+                        textBox.Height = y - textBox.Top + 1;
+                }
+                else
+                {
+                    textBox.Left = x - anchorX;
+                    textBox.Top = y - anchorY;
+                }
+
+                textBox.Invalidate();
+                //ConsoleRenderer.RenderOutput();
+                ConsoleRenderer.RenderArea(old);
+                ConsoleRenderer.RenderArea(textBox.Rectangle);
             }
+            //if (x != prevX || y != prevY)
+            //{
+            //    prevX = x;
+            //    prevY = y;
+            //    squareX = x - square.GetLength(1) / 2;
+            //    squareY = y - square.GetLength(0) / 2;
+            //    Draw();
+            //}
         }
 
         private void ConsoleInput_KeyPressed(KeyEventArgs e)
@@ -208,16 +268,64 @@ namespace ConsoleApiTest
                 }
             }
 
-            if(e.Key == ConsoleKey.F)
-            {
-                var oldRect = textBox.Rectangle;
-                textBox.Width = 40;
-                textBox.Left = -1;
-                textBox.Invalidate();
-                //ConsoleRenderer.RenderArea(oldRect);
+            var old = textBox.Rectangle;
+            buffer.Clear();
 
-                ConsoleRenderer.RenderArea(textBox.Rectangle);
+            if (e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed) || e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed))
+            {
+                switch (e.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.W:
+                        textBox.Height--;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                    case ConsoleKey.A:
+                        textBox.Width--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.S:
+                        textBox.Height++;
+                        break;
+                    case ConsoleKey.RightArrow:
+                    case ConsoleKey.D:
+                        textBox.Width++;
+                        break;
+                    default:
+                        break;
+                }
             }
+            else
+            {
+                switch (e.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                    case ConsoleKey.W:
+                        textBox.Top--;
+                        break;
+                    case ConsoleKey.LeftArrow:
+                    case ConsoleKey.A:
+                        textBox.Left--;
+                        break;
+                    case ConsoleKey.DownArrow:
+                    case ConsoleKey.S:
+                        textBox.Top++;
+                        break;
+                    case ConsoleKey.RightArrow:
+                    case ConsoleKey.D:
+                        textBox.Left++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            //if (e.Key == ConsoleKey.F)
+            //{
+            //    textBox.Width -= 1;
+            //}
+            textBox.Invalidate();
+            ConsoleRenderer.RenderArea(old);
+            ConsoleRenderer.RenderArea(textBox.Rectangle);
             //switch (e.Key)
             //{
             //    case ConsoleKey.A:
