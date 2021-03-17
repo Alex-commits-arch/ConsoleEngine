@@ -9,6 +9,7 @@ namespace WindowsWrapper.Structs
         public short Top;
         public short Right;
         public short Bottom;
+        public COORD LowerRight => new COORD(Right, Bottom);
 
         public SMALL_RECT(short Left, short Top, short Right, short Bottom)
         {

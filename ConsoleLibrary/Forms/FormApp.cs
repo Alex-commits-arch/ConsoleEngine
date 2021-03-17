@@ -42,7 +42,9 @@ namespace ConsoleLibrary.Forms
 
         public FormApp(int width, int height) : base(width, height)
         {
-            MyConsole.SetMode(ConsoleConstants.ENABLE_EXTENDED_FLAGS | ConsoleConstants.ENABLE_WINDOW_INPUT | ConsoleConstants.ENABLE_MOUSE_INPUT);
+            //ConsoleModes mode = 0;
+            //MyConsole.GetMode(ref mode);
+            MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_WINDOW_INPUT | ConsoleModes.ENABLE_MOUSE_INPUT);
         }
 
         public override void Init()

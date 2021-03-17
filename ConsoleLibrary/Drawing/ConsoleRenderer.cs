@@ -28,11 +28,11 @@ namespace ConsoleLibrary.Drawing
 
         public static Point GetFontSize() => MyConsole.GetFontSize();
         public static Point GetWindowSize() => MyConsole.GetClientSize();
-        public static Point GetConsoleSize() => MyConsole.GetConsoleSize();
+        public static Point GetConsoleSize() => MyConsole.GetConsoleBufferSize();
 
         public static Point GetWindowCenter()
         {
-            var (w, h) = MyConsole.GetConsoleSize();
+            var (w, h) = MyConsole.GetConsoleBufferSize();
             return new Point(w / 2, h / 2);
         }
 

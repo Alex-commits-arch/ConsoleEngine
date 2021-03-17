@@ -44,6 +44,10 @@
   <ItemGroup>
     <Compile Include="Constants\Colors.cs" />
     <Compile Include="Constants\ConsoleConstants.cs" />
+    <Compile Include="Enums\ConsoleModes.cs" />
+    <Compile Include="Enums\DuplicateOptions.cs" />
+    <Compile Include="Enums\FormatMessage.cs" />
+    <Compile Include="Enums\GenericAccess.cs" />
     <Compile Include="Enums\GWL.cs" />
     <Compile Include="Enums\IDC_STANDARD_CURSORS.cs" />
     <Compile Include="Enums\MouseButton.cs" />
@@ -51,6 +55,7 @@
     <Compile Include="Enums\ProcessAccessFlags.cs" />
     <Compile Include="Enums\ScrollBar.cs" />
     <Compile Include="Enums\SystemMetric.cs" />
+    <Compile Include="Enums\WindowStyles.cs" />
     <Compile Include="Structs\COLORREF.cs" />
     <Compile Include="Structs\CONSOLE_CURSOR_INFO.cs" />
     <Compile Include="Structs\CONSOLE_FONT_INFO.cs" />
@@ -79,6 +84,7 @@
     <Compile Include="Structs\MSG.cs" />
     <Compile Include="Structs\POINT.cs" />
     <Compile Include="Structs\SMALL_RECT.cs" />
+    <Compile Include="Structs\WINDOWINFO.cs" />
     <Compile Include="Structs\WINDOW_BUFFER_SIZE_RECORD.cs" />
     <Compile Include="Structs\WNDCLASSEX.cs" />
     <Compile Include="WinApi.cs" />

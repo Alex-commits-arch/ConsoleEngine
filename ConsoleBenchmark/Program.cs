@@ -1,6 +1,7 @@
 ﻿using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using ConsoleLibrary.Drawing;
+using System;
 using WindowsWrapper.Structs;
 
 namespace ConsoleBenchmark
@@ -19,7 +20,28 @@ namespace ConsoleBenchmark
     [MemoryDiagnoser]
     public class Benchmarks
     {
-        readonly BufferArea area = new BufferArea(50, 50);
+        //readonly BufferArea area = new BufferArea(50, 50);
+        const int sourceSize = 10;
+        const int destSize = 100;
+        const int range = 100;
+
+        [Benchmark]
+        public void TestA()
+        {
+            for (int i = 0; i <= range; i++)
+                A(i, sourceSize, destSize);
+        }
+
+        [Benchmark]
+        public void TestC()
+        {
+            for (int i = 0; i <= range; i++)
+                B(i, sourceSize, destSize);
+        }
+
+        private int A(int a, int b, int c) => Math.Min(c - a, b);
+
+        private int B(int a, int b, int c) => (c - a) < b ? c - a : b;
 
         //[Benchmark]
         //public void FastClear()

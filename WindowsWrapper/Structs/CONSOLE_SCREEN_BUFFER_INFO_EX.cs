@@ -19,23 +19,25 @@ namespace WindowsWrapper.Structs
 
         public ushort wPopupAttributes;
         public bool bFullscreenSupported;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 16)]
+        public COLORREF[] ColorTable;
 
-        internal COLORREF black;
-        internal COLORREF darkBlue;
-        internal COLORREF darkGreen;
-        internal COLORREF darkCyan;
-        internal COLORREF darkRed;
-        internal COLORREF darkMagenta;
-        internal COLORREF darkYellow;
-        internal COLORREF gray;
-        internal COLORREF darkGray;
-        internal COLORREF blue;
-        internal COLORREF green;
-        internal COLORREF cyan;
-        internal COLORREF red;
-        internal COLORREF magenta;
-        internal COLORREF yellow;
-        internal COLORREF white;
+        //internal COLORREF black;
+        //internal COLORREF darkBlue;
+        //internal COLORREF darkGreen;
+        //internal COLORREF darkCyan;
+        //internal COLORREF darkRed;
+        //internal COLORREF darkMagenta;
+        //internal COLORREF darkYellow;
+        //internal COLORREF gray;
+        //internal COLORREF darkGray;
+        //internal COLORREF blue;
+        //internal COLORREF green;
+        //internal COLORREF cyan;
+        //internal COLORREF red;
+        //internal COLORREF magenta;
+        //internal COLORREF yellow;
+        //internal COLORREF white;
 
         // has been a while since I did this, test before use
         // but should be something like:

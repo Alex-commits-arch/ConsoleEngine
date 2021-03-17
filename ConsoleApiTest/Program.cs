@@ -26,10 +26,25 @@ namespace ConsoleApiTest
             //    Console.WriteLine($"{metric} = {WinApi.GetSystemMetrics(metric)}");
             //}
             //WinApi
-            new TestApp(84, 42).Init();
-            //new TestApp(52, 40).Init();
+
+            //bool equal = true;
+            //for (int i = 0; i < 100; i++)
+            //{
+            //    Debug.WriteLine($"{i} => {A(i, 10, 100)}, {B(i, 10, 100)}");
+            //    if (A(i, 10, 100) != B(i, 10, 100) )
+            //        equal = false;
+            //}
+            //Console.WriteLine(equal);
+            //Console.ReadLine();
+
+            //new TestApp(84, 42).Init();
+            new TestApp(80, 20).Init();
             ConsoleInput.InputLoop();
         }
+
+        private static int A(int a, int b, int c) => Math.Min(c - a, b);
+
+        private static int B(int a, int b, int c) => (c - a) < b ? c - a : b;
     }
 
     public class TestApp : FormApp
@@ -54,10 +69,10 @@ namespace ConsoleApiTest
         {
             base.Init();
 
-            buffer = ConsoleRenderer.ActiveBuffer;
+            //ConsoleInput.KeyPressed += ConsoleInput_KeyPressed;
 
-            var t1 = new BufferArea(20, 20);
-            t1.ResizePreserve(40, 40);
+            //return;
+            buffer = ConsoleRenderer.ActiveBuffer;
 
             textBox = new TextBox(controlManager)
             {
@@ -131,21 +146,19 @@ namespace ConsoleApiTest
             backface.Fill(backChar);
 
 
-            Draw();
+            //Draw();
 
             ConsoleInput.KeyPressed += ConsoleInput_KeyPressed;
 
-            ConsoleInput.KeyHeld += ConsoleInput_KeyPressed;
+            //ConsoleInput.KeyHeld += ConsoleInput_KeyPressed;
 
-            ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
+            //ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
 
             ConsoleInput.Resized += delegate
             {
                 Draw();
-                //Debug.WriteLine("aaaaa");
             };
-            //Draw();
-            //ConsoleInput.MouseMoved += ConsoleInput_MouseDragged;
+            Draw();
         }
 
         int prevX = 0;
@@ -168,7 +181,10 @@ namespace ConsoleApiTest
         private void ConsoleInput_KeyPressed(KeyEventArgs e)
         {
             if (e.Key == ConsoleKey.Escape)
-                Environment.Exit(0);
+            {
+                //ConsoleRenderer.Clear();
+                Exit();
+            }
 
 
             //if (e.Key == ConsoleKey.S && e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed))
@@ -227,7 +243,11 @@ namespace ConsoleApiTest
             //buffer.Clear(CharAttribute.BackgroundDarkYellow);
             int i = 0;
             Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
+            gradient = new Gradient(CharAttribute.BackgroundCyan, CharAttribute.BackgroundMagenta, CharAttribute.ForegroundYellow, CharAttribute.BackgroundBlack);
+            gradient = new Gradient(CharAttribute.BackgroundBlue, CharAttribute.BackgroundCyan, CharAttribute.BackgroundGreen);
             gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
+            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
+            gradient.Reverse();
             //int w = (int)Math.Ceiling(Width / (double)gradient.Pallette.Length);
             //float w = Width / (float)gradient.Pallette.Length;
 
@@ -240,15 +260,6 @@ namespace ConsoleApiTest
             buffer.Draw(gradient, 0, 0, Width, Height/2);
             gradient.Reverse();
             buffer.Draw(gradient, 0, Height/2, Width, Height);
-            //buffer.FillRect(w * 0, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            //buffer.FillRect(w * 1, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            //buffer.FillRect(w * 2, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            //buffer.FillRect(w * 3, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey });
-            //buffer.FillRect(w * 4, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
-            ////w += 3;
-            //buffer.FillRect(w * 4, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Medium, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
-            //buffer.FillRect(w * 5, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.Light, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
-            //buffer.FillRect(w * 6, 0, w, 10, new CharInfo { UnicodeChar = ShadingCharacter.None, Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundDarkGrey | CharAttribute.Reverse });
 
             //buffer.Draw(backface, squareX - 2, squareY - 1);
             //buffer.Draw(square, squareX, squareY);
@@ -258,6 +269,8 @@ namespace ConsoleApiTest
             //buffer.Draw('♕', 35, 10, CharAttribute.ForegroundCyan | CharAttribute.TrailingByte);
             //buffer.Draw('A', 35, 10, CharAttribute.ForegroundCyan | CharAttribute.TrailingByte);
             buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height / 2 - strings.Length / 2, CharAttribute.ForegroundWhite);
+            //buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height - strings.Length, CharAttribute.ForegroundWhite);
+            buffer.Draw("Hello", 10, Height - 1);
             //buffer.Draw()
             //controlManager.DrawControls();
             ConsoleRenderer.RenderOutput();

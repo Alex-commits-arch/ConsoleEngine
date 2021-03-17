@@ -69,9 +69,9 @@ namespace WindowsWrapper
             uint nFont
         );
 
-        [DllImport("Kernel32.dll")]
-        static extern IntPtr CreateConsoleScreenBuffer(
-            uint dwDesiredAccess,
+        [DllImport("kernel32.dll")]
+        public static extern ConsoleHandle CreateConsoleScreenBuffer(
+            GenericAccess dwDesiredAccess,
             uint dwShareMode,
             IntPtr secutiryAttributes,
             uint flags,
@@ -79,13 +79,38 @@ namespace WindowsWrapper
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool DuplicateHandle(
+            IntPtr hSourceProcessHandle,
+            IntPtr hSourceHandle,
+            IntPtr hTargetProcessHandle,
+            out ConsoleHandle lpTargetHandle,
+            short dwDesiredAccess,
+            bool bInheritHandle,
+            DuplicateOptions dwOptions
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool SetConsoleActiveScreenBuffer(ConsoleHandle hConsoleOutput);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool GetNumberOfConsoleInputEvents(
             IntPtr hConsoleInput,
             out uint lpcNumberOfEvents
         );
 
+        //[DllImport("kernel32.dll")]
+        //public static extern uint GetLastError();
+
         [DllImport("kernel32.dll")]
-        public static extern uint GetLastError();
+        static extern int FormatMessage(
+            FormatMessage dwFlags,
+            IntPtr lpSource,
+            int dwMessageId,
+            uint dwLanguageId,
+            out StringBuilder msgOut,
+            int nSize,
+            IntPtr Arguments
+        );
 
         [DllImport("kernel32.dll")]
         public static extern int WideCharToMultiByte(
@@ -148,7 +173,7 @@ namespace WindowsWrapper
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetConsoleMode(ConsoleHandle hConsoleHandle, ref int lpMode);
+        public static extern bool GetConsoleMode(ConsoleHandle hConsoleHandle, ref ConsoleModes lpMode);
 
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern ConsoleHandle GetStdHandle(int nStdHandle);
@@ -322,7 +347,7 @@ namespace WindowsWrapper
 
         [DllImport("kernel32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetConsoleMode(ConsoleHandle hConsoleHandle, int dwMode);
+        public static extern bool SetConsoleMode(ConsoleHandle hConsoleHandle, ConsoleModes dwMode);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr LoadCursor(IntPtr hInstance, IDC_STANDARD_CURSORS lpCursorName);
@@ -377,11 +402,46 @@ namespace WindowsWrapper
 
         [DllImport("user32", ExactSpelling = true, SetLastError = true)]
         public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, ref System.Drawing.Point[] pt, [MarshalAs(UnmanagedType.U4)] int cPoints);
+
+        [DllImport("user32", SetLastError = true)]
+        public static extern bool GetWindowInfo(IntPtr hwnd, ref WINDOWINFO pwi);
         #endregion
 
         #region GDI32.DLL
         [DllImport("gdi32.dll")]
         public static extern uint SetPixel(IntPtr hdc, int X, int Y, COLORREF crColor);
+        #endregion
+
+        #region UTILITY
+        public static int GetLastError()
+        {
+            return (Marshal.GetLastWin32Error());
+        }
+
+        public static string GetLastErrorMessage()
+        {
+            int lastError = GetLastError();
+
+            if (lastError == 0)
+                return "";
+
+            uint langId = 0x0409;
+
+            StringBuilder msgOut = new StringBuilder(256);
+            var flags = Enums.FormatMessage.ALLOCATE_BUFFER | Enums.FormatMessage.FROM_SYSTEM | Enums.FormatMessage.IGNORE_INSERTS;
+            FormatMessage(flags, IntPtr.Zero, lastError, langId, out msgOut, msgOut.Capacity, IntPtr.Zero);
+            return msgOut.ToString().Trim();
+        }
+
+        public static string GetErrorMessage(int errorCode)
+        {
+            uint langId = 0x0409;
+
+            StringBuilder msgOut = new StringBuilder(256);
+            var flags = Enums.FormatMessage.ALLOCATE_BUFFER | Enums.FormatMessage.FROM_SYSTEM | Enums.FormatMessage.IGNORE_INSERTS;
+            FormatMessage(flags, IntPtr.Zero, errorCode, langId, out msgOut, msgOut.Capacity, IntPtr.Zero);
+            return msgOut.ToString().Trim();
+        }
         #endregion
     }
     public class ConsoleHandle : SafeHandleMinusOneIsInvalid

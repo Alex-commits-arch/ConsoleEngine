@@ -194,7 +194,7 @@ namespace ConsoleLibrary.Drawing
 
             for (int xx = startX; xx < endX; xx++)
             {
-                CharInfo color = gradient.Pallette[(int)(xx / (width / (float)gradient.Pallette.Length)) % gradient.Pallette.Length];
+                CharInfo color = gradient.Palette[(int)(xx / (width / (float)gradient.Palette.Length)) % gradient.Palette.Length];
                 for (int yy = startY; yy < endY; yy++)
                 {
                     content[y + yy, x + xx] = color;
@@ -233,7 +233,8 @@ namespace ConsoleLibrary.Drawing
         }
 
         #region UTILITY
-        private int SafeSourceStart(int sourceX) => Math.Max(-sourceX, Math.Min(0, sourceX));
+        [MethodImpl]
+        private int SafeSourceStart(int index) => index < 0 ? -index : 0;
         private int SafeSourceEnd(int destinationIndex, int sourceSize, int destinationSize) => Math.Min(destinationSize - destinationIndex, sourceSize);
         private int BoundToWidth(int x) => Math.Max(0, Math.Min(width, x));
         private int BoundToHeight(int y) => Math.Max(0, Math.Min(height, y));
