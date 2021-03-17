@@ -46,13 +46,15 @@ namespace ConsoleLibrary.TextExtensions
             return output;
         }
 
-        public static string[] NormalizeLengths(this string[] strings, TextAlign textAlign = TextAlign.Center)
+        public static string[] NormalizeLengths(this string[] strings, TextAlign textAlign = TextAlign.Left)
         {
             int longest = 0;
 
             foreach (var str in strings)
                 if (str.Length > longest)
                     longest = str.Length;
+
+            return strings.PadAll(longest);
 
             for (int i = 0; i < strings.Length; i++)
                 strings[i] = textAlign == TextAlign.Left
@@ -61,6 +63,17 @@ namespace ConsoleLibrary.TextExtensions
                     ? strings[i].PadLeft(longest)
                     : strings[i].PadBoth(longest);
 
+            return strings;
+        }
+
+        public static string[] PadAll(this string[] strings, int length, TextAlign textAlign = TextAlign.Left)
+        {
+            for (int i = 0; i < strings.Length; i++)
+                strings[i] = textAlign == TextAlign.Left
+                    ? strings[i].PadRight(length)
+                    : textAlign == TextAlign.Right
+                    ? strings[i].PadLeft(length)
+                    : strings[i].PadBoth(length);
             return strings;
         }
 

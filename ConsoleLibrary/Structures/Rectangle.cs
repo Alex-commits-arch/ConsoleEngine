@@ -15,6 +15,9 @@ namespace ConsoleLibrary.Structures
         public int Height { get; set; }
         public int Right => Left + Width;
         public int Bottom => Top + Height;
+        public Point UpperLeft => new Point(Left, Top);
+        public Point LowerRight => new Point(Left + Width, Top + Height);
+        public Point Size => new Point(Width, Height);
 
         public Rectangle(int x, int y, int width, int height)
         {
@@ -34,5 +37,6 @@ namespace ConsoleLibrary.Structures
 
         public static implicit operator SMALL_RECT(Rectangle rect) => new SMALL_RECT((short)rect.Left, (short)rect.Top, (short)rect.Right, (short)rect.Bottom);
         public static implicit operator Rectangle(SMALL_RECT rect) => new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
+        public static implicit operator Rectangle(RECT rect) => new Rectangle(rect.Left, rect.Top, rect.Right - rect.Left, rect.Bottom - rect.Top);
     }
 }

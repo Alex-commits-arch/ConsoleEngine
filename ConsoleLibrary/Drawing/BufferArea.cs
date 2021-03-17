@@ -82,6 +82,34 @@ namespace ConsoleLibrary.Drawing
             return area;
         }
 
+        public CharInfo[,] GetArea(ref Rectangle rect)
+        {
+            int x = rect.Left;
+            int y = rect.Top;
+            int w = rect.Width;
+            int h = rect.Height;
+
+            int safeX = Math.Max(0, Math.Min(width, x));
+            int safeY = Math.Max(0, Math.Min(height, y));
+
+            int safeWidth = SafeSourceEnd(safeX, Math.Min(w - (safeX - x), w), width);
+            int safeHeight = SafeSourceEnd(safeY, Math.Min(h - (safeY - y), h), height);
+
+            CharInfo[,] area = (safeWidth < 0 || safeHeight < 0)
+                ? new CharInfo[0, 0]
+                : new CharInfo[safeHeight, safeWidth];
+
+            for (int areaY = 0; areaY < safeHeight; areaY++)
+                for (int areaX = 0; areaX < safeWidth; areaX++)
+                    area[areaY, areaX] = content[(safeY + areaY), (safeX + areaX)];
+
+            rect.Left = safeX;
+            rect.Top = safeY;
+            rect.Width = safeWidth;
+            rect.Height = safeHeight;
+            return area;
+        }
+
         public void Clear(CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
         {
             CharInfo clearChar = new CharInfo

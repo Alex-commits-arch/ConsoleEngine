@@ -59,6 +59,7 @@ namespace ConsoleApiTest
         TextBox textBox;
         ColorfulString colorfulString;
         string[] strings;
+        Graphics g = Graphics.FromHwnd(Process.GetCurrentProcess().MainWindowHandle);
 
         public TestApp(int width = 90, int height = 40) : base(width, height)
         {
@@ -74,14 +75,22 @@ namespace ConsoleApiTest
             //return;
             buffer = ConsoleRenderer.ActiveBuffer;
 
+            //textBox = new TextBox(controlManager)
+            //{
+            //    Left = Width / 2,
+            //    Top = Height / 2,
+            //    Text = lorem,
+            //    Width = 20,
+            //    Height = 5,
+            //    Attributes = CharAttribute.ForegroundWhite
+            //};
+
             textBox = new TextBox(controlManager)
             {
-                Left = Width / 2,
-                Top = Height / 2,
-                Text = lorem,
-                Width = 20,
-                Height = 5,
-                Attributes = CharAttribute.ForegroundWhite
+                Width = "Hello".Length + 6,
+                Height = 10,
+                Text = "Hello there",
+                Attributes = CharAttribute.ForegroundBlack | CharAttribute.BackgroundCyan
             };
 
             colorfulString = new ColorfulString
@@ -187,27 +196,28 @@ namespace ConsoleApiTest
             }
 
 
-            //if (e.Key == ConsoleKey.S && e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed))
-            //{
-            //    var h = Process.GetCurrentProcess().MainWindowHandle;
-            //    //using (var image = )
-            //    (int ww, int wh) = ClientSize;
-            //    using (Bitmap b = new Bitmap(ww, wh))
-            //    {
-            //        using (var p = Brushes.CornflowerBlue)
-            //        {
-            //            using (Graphics g = Graphics.FromImage(b))
-            //            {
-            //                //g.draw
-            //                var points = MapToScreen(new Point[] { new Point(0, 0) });
-            //                //g.CopyFromScreen(new Point(0, 0), new Point(0, 0), new Size((int)g.VisibleClipBounds.Width, (int)g.VisibleClipBounds.Height));
-            //                //g.
-            //                b.Save("Test.png");
-            //            }
-            //            //g.FillEllipse(p, 0, 0, g.VisibleClipBounds.Width, g.VisibleClipBounds.Height);
-            //        }
-            //    }
-            //}
+            if (e.Key == ConsoleKey.S && e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed))
+            {
+                var area = ClientArea;
+                var size = area.Size;
+                using (Bitmap b = new Bitmap(size.X, size.Y, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
+                using (Graphics g = Graphics.FromImage(b))
+                {
+                    g.CopyFromScreen(area.UpperLeft, new Point(0, 0), new Size(size));
+                    b.Save("Test.png");
+                }
+            }
+
+            if(e.Key == ConsoleKey.F)
+            {
+                var oldRect = textBox.Rectangle;
+                textBox.Width = 40;
+                textBox.Left = -1;
+                textBox.Invalidate();
+                //ConsoleRenderer.RenderArea(oldRect);
+
+                ConsoleRenderer.RenderArea(textBox.Rectangle);
+            }
             //switch (e.Key)
             //{
             //    case ConsoleKey.A:
@@ -241,38 +251,20 @@ namespace ConsoleApiTest
         private void Draw()
         {
             //buffer.Clear(CharAttribute.BackgroundDarkYellow);
-            int i = 0;
-            Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
-            gradient = new Gradient(CharAttribute.BackgroundCyan, CharAttribute.BackgroundMagenta, CharAttribute.ForegroundYellow, CharAttribute.BackgroundBlack);
-            gradient = new Gradient(CharAttribute.BackgroundBlue, CharAttribute.BackgroundCyan, CharAttribute.BackgroundGreen);
-            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
-            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
-            gradient.Reverse();
-            //int w = (int)Math.Ceiling(Width / (double)gradient.Pallette.Length);
-            //float w = Width / (float)gradient.Pallette.Length;
+            //Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
+            //gradient = new Gradient(CharAttribute.BackgroundCyan, CharAttribute.BackgroundMagenta, CharAttribute.ForegroundYellow, CharAttribute.BackgroundBlack);
+            //gradient = new Gradient(CharAttribute.BackgroundBlue, CharAttribute.BackgroundCyan, CharAttribute.BackgroundGreen);
+            //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
+            //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
+            //gradient.Reverse();
+            //buffer.Draw(gradient, 0, 0, Width, Height/2);
+            //gradient.Reverse();
+            //buffer.Draw(gradient, 0, Height/2, Width, Height);
 
-            //foreach (var color in gradient.Pallette)
-            //{
-            //    //buffer.FillRect((int)(w * i), 0, (int)(w * i++), Height, color);
-            //    buffer.FillRect((int)(w * i), 0, (int)Math.Ceiling(w * i++), Height, color);
-            //}
+            //buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height / 2 - strings.Length / 2, CharAttribute.ForegroundWhite);
+            //buffer.Draw("Hello", 10, Height - 1);
 
-            buffer.Draw(gradient, 0, 0, Width, Height/2);
-            gradient.Reverse();
-            buffer.Draw(gradient, 0, Height/2, Width, Height);
-
-            //buffer.Draw(backface, squareX - 2, squareY - 1);
-            //buffer.Draw(square, squareX, squareY);
-            //buffer.Draw(colorfulString, 0, strings.Length);
-            //buffer.Draw('\u2020', 35, 0, CharAttribute.LeadingByte);
-            //buffer.Draw('♕', 34, 10, CharAttribute.ForegroundCyan | CharAttribute.LeadingByte);
-            //buffer.Draw('♕', 35, 10, CharAttribute.ForegroundCyan | CharAttribute.TrailingByte);
-            //buffer.Draw('A', 35, 10, CharAttribute.ForegroundCyan | CharAttribute.TrailingByte);
-            buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height / 2 - strings.Length / 2, CharAttribute.ForegroundWhite);
-            //buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height - strings.Length, CharAttribute.ForegroundWhite);
-            buffer.Draw("Hello", 10, Height - 1);
-            //buffer.Draw()
-            //controlManager.DrawControls();
+            controlManager.DrawControls();
             ConsoleRenderer.RenderOutput();
         }
 

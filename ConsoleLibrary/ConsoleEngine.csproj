@@ -65,6 +65,7 @@
     <Compile Include="Drawing\Gradient.cs" />
     <Compile Include="Drawing\ShadingCharacter.cs" />
     <Compile Include="Drawing\TextAlign.cs" />
+    <Compile Include="Drawing\WordBreak.cs" />
     <Compile Include="Forms\Components\Button.cs" />
     <Compile Include="Forms\Components\ButtonBase.cs" />
     <Compile Include="Forms\ControlManager.cs" />

@@ -4,12 +4,14 @@ using System.ComponentModel;
 using WindowsWrapper.Enums;
 using ConsoleLibrary.Structures;
 using System.Runtime.CompilerServices;
+using WindowsWrapper.Structs;
+using ConsoleLibrary.Drawing;
 
 namespace ConsoleLibrary.Forms.Controls
 {
     public abstract class Control// : Component
     {
-        protected ControlManager container;
+        protected ControlManager controlManager;
 
         protected Rectangle rectangle;
         protected string name;
@@ -17,15 +19,16 @@ namespace ConsoleLibrary.Forms.Controls
         protected bool enabled = true;
         protected bool isInvalid = true;
         protected CharAttribute attributes = CharAttribute.BackgroundBlack;
+        protected BufferArea buffer;
 
-        protected Rectangle Rectangle { get => rectangle; set => rectangle = value; }
+        public Rectangle Rectangle { get => rectangle; set => rectangle = value; }
 
         public int Left
         {
             get => rectangle.Left;
             set
             {
-                if (value != rectangle.Left) Invalidate();
+                //if (value != rectangle.Left) Invalidate();
                 rectangle.Left = value;
             }
         }
@@ -34,7 +37,7 @@ namespace ConsoleLibrary.Forms.Controls
             get => rectangle.Top;
             set
             {
-                if (value != rectangle.Top) Invalidate();
+                //if (value != rectangle.Top) Invalidate();
                 rectangle.Top = value;
             }
         }
@@ -43,7 +46,7 @@ namespace ConsoleLibrary.Forms.Controls
             get => rectangle.Width;
             set
             {
-                if (value != rectangle.Width) Invalidate();
+                //if (value != rectangle.Width) Invalidate();
                 rectangle.Width = Math.Max(0, value);
             }
         }
@@ -52,7 +55,7 @@ namespace ConsoleLibrary.Forms.Controls
             get => rectangle.Height;
             set
             {
-                if (value != rectangle.Height) Invalidate();
+                //if (value != rectangle.Height) Invalidate();
                 rectangle.Height = Math.Max(0, value);
             }
         }
@@ -67,43 +70,44 @@ namespace ConsoleLibrary.Forms.Controls
 
         public event MouseEventHandler MousePressed
         {
-            add => container.SubscribeMouseEvent(EventType.MousePressed, this, value);
-            remove => container.UnsubscribeMouseEvent(EventType.MousePressed, this, value);
+            add => controlManager.SubscribeMouseEvent(EventType.MousePressed, this, value);
+            remove => controlManager.UnsubscribeMouseEvent(EventType.MousePressed, this, value);
         }
 
         public event MouseEventHandler MouseReleased
         {
-            add => container.SubscribeMouseEvent(EventType.MouseReleased, this, value);
-            remove => container.UnsubscribeMouseEvent(EventType.MouseReleased, this, value);
+            add => controlManager.SubscribeMouseEvent(EventType.MouseReleased, this, value);
+            remove => controlManager.UnsubscribeMouseEvent(EventType.MouseReleased, this, value);
         }
 
         public event MouseEventHandler MouseMoved
         {
-            add => container.SubscribeMouseEvent(EventType.MouseMoved, this, value);
-            remove => container.UnsubscribeMouseEvent(EventType.MouseMoved, this, value);
+            add => controlManager.SubscribeMouseEvent(EventType.MouseMoved, this, value);
+            remove => controlManager.UnsubscribeMouseEvent(EventType.MouseMoved, this, value);
         }
 
         public event MouseEventHandler MouseEnter
         {
-            add => container.SubscribeMouseEvent(EventType.MouseEnter, this, value);
-            remove => container.UnsubscribeMouseEvent(EventType.MouseEnter, this, value);
+            add => controlManager.SubscribeMouseEvent(EventType.MouseEnter, this, value);
+            remove => controlManager.UnsubscribeMouseEvent(EventType.MouseEnter, this, value);
         }
 
         public event MouseEventHandler MouseLeave
         {
-            add => container.SubscribeMouseEvent(EventType.MouseLeave, this, value);
-            remove => container.UnsubscribeMouseEvent(EventType.MouseLeave, this, value);
+            add => controlManager.SubscribeMouseEvent(EventType.MouseLeave, this, value);
+            remove => controlManager.UnsubscribeMouseEvent(EventType.MouseLeave, this, value);
         }
 
-        public Control(ControlManager container)
+        public Control(ControlManager manager)
         {
-            this.container = container;
-            container.Add(this);
+            controlManager = manager;
+            manager.Add(this);
         }
 
         public void Invalidate()
         {
             isInvalid = true;
+            Draw();
         }
 
         public bool ContainsPoint(Point p)
@@ -117,6 +121,25 @@ namespace ConsoleLibrary.Forms.Controls
                    my >= rectangle.Top && my < rectangle.Bottom;
         }
 
-        public virtual void Draw() { }
+        /// <summary>
+        /// Reinitializes the buffer with the current width and height
+        /// </summary>
+        protected virtual void RefreshBuffer()
+        {
+            if (buffer == null)
+                buffer = new BufferArea(Width, Height);
+            else
+                buffer.Resize(Width, Height);
+        }
+
+        public virtual void Draw()
+        {
+            if (isInvalid)
+            {
+                RefreshBuffer();
+                isInvalid = false;
+            }
+            ConsoleRenderer.ActiveBuffer.Draw(buffer, Left, Top);
+        }
     }
 }

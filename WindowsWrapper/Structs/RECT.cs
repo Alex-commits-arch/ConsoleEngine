@@ -28,6 +28,7 @@ namespace WindowsWrapper.Structs
             Bottom = (Top + size.Y);
         }
 
+
         public override string ToString()
         {
             return new { Left, Top, Right, Bottom }.ToString();

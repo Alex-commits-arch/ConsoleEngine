@@ -12,6 +12,7 @@ namespace ConsoleLibrary
         public int Height => MyConsole.Height;
         public Point FontSize => MyConsole.GetFontSize();
         public Point ClientSize => MyConsole.GetClientSize();
+        protected Rectangle ClientArea => MyConsole.ClientArea;
 
         public ConsoleApp(int width = 40, int height = 30)
         {

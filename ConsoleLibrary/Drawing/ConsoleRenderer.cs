@@ -80,5 +80,21 @@ namespace ConsoleLibrary.Drawing
                 new Point(0, 0)
             );
         }
+
+        public static void RenderArea(Rectangle rect)
+        {
+            var area = activeBuffer.GetArea(ref rect);
+            MyConsole.WriteOutput(
+                area,
+                rect.Size,
+                rect.UpperLeft
+            );
+        }
+
+        public static void RenderArea(int x, int y, int width, int height)
+        {
+            var area = activeBuffer.GetArea(x, y, width, height);
+            //area.
+        }
     }
 }

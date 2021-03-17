@@ -49,6 +49,7 @@ namespace ConsoleLibrary
         public static bool Exiting => exiting;
         public static bool StartedMaximized => startedMaximized;
         public static WindowStyles WindowStyles => GetWindowInfo().dwStyle;
+        public static Rectangle ClientArea => GetWindowInfo().rcClient;
         public static bool ScrollBarVisible => WindowStyles.HasFlag(WindowStyles.WS_VSCROLL);
 
         public static void Start()
