@@ -134,10 +134,6 @@ namespace ConsoleLibrary.Forms.Controls
 
         public void Draw(Rectangle rect)
         {
-            if(this is TextBox test && test.name == "hello")
-            {
-
-            }
             rect.Left -= Left;
             rect.Top -= Top;
             var area = buffer.GetArea(rect);

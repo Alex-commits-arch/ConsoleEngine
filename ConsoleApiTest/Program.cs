@@ -94,16 +94,17 @@ namespace ConsoleApiTest
             };
             textBox.Text = lorem;
             textBox.MousePressed += TextBox_MousePressed;
-            textBox.MouseReleased += TextBox_MouseReleased;
+            //textBox.MouseReleased += TextBox_MouseReleased;
 
             dataBox = new TextBox(controlManager)
             {
                 Width = 20,
-                Height = 1,
+                Height = 2,
                 Name = "hello",
                 Text = textBox.Rectangle.Size.ToString(),
                 Attributes = CharAttribute.ForegroundGreen
             };
+            dataBox.Width = dataBox.Text.Length;
 
             colorfulString = new ColorfulString
             {
@@ -173,7 +174,7 @@ namespace ConsoleApiTest
 
             ConsoleInput.KeyHeld += ConsoleInput_KeyPressed;
 
-
+            ConsoleInput.MouseReleased += TextBox_MouseReleased;
 
             ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
 
@@ -229,6 +230,14 @@ namespace ConsoleApiTest
                     textBox.Top = y - anchorY;
                 }
                 textBox.EndUpdate();
+
+                dataBox.BeginUpdate();
+                string line1 = "Location: " + textBox.Rectangle.UpperLeft;
+                string line2 = "Size:" + textBox.Rectangle.Size;
+                dataBox.Text = $"{line1} {line2}";
+                dataBox.Width = Math.Max(line1.Length, line2.Length);
+                dataBox.EndUpdate();
+                //Draw();
             }
         }
 
@@ -302,6 +311,8 @@ namespace ConsoleApiTest
                         break;
                 }
             }
+
+            //Fill
             if (e.Key == ConsoleKey.F)
             {
                 if (leftControl)
@@ -314,6 +325,8 @@ namespace ConsoleApiTest
                 else
                     UpdateColor();
             }
+
+            //Reset
             if (e.Key == ConsoleKey.R && leftControl)
             {
                 textBox.Left = 0;
@@ -321,30 +334,39 @@ namespace ConsoleApiTest
                 textBox.Width = 34;
                 textBox.Height = 13;
             }
+
+            //Center
             if (e.Key == ConsoleKey.C && leftControl)
             {
                 textBox.Left = Width / 2 - textBox.Width / 2;
                 textBox.Top = Height / 2 - textBox.Height / 2;
             }
+
             textBox.EndUpdate();
 
             dataBox.BeginUpdate();
-            dataBox.Text = textBox.Rectangle.Size.ToString();
+            string line1 = "Location: " + textBox.Rectangle.UpperLeft;
+            string line2 = "Size:" + textBox.Rectangle.Size;
+            dataBox.Text = $"{line1} {line2}";
+            dataBox.Width = Math.Max(line1.Length, line2.Length);
             dataBox.EndUpdate();
         }
 
         private void Draw()
         {
             //buffer.Clear(CharAttribute.BackgroundDarkYellow);
-            //Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
+            Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
             //gradient = new Gradient(CharAttribute.BackgroundCyan, CharAttribute.BackgroundMagenta, CharAttribute.ForegroundYellow, CharAttribute.BackgroundBlack);
             //gradient = new Gradient(CharAttribute.BackgroundBlue, CharAttribute.BackgroundCyan, CharAttribute.BackgroundGreen);
             //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
-            //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
+            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
             //gradient.Reverse();
-            //buffer.Draw(gradient, 0, 0, Width, Height/2);
-            //gradient.Reverse();
-            //buffer.Draw(gradient, 0, Height/2, Width, Height);
+            buffer.Draw(gradient, 0, 0, Width, Height / 2);
+            gradient.Reverse();
+            buffer.Draw(gradient, 0, Height / 2, Width, Height);
+
+            buffer.Draw(backface, Width / 2 - backface.Width / 2, Height / 2 - backface.Height / 2);
+            buffer.Draw(square, Width / 2 - square.GetLength(1) / 2, Height / 2 - square.GetLength(0) / 2);
 
             //buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height / 2 - strings.Length / 2, CharAttribute.ForegroundWhite);
             //buffer.Draw("Hello", 10, Height - 1);
