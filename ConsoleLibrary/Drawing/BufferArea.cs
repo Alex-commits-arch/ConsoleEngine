@@ -121,6 +121,17 @@ namespace ConsoleLibrary.Drawing
             Fill(clearChar);
         }
 
+        public void Clear(Rectangle rect, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
+        {
+            CharInfo clearChar = new CharInfo
+            {
+                Attributes = attributes,
+                UnicodeChar = '\0'
+            };
+
+            FillRect(rect, clearChar);
+        }
+
         public void Fill(CharInfo charInfo)
         {
             int ux = content.GetLength(1);
@@ -128,6 +139,21 @@ namespace ConsoleLibrary.Drawing
             for (int y = 0; y < uy; y++)
                 for (int x = 0; x < ux; x++)
                     content[y, x] = charInfo;
+        }
+
+        public void FillRect(Rectangle rect, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
+        {
+            FillRect(rect.Left, rect.Top, rect.Width, rect.Height, new CharInfo { UnicodeChar = '\0', Attributes = attributes });
+        }
+
+        public void FillRect(Rectangle rect, CharInfo charInfo)
+        {
+            FillRect(rect.Left, rect.Top, rect.Width, rect.Height, charInfo);
+        }
+
+        public void FillRect(int x, int y, int width, int height, CharAttribute attributes)
+        {
+            FillRect(x, y, width, height, new CharInfo { UnicodeChar = '\0', Attributes = attributes });
         }
 
         public void FillRect(int x, int y, int width, int height, CharInfo charInfo)

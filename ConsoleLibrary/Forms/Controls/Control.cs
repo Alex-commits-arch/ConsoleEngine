@@ -107,19 +107,19 @@ namespace ConsoleLibrary.Forms.Controls
         public void Invalidate()
         {
             isInvalid = true;
-            Draw();
         }
+
+        public void BeginUpdate() => controlManager.BeginUpdate(this);
+        public void EndUpdate() => controlManager.EndUpdate(this);
 
         public bool ContainsPoint(Point p)
         {
             return ContainsPoint(p.X, p.Y);
         }
 
-        public bool ContainsPoint(int mx, int my)
-        {
-            return mx >= rectangle.Left && mx < rectangle.Right &&
-                   my >= rectangle.Top && my < rectangle.Bottom;
-        }
+        public bool ContainsPoint(int mx, int my) => Rectangle.ContainsPoint(mx, my);
+
+        public bool IntersectsWith(Rectangle rectangle) => Rectangle.IntersectsWith(rectangle);
 
         /// <summary>
         /// Reinitializes the buffer with the current width and height
@@ -132,7 +132,19 @@ namespace ConsoleLibrary.Forms.Controls
                 buffer.Resize(Width, Height);
         }
 
-        public virtual void Draw()
+        public void Draw(Rectangle rect)
+        {
+            if(this is TextBox test && test.name == "hello")
+            {
+
+            }
+            rect.Left -= Left;
+            rect.Top -= Top;
+            var area = buffer.GetArea(rect);
+            ConsoleRenderer.ActiveBuffer.Draw(area, rect.Left, rect.Top);
+        }
+
+        public void Draw()
         {
             if (isInvalid)
             {

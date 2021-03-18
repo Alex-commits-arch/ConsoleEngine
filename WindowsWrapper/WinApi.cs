@@ -242,6 +242,12 @@ namespace WindowsWrapper
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool SetConsoleScreenBufferInfoEx(
+            ConsoleHandle hConsoleOutput,
+            ref CONSOLE_SCREEN_BUFFER_INFO_EX ConsoleScreenBufferInfo
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetConsoleCursorInfo(
             ConsoleHandle hConsoleOutput,
             [In] ref CONSOLE_CURSOR_INFO lpConsoleCursorInfo

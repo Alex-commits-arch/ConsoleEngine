@@ -20,8 +20,6 @@ namespace ConsoleLibrary
         static readonly IntPtr handle = WinApi.GetConsoleWindow();
         static readonly IntPtr sysMenu = WinApi.GetSystemMenu(handle, false);
         static readonly ConsoleHandle inputHandle = WinApi.GetStdHandle(ConsoleConstants.STD_INPUT_HANDLE);
-        //static readonly ConsoleHandle inputHandle = WinApi.CreateFile("CONIN$",);
-        //static readonly ConsoleHandle originalBufferHandle = WinApi.GetStdHandle(ConsoleConstants.STD_OUTPUT_HANDLE);
         static ConsoleHandle bufferHandle = WinApi.CreateConsoleScreenBuffer(GenericAccess.GENERIC_READ | GenericAccess.GENERIC_WRITE, 0x00000004, IntPtr.Zero, 1, IntPtr.Zero);
 
         static readonly int minWindowWidth = WinApi.GetSystemMetrics(SystemMetric.SM_CXMIN);
@@ -54,7 +52,6 @@ namespace ConsoleLibrary
 
         public static void Start()
         {
-            //bufferHandle = WinApi.CreateConsoleScreenBuffer(GenericAccess.GENERIC_READ | GenericAccess.GENERIC_WRITE, 0x00000004, IntPtr.Zero, 1, IntPtr.Zero);
             HandleError(!WinApi.SetConsoleActiveScreenBuffer(bufferHandle));
         }
 
@@ -62,12 +59,6 @@ namespace ConsoleLibrary
         {
             Clear();
             SetTitle("Exiting...");
-            //bufferHandle = originalBufferHandle;
-            //var width = GetConsoleBufferSize().X;
-            //var height = GetConsoleWindowSize().Y;
-
-            //bufferHandle = WinApi.GetStdHandle(ConsoleConstants.STD_OUTPUT_HANDLE);
-            //SetSize(width, height, originalBufferSize.Y);
             WinApi.SetConsoleActiveScreenBuffer(WinApi.GetStdHandle(ConsoleConstants.STD_OUTPUT_HANDLE));
             exiting = true;
         }
@@ -114,6 +105,26 @@ namespace ConsoleLibrary
         {
             HandleError(!WinApi.GetWindowRect(handle, out RECT rect));
             return new Point(rect.Width, rect.Height);
+        }
+
+        public static void UpdateColor()
+        {
+            var bufferInfo = GetExtendedBufferInfo();
+            bufferInfo.ColorTable[0] = new COLORREF(System.Drawing.Color.CornflowerBlue);
+            SetExtendedBufferInfo(bufferInfo);
+        }
+
+        public static CONSOLE_SCREEN_BUFFER_INFO_EX GetExtendedBufferInfo()
+        {
+            CONSOLE_SCREEN_BUFFER_INFO_EX bufferInfo = new CONSOLE_SCREEN_BUFFER_INFO_EX();
+            bufferInfo.cbSize = (uint)Marshal.SizeOf(bufferInfo);
+            HandleError(!WinApi.GetConsoleScreenBufferInfoEx(bufferHandle, ref bufferInfo));
+            return bufferInfo;
+        }
+
+        public static void SetExtendedBufferInfo(CONSOLE_SCREEN_BUFFER_INFO_EX bufferInfo)
+        {
+            HandleError(!WinApi.SetConsoleScreenBufferInfoEx(bufferHandle, ref bufferInfo));
         }
 
         public delegate bool SystemErrorHandler(bool errorOccurred, [CallerLineNumber] int lineNumber = 0, [CallerMemberName] string callerName = "", [CallerFilePath] string filePath = "");
@@ -170,6 +181,7 @@ namespace ConsoleLibrary
 
         public static void SetCursor(IDC_STANDARD_CURSORS cursor) { }
 
+        //TODO: Maybe move to ConsoleInput
         public static void GetMode(ref ConsoleModes mode) => WinApi.GetConsoleMode(inputHandle, ref mode);
         public static void SetMode(ConsoleModes mode) => WinApi.SetConsoleMode(inputHandle, mode);
 
@@ -233,7 +245,6 @@ namespace ConsoleLibrary
 
         public static void SetSize(int width, int height, int bufferHeight = -1)
         {
-            //Console.WriteLine("Set size: " + new Point(width, height));
             if (width > 0 && width <= MaximumWidth && height > 0 && height <= MaximumHeight)
             {
                 COORD bufferSize = GetConsoleBufferSize();
@@ -274,6 +285,7 @@ namespace ConsoleLibrary
             WinApi.SendMessage(handle, WM.SETICON, 0x80, icon.Handle);
         }
 
+        //TODO: Add SetFont method
         public static void SetFontSize(int width, int height)
         {
             CONSOLE_FONT_INFO_EX cfi = new CONSOLE_FONT_INFO_EX();

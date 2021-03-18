@@ -5,13 +5,14 @@ using ConsoleLibrary.Input;
 using ConsoleLibrary.Input.Events;
 using System;
 using System.Diagnostics;
-using System.Drawing;
+//using System.Drawing;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 using ConsoleLibrary;
 using WindowsWrapper;
 using ConsoleLibrary.TextExtensions;
 using System.Linq;
+using ConsoleLibrary.Structures;
 
 namespace ConsoleApiTest
 {
@@ -57,15 +58,19 @@ namespace ConsoleApiTest
         int squareX = 2;
         int squareY = 1;
         TextBox textBox;
+        TextBox dataBox;
         ColorfulString colorfulString;
         string[] strings;
-        Graphics g = Graphics.FromHwnd(Process.GetCurrentProcess().MainWindowHandle);
 
         int anchorX = 0;
         int anchorY = 0;
         bool active = false;
         bool scalingX = false;
         bool scalingY = false;
+
+        static Rectangle r0 = new Rectangle(20, 10, 8, 4);
+        static Rectangle r1 = new Rectangle(22, 11, 8, 4);
+        Rectangle r2 = r0.Intersect(r1);
 
         public TestApp(int width = 90, int height = 40) : base(width, height)
         {
@@ -76,32 +81,29 @@ namespace ConsoleApiTest
         {
             base.Init();
 
-            //ConsoleInput.KeyPressed += ConsoleInput_KeyPressed;
-
-            //return;
             buffer = ConsoleRenderer.ActiveBuffer;
-
-            //textBox = new TextBox(controlManager)
-            //{
-            //    Left = Width / 2,
-            //    Top = Height / 2,
-            //    Text = lorem,
-            //    Width = 20,
-            //    Height = 5,
-            //    Attributes = CharAttribute.ForegroundWhite
-            //};
 
             textBox = new TextBox(controlManager)
             {
-                Width = "Hello".Length + 6,
-                Height = 10,
+                Width = 34,
+                Height = 13,
                 Text = "Hello there",
                 Attributes = CharAttribute.ForegroundWhite | CharAttribute.BackgroundDarkRed,
                 WordBreak = WordBreak.Hard,
-                TextAlign = TextAlign.Center
+                TextAlign = TextAlign.Left
             };
+            textBox.Text = lorem;
             textBox.MousePressed += TextBox_MousePressed;
             textBox.MouseReleased += TextBox_MouseReleased;
+
+            dataBox = new TextBox(controlManager)
+            {
+                Width = 20,
+                Height = 1,
+                Name = "hello",
+                Text = textBox.Rectangle.Size.ToString(),
+                Attributes = CharAttribute.ForegroundGreen
+            };
 
             colorfulString = new ColorfulString
             {
@@ -185,8 +187,8 @@ namespace ConsoleApiTest
         private void TextBox_MousePressed(object sender, MouseEventArgs e)
         {
             (int x, int y) = e.Location;
-            scalingX = x == textBox.Right - 1 && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed);
-            scalingY = y == textBox.Bottom - 1 && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed);
+            scalingX = x == textBox.Right && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed);
+            scalingY = y == textBox.Bottom && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed);
 
             if (scalingX || scalingY)
             {
@@ -199,8 +201,6 @@ namespace ConsoleApiTest
                 anchorY = y - textBox.Top;
             }
             active = true;
-
-            //Console.WriteLine(e.Location);
         }
 
         private void TextBox_MouseReleased(object sender, MouseEventArgs e)
@@ -208,16 +208,13 @@ namespace ConsoleApiTest
             active = false;
         }
 
-        int prevX = 0;
-        int prevY = 0;
         private void ConsoleInput_MouseDragged(object sender, MouseEventArgs e)
         {
-            //Debug.WriteLine("Drag");
             if (active)
             {
                 (int x, int y) = e.Location;
-                var old = textBox.Rectangle;
-                buffer.Clear();
+
+                textBox.BeginUpdate();
 
                 if ((scalingX || scalingY) && e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed))
                 {
@@ -231,47 +228,33 @@ namespace ConsoleApiTest
                     textBox.Left = x - anchorX;
                     textBox.Top = y - anchorY;
                 }
-
-                textBox.Invalidate();
-                //ConsoleRenderer.RenderOutput();
-                ConsoleRenderer.RenderArea(old);
-                ConsoleRenderer.RenderArea(textBox.Rectangle);
+                textBox.EndUpdate();
             }
-            //if (x != prevX || y != prevY)
-            //{
-            //    prevX = x;
-            //    prevY = y;
-            //    squareX = x - square.GetLength(1) / 2;
-            //    squareY = y - square.GetLength(0) / 2;
-            //    Draw();
-            //}
         }
 
         private void ConsoleInput_KeyPressed(KeyEventArgs e)
         {
             if (e.Key == ConsoleKey.Escape)
             {
-                //ConsoleRenderer.Clear();
                 Exit();
             }
 
+            bool leftControl = e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed);
 
-            if (e.Key == ConsoleKey.S && e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed))
+            if (e.Key == ConsoleKey.S && leftControl)
             {
                 var area = ClientArea;
                 var size = area.Size;
-                using (Bitmap b = new Bitmap(size.X, size.Y, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
-                using (Graphics g = Graphics.FromImage(b))
+                using (System.Drawing.Bitmap b = new System.Drawing.Bitmap(size.X, size.Y, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
+                using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
                 {
-                    g.CopyFromScreen(area.UpperLeft, new Point(0, 0), new Size(size));
+                    g.CopyFromScreen(area.UpperLeft, new System.Drawing.Point(0, 0), new System.Drawing.Size(size));
                     b.Save("Test.png");
                 }
             }
 
-            var old = textBox.Rectangle;
-            buffer.Clear();
-
-            if (e.ControlKeyState.HasFlag(ControlKeyState.LeftCtrlPressed) || e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed))
+            textBox.BeginUpdate();
+            if (leftControl || e.ControlKeyState.HasFlag(ControlKeyState.ShiftPressed))
             {
                 switch (e.Key)
                 {
@@ -319,41 +302,35 @@ namespace ConsoleApiTest
                         break;
                 }
             }
-            //if (e.Key == ConsoleKey.F)
-            //{
-            //    textBox.Width -= 1;
-            //}
-            textBox.Invalidate();
-            ConsoleRenderer.RenderArea(old);
-            ConsoleRenderer.RenderArea(textBox.Rectangle);
-            //switch (e.Key)
-            //{
-            //    case ConsoleKey.A:
-            //    case ConsoleKey.LeftArrow:
-            //        squareX--;
-            //        break;
-            //    case ConsoleKey.W:
-            //    case ConsoleKey.UpArrow:
-            //        squareY--;
-            //        break;
-            //    case ConsoleKey.D:
-            //    case ConsoleKey.RightArrow:
-            //        squareX++;
-            //        break;
-            //    case ConsoleKey.S:
-            //    case ConsoleKey.DownArrow:
-            //        squareY++;
-            //        break;
-            //    default:
-            //        break;
-            //}
-            //Draw();
+            if (e.Key == ConsoleKey.F)
+            {
+                if (leftControl)
+                {
+                    textBox.Left = 0;
+                    textBox.Top = 0;
+                    textBox.Width = Width;
+                    textBox.Height = Height;
+                }
+                else
+                    UpdateColor();
+            }
+            if (e.Key == ConsoleKey.R && leftControl)
+            {
+                textBox.Left = 0;
+                textBox.Top = 0;
+                textBox.Width = 34;
+                textBox.Height = 13;
+            }
+            if (e.Key == ConsoleKey.C && leftControl)
+            {
+                textBox.Left = Width / 2 - textBox.Width / 2;
+                textBox.Top = Height / 2 - textBox.Height / 2;
+            }
+            textBox.EndUpdate();
 
-            //Draw();
-            //if (e.Key == ConsoleKey.F)
-            //MyConsole.Fill(new CharInfo());
-            //ConsoleRenderer.Clear();
-            //    buffer.Clear();
+            dataBox.BeginUpdate();
+            dataBox.Text = textBox.Rectangle.Size.ToString();
+            dataBox.EndUpdate();
         }
 
         private void Draw()
@@ -373,6 +350,9 @@ namespace ConsoleApiTest
             //buffer.Draw("Hello", 10, Height - 1);
 
             controlManager.DrawControls();
+            buffer.FillRect(r0, CharAttribute.BackgroundCyan);
+            buffer.FillRect(r1, CharAttribute.BackgroundRed);
+            buffer.FillRect(r2, CharAttribute.BackgroundYellow);
             ConsoleRenderer.RenderOutput();
         }
 

@@ -50,6 +50,11 @@ namespace ConsoleLibrary
             Exit();
         }
 
+        protected void UpdateColor()
+        {
+            MyConsole.UpdateColor();
+        }
+
         protected void Exit()
         {
             MyConsole.Exit();

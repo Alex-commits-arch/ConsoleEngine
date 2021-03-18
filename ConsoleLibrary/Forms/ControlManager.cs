@@ -1,6 +1,8 @@
-﻿using ConsoleLibrary.Forms.Controls;
+﻿using ConsoleLibrary.Drawing;
+using ConsoleLibrary.Forms.Controls;
 using ConsoleLibrary.Input;
 using ConsoleLibrary.Input.Events;
+using ConsoleLibrary.Structures;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,6 +13,8 @@ namespace ConsoleLibrary.Forms
     {
         private int prevMouseX;
         private int prevMouseY;
+        private bool updating = false;
+        private Rectangle oldRectangle;
         private Control controlUnderMouse;
         private readonly List<Control> controls;
         private readonly Dictionary<EventType, EventHandlerList> events;
@@ -87,14 +91,54 @@ namespace ConsoleLibrary.Forms
 
         private Control ControlUnderMouse(int x, int y)
         {
-            return controls
-                .Where(control => control.Visible && control.Enabled && control.ContainsPoint(x, y))
-                .LastOrDefault();
+            for (int i = controls.Count - 1; i >= 0; i--)
+            {
+                Control control = controls[i];
+                if (control.Visible && control.Enabled && control.ContainsPoint(x, y))
+                    return control;
+            }
+            return null;
+        }
+
+        private void IntersectingControls(Rectangle rect)
+        {
+
         }
 
         private void InvokeMouseEvent(EventType type, Control control, MouseEventArgs e)
         {
             (events[type][control] as MouseEventHandler)?.Invoke(control, e);
+        }
+
+        public void BeginUpdate(Control control)
+        {
+            oldRectangle = control.Rectangle;
+            updating = true;
+            control.Invalidate();
+        }
+
+        public void EndUpdate(Control control)
+        {
+            if (updating)
+            {
+                ConsoleRenderer.ActiveBuffer.Clear(oldRectangle);
+                foreach (var ctrl in controls)
+                    if (ctrl != control && ctrl.IntersectsWith(oldRectangle))
+                        ctrl.Draw(ctrl.Rectangle.Intersect(oldRectangle));
+                control.Draw();
+
+                int index = controls.IndexOf(control);
+                for (int i = index + 1; i < controls.Count; i++)
+                {
+                    var ctrl = controls[i];
+                    if (ctrl.IntersectsWith(control.Rectangle))
+                        ctrl.Draw(ctrl.Rectangle.Intersect(control.Rectangle));
+                }
+
+                ConsoleRenderer.RenderArea(oldRectangle);
+                ConsoleRenderer.RenderArea(control.Rectangle);
+                updating = false;
+            }
         }
 
         public void DrawControls()
