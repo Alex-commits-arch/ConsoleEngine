@@ -71,6 +71,7 @@
     <Compile Include="Forms\ControlManager.cs" />
     <Compile Include="Forms\Controls\Control.cs" />
     <Compile Include="Forms\Controls\TextBox.cs" />
+    <Compile Include="Forms\Controls\VerticalScrollbar.cs" />
     <Compile Include="Forms\EventType.cs" />
     <Compile Include="Forms\FormApp.cs" />
     <Compile Include="Forms\Components\Border.cs" />
@@ -87,10 +88,10 @@
     <Compile Include="Drawing\Shapes\IShape.cs" />
     <Compile Include="Drawing\Shapes\TextBox.cs" />
     <Compile Include="Input\ConsoleInput.cs" />
+    <Compile Include="Input\Events\MouseEventHandler.cs" />
     <Compile Include="Input\Events\ResizedEventArgs.cs" />
     <Compile Include="Input\Events\KeyEventArgs.cs" />
     <Compile Include="Input\Events\MouseEventArgs.cs" />
-    <Compile Include="Input\Events\MouseEventHandler.cs" />
     <Compile Include="MyConsole.cs" />
     <Compile Include="Structures\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

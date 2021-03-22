@@ -9,7 +9,7 @@ using ConsoleLibrary.Drawing;
 
 namespace ConsoleLibrary.Forms.Controls
 {
-    public abstract class Control// : Component
+    public abstract class Control
     {
         protected ControlManager controlManager;
 
@@ -26,38 +26,22 @@ namespace ConsoleLibrary.Forms.Controls
         public int Left
         {
             get => rectangle.Left;
-            set
-            {
-                //if (value != rectangle.Left) Invalidate();
-                rectangle.Left = value;
-            }
+            set => rectangle.Left = value;
         }
         public int Top
         {
             get => rectangle.Top;
-            set
-            {
-                //if (value != rectangle.Top) Invalidate();
-                rectangle.Top = value;
-            }
+            set => rectangle.Top = value;
         }
-        public int Width
+        public virtual int Width
         {
             get => rectangle.Width;
-            set
-            {
-                //if (value != rectangle.Width) Invalidate();
-                rectangle.Width = Math.Max(0, value);
-            }
+            set => rectangle.Width = Math.Max(0, value);
         }
-        public int Height
+        public virtual int Height
         {
             get => rectangle.Height;
-            set
-            {
-                //if (value != rectangle.Height) Invalidate();
-                rectangle.Height = Math.Max(0, value);
-            }
+            set => rectangle.Height = Math.Max(0, value);
         }
 
         public int Right => rectangle.Right;
@@ -80,10 +64,22 @@ namespace ConsoleLibrary.Forms.Controls
             remove => controlManager.UnsubscribeMouseEvent(EventType.MouseReleased, this, value);
         }
 
+        public event MouseEventHandler MouseDoubleClick
+        {
+            add => controlManager.SubscribeMouseEvent(EventType.MouseDoubleClick, this, value);
+            remove => controlManager.UnsubscribeMouseEvent(EventType.MouseDoubleClick, this, value);
+        }
+
         public event MouseEventHandler MouseMoved
         {
             add => controlManager.SubscribeMouseEvent(EventType.MouseMoved, this, value);
             remove => controlManager.UnsubscribeMouseEvent(EventType.MouseMoved, this, value);
+        }
+
+        public event MouseEventHandler MouseDragged
+        {
+            add => controlManager.SubscribeMouseEvent(EventType.MouseDragged, this, value);
+            remove => controlManager.UnsubscribeMouseEvent(EventType.MouseDragged, this, value);
         }
 
         public event MouseEventHandler MouseEnter
@@ -121,6 +117,8 @@ namespace ConsoleLibrary.Forms.Controls
 
         public bool IntersectsWith(Rectangle rectangle) => Rectangle.IntersectsWith(rectangle);
 
+        public Point GetRelativeLocation(Point p) => new Point(p.X - Left, p.Y - Top);
+
         /// <summary>
         /// Reinitializes the buffer with the current width and height
         /// </summary>
@@ -134,10 +132,14 @@ namespace ConsoleLibrary.Forms.Controls
 
         public void Draw(Rectangle rect)
         {
+            if(this is VerticalScrollbar)
+            {
+
+            }
             rect.Left -= Left;
             rect.Top -= Top;
             var area = buffer.GetArea(rect);
-            ConsoleRenderer.ActiveBuffer.Draw(area, rect.Left, rect.Top);
+            ConsoleRenderer.ActiveBuffer.Draw(area, rect.Left + Left, rect.Top + Top);
         }
 
         public void Draw()

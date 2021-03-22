@@ -187,6 +187,15 @@ namespace WindowsWrapper
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool ReadConsoleInput(
+            ConsoleHandle hConsoleInput,
+            [MarshalAs(UnmanagedType.LPArray)]
+            [Out] INPUT_RECORD[] lpBuffer,
+            uint nLength,
+            out uint lpNumberOfEventsRead
+        );
+
+        [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool ReadConsoleOutputCharacter(
             ConsoleHandle hConsoleOutput,
             [Out] char[] lpCharacter,

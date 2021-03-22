@@ -44,7 +44,8 @@ namespace ConsoleLibrary.Forms
         {
             //ConsoleModes mode = 0;
             //MyConsole.GetMode(ref mode);
-            MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_WINDOW_INPUT | ConsoleModes.ENABLE_MOUSE_INPUT);
+            //MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_WINDOW_INPUT | ConsoleModes.ENABLE_MOUSE_INPUT);
+            MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_MOUSE_INPUT);
         }
 
         public override void Init()

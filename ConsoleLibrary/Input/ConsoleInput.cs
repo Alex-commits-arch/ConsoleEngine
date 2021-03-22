@@ -1,6 +1,8 @@
 ﻿using ConsoleLibrary.Input.Events;
 using System;
 using System.Diagnostics;
+using WindowsWrapper;
+using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
@@ -24,119 +26,126 @@ namespace ConsoleLibrary.Input
 
         private static readonly bool[] keyStates = new bool[65535];
 
+        private static readonly ConsoleHandle inputHandle = WinApi.GetStdHandle(ConsoleConstants.STD_INPUT_HANDLE);
+
         public static void InputLoop()
         {
-            var record = new INPUT_RECORD();
-            uint recordLen = 0;
-            MouseButton prevMouseState = MouseButton.None;
+            uint toRead = 128;
+            var records = new INPUT_RECORD[toRead];
             int prevWidth = MyConsole.Width;
             int prevHeight = MyConsole.Height;
+            MouseButton prevMouseState = MouseButton.None;
             COORD prevMouseLocation = new COORD();
+
             while (!MyConsole.Exiting)
             {
-                MyConsole.ReadClientInput(ref record, 1, ref recordLen);
-                switch (record.EventType)
+                WinApi.ReadConsoleInput(inputHandle, records, toRead, out uint recordLen);
+
+                for (int i = 0; i < recordLen; i++)
                 {
-                    case EventType.Mouse:
-                        {
-                            var mouseEvent = record.Event.MouseEvent;
-                            var button = mouseEvent.ButtonState;
-                            var flags = mouseEvent.EventFlags;
-                            var location = mouseEvent.MousePosition;
+                    var record = records[i];
 
-                            bool mousePressed = prevMouseState == MouseButton.None && button != MouseButton.None;
-                            bool mouseReleased = prevMouseState != MouseButton.None && button == MouseButton.None;
-                            bool mouseHeld = prevMouseState != MouseButton.None && button != MouseButton.None;
-                            //mouseEvent.co
-                            var args = new MouseEventArgs
+                    switch (record.EventType)
+                    {
+                        case EventType.Mouse:
                             {
-                                Button = button,
-                                Location = location,
-                                ControlKeyState = mouseEvent.ControlKeyState
-                            };
+                                var mouseEvent = record.Event.MouseEvent;
+                                var button = mouseEvent.ButtonState;
+                                var flags = mouseEvent.EventFlags;
+                                var location = mouseEvent.MousePosition;
 
-                            bool sameLocation = location.Equals(prevMouseLocation);
+                                bool mousePressed = prevMouseState == MouseButton.None && button != MouseButton.None;
+                                bool mouseReleased = prevMouseState != MouseButton.None && button == MouseButton.None;
+                                bool mouseHeld = prevMouseState != MouseButton.None && button != MouseButton.None;
 
-                            if (mousePressed && flags.HasFlag(MouseState.DoubleClick))
-                                MouseDoubleClick?.Invoke(null, args);
-                            else if (mousePressed)
-                                MousePressed?.Invoke(null, args);
-                            else if (mouseReleased)
-                                MouseReleased?.Invoke(null, args);
-                            else if (mouseHeld && flags.HasFlag(MouseState.Moved) && !sameLocation)
-                                MouseDragged?.Invoke(null, args);
-                            else if (flags.HasFlag(MouseState.Moved) && !sameLocation)
-                                MouseMoved?.Invoke(null, args);
-
-                            prevMouseState = button;
-                            prevMouseLocation = location;
-                        }
-                        break;
-
-                    case EventType.Key:
-                        {
-                            var keyEvent = record.Event.KeyEvent;
-
-                            var eventArgs = new KeyEventArgs
-                            {
-                                Key = (ConsoleKey)keyEvent.VirtualKeyCode,
-                                ControlKeyState = keyEvent.ControlKeyState
-                            };
-
-                            bool currState = keyEvent.KeyDown;
-                            bool prevState = keyStates[keyEvent.VirtualKeyCode];
-
-                            if (currState && !prevState)
-                                KeyPressed?.Invoke(eventArgs);
-                            else if (prevState && !currState)
-                                KeyReleased?.Invoke(eventArgs);
-                            else if (prevState && currState)
-                                KeyHeld?.Invoke(eventArgs);
-
-                            keyStates[keyEvent.VirtualKeyCode] = keyEvent.KeyDown;
-                        }
-                        break;
-
-                    case EventType.Resize:
-                        {
-                            var clientSize = MyConsole.GetClientSize();
-                            var fontSize = MyConsole.GetFontSize();
-                            int w = clientSize.X / fontSize.X;
-                            int h = clientSize.Y / fontSize.Y;
-
-                            if (prevWidth != w || prevHeight != h)
-                            {
-                                MyConsole.SetSize(w, h);
-                                MyConsole.HideCursor();
-                                Drawing.ConsoleRenderer.Resize(w, h);
-                                Resized?.Invoke(new ResizedEventArgs
+                                var args = new MouseEventArgs
                                 {
-                                    Width = w,
-                                    Height = h
-                                });
-                                prevWidth = w;
-                                prevHeight = h;
+                                    Button = button,
+                                    Location = location,
+                                    ControlKeyState = mouseEvent.ControlKeyState
+                                };
+
+                                bool sameLocation = location.Equals(prevMouseLocation);
+
+                                if (mousePressed && flags.HasFlag(MouseState.DoubleClick))
+                                    MouseDoubleClick?.Invoke(null, args);
+                                else if (mousePressed)
+                                    MousePressed?.Invoke(null, args);
+                                else if (mouseReleased)
+                                    MouseReleased?.Invoke(null, args);
+                                else if (mouseHeld && flags.HasFlag(MouseState.Moved) && !sameLocation)
+                                    MouseDragged?.Invoke(null, args);
+                                else if (flags.HasFlag(MouseState.Moved) && !sameLocation)
+                                    MouseMoved?.Invoke(null, args);
+
+                                prevMouseState = button;
+                                prevMouseLocation = location;
                             }
-                        }
-                        break;
+                            break;
 
-                    case EventType.Menu:
-                        {
-                            var id = record.Event.MenuEvent.dwCommandId;
-                            Debug.WriteLine(id);
-                        }
-                        break;
-                    case EventType.Focus:
-                        {
-                            var focused = record.Event.FocusEvent.bSetFocus;
+                        case EventType.Key:
+                            {
+                                var keyEvent = record.Event.KeyEvent;
 
-                            //if (focused == 1)
-                            //    MyConsole.UpdateMinimumSize();
-                        }
-                        break;
-                    default:
-                        Debug.WriteLine("Unhandled event: " + record.EventType);
-                        break;
+                                var eventArgs = new KeyEventArgs
+                                {
+                                    Key = (ConsoleKey)keyEvent.VirtualKeyCode,
+                                    ControlKeyState = keyEvent.ControlKeyState
+                                };
+
+                                bool currState = keyEvent.KeyDown;
+                                bool prevState = keyStates[keyEvent.VirtualKeyCode];
+
+                                if (currState && !prevState)
+                                    KeyPressed?.Invoke(eventArgs);
+                                else if (prevState && !currState)
+                                    KeyReleased?.Invoke(eventArgs);
+                                else if (prevState && currState)
+                                    KeyHeld?.Invoke(eventArgs);
+
+                                keyStates[keyEvent.VirtualKeyCode] = keyEvent.KeyDown;
+                            }
+                            break;
+
+                        case EventType.Resize:
+                            {
+                                var clientSize = MyConsole.GetClientSize();
+                                var fontSize = MyConsole.GetFontSize();
+                                int w = clientSize.X / fontSize.X;
+                                int h = clientSize.Y / fontSize.Y;
+
+                                if (prevWidth != w || prevHeight != h)
+                                {
+                                    MyConsole.SetSize(w, h);
+                                    MyConsole.HideCursor();
+                                    Drawing.ConsoleRenderer.Resize(w, h);
+                                    Resized?.Invoke(new ResizedEventArgs
+                                    {
+                                        Width = w,
+                                        Height = h
+                                    });
+                                    prevWidth = w;
+                                    prevHeight = h;
+                                }
+                            }
+                            break;
+
+                        case EventType.Menu:
+                            {
+                                var id = record.Event.MenuEvent.dwCommandId;
+                                Debug.WriteLine(id);
+                            }
+                            break;
+                        case EventType.Focus:
+                            {
+                                var focused = record.Event.FocusEvent.bSetFocus;
+                            }
+                            break;
+                        default:
+                            Debug.WriteLine("Unhandled event: " + record.EventType);
+                            break;
+                    }
+
                 }
             }
         }

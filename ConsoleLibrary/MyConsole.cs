@@ -185,12 +185,6 @@ namespace ConsoleLibrary
         public static void GetMode(ref ConsoleModes mode) => WinApi.GetConsoleMode(inputHandle, ref mode);
         public static void SetMode(ConsoleModes mode) => WinApi.SetConsoleMode(inputHandle, mode);
 
-        //TODO: Maybe move to ConsoleInput
-        public static void ReadClientInput(ref INPUT_RECORD record, int length, ref uint recordLen)
-        {
-            WinApi.ReadConsoleInput(inputHandle, ref record, 1, ref recordLen);
-        }
-
         public static void WriteOutputCharacter(char[] chars, int length, COORD coord, out int numCharsWritten)
         {
             WinApi.WriteConsoleOutputCharacterW(bufferHandle, chars, length, coord, out numCharsWritten);

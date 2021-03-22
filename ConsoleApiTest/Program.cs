@@ -59,6 +59,7 @@ namespace ConsoleApiTest
         int squareY = 1;
         TextBox textBox;
         TextBox dataBox;
+        VerticalScrollbar vs;
         ColorfulString colorfulString;
         string[] strings;
 
@@ -105,6 +106,16 @@ namespace ConsoleApiTest
                 Attributes = CharAttribute.ForegroundGreen
             };
             dataBox.Width = dataBox.Text.Length;
+
+
+            vs = new VerticalScrollbar(controlManager)
+            {
+                Height = 5,
+                Left = 20,
+                Top = 0,
+                Attributes = CharAttribute.BackgroundDarkYellow
+            };
+
 
             colorfulString = new ColorfulString
             {
@@ -178,10 +189,20 @@ namespace ConsoleApiTest
 
             ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
 
-            ConsoleInput.Resized += delegate
-            {
-                Draw();
-            };
+            ConsoleInput.Resized += ConsoleInput_Resized;
+            //ConsoleInput.Resized += delegate
+            //{
+            //    Draw();
+            //};
+            Draw();
+        }
+
+        private void ConsoleInput_Resized(ResizedEventArgs keyEventArgs)
+        {
+            vs.BeginUpdate();
+            vs.Left = Width - vs.Width;
+            vs.Height = Height;
+            vs.EndUpdate();
             Draw();
         }
 
