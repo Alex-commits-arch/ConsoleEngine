@@ -39,8 +39,13 @@ namespace ConsoleApiTest
             //Console.ReadLine();
 
             //new TestApp(84, 42).Init();
-            new TestApp(80, 20).Init();
-            ConsoleInput.InputLoop();
+
+            Console.WriteLine(new { hello = "test" });
+
+
+            //new TestApp(80, 20).Init();
+            //ConsoleInput.InputLoop();
+            Console.ReadLine();
         }
 
         private static int A(int a, int b, int c) => Math.Min(c - a, b);
@@ -60,6 +65,7 @@ namespace ConsoleApiTest
         TextBox textBox;
         TextBox dataBox;
         VerticalScrollbar vs;
+        HorizontalScrollbar hs;
         ColorfulString colorfulString;
         string[] strings;
 
@@ -95,6 +101,7 @@ namespace ConsoleApiTest
             };
             textBox.Text = lorem;
             textBox.MousePressed += TextBox_MousePressed;
+            textBox.Visible = false;
             //textBox.MouseReleased += TextBox_MouseReleased;
 
             dataBox = new TextBox(controlManager)
@@ -106,14 +113,27 @@ namespace ConsoleApiTest
                 Attributes = CharAttribute.ForegroundGreen
             };
             dataBox.Width = dataBox.Text.Length;
+            dataBox.Visible = false;
 
 
             vs = new VerticalScrollbar(controlManager)
             {
                 Height = 5,
                 Left = 20,
-                Top = 0,
-                Attributes = CharAttribute.BackgroundDarkYellow
+                Top = 4
+            };
+
+            hs = new HorizontalScrollbar(controlManager)
+            {
+                Width = 10,
+                Left = 3,
+                Top = Height - 1
+            };
+
+            new ScrollableTextBox(controlManager)
+            {
+                Width= 20,
+                Height= 5
             };
 
 
@@ -200,9 +220,17 @@ namespace ConsoleApiTest
         private void ConsoleInput_Resized(ResizedEventArgs keyEventArgs)
         {
             vs.BeginUpdate();
+            vs.Top = 0;
             vs.Left = Width - vs.Width;
-            vs.Height = Height;
+            vs.Height = Height - 1;
             vs.EndUpdate();
+
+            textBox.Visible = false;
+            hs.BeginUpdate();
+            hs.Left = 0;
+            hs.Top = Height - 1;
+            hs.Width = Width - 2;
+            hs.EndUpdate();
             Draw();
         }
 
@@ -379,7 +407,7 @@ namespace ConsoleApiTest
             Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
             //gradient = new Gradient(CharAttribute.BackgroundCyan, CharAttribute.BackgroundMagenta, CharAttribute.ForegroundYellow, CharAttribute.BackgroundBlack);
             //gradient = new Gradient(CharAttribute.BackgroundBlue, CharAttribute.BackgroundCyan, CharAttribute.BackgroundGreen);
-            //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
+            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
             gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
             //gradient.Reverse();
             buffer.Draw(gradient, 0, 0, Width, Height / 2);

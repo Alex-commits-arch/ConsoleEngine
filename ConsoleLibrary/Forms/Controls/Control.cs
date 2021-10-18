@@ -22,6 +22,7 @@ namespace ConsoleLibrary.Forms.Controls
         protected BufferArea buffer;
 
         public Rectangle Rectangle { get => rectangle; set => rectangle = value; }
+        public BufferArea Buffer => buffer;
 
         public int Left
         {
@@ -132,24 +133,26 @@ namespace ConsoleLibrary.Forms.Controls
 
         public void Draw(Rectangle rect)
         {
-            if(this is VerticalScrollbar)
+            if (Visible)
             {
-
+                rect.Left -= Left;
+                rect.Top -= Top;
+                var area = buffer.GetArea(rect);
+                ConsoleRenderer.ActiveBuffer.Draw(area, rect.Left + Left, rect.Top + Top);
             }
-            rect.Left -= Left;
-            rect.Top -= Top;
-            var area = buffer.GetArea(rect);
-            ConsoleRenderer.ActiveBuffer.Draw(area, rect.Left + Left, rect.Top + Top);
         }
 
         public void Draw()
         {
-            if (isInvalid)
+            if (Visible)
             {
-                RefreshBuffer();
-                isInvalid = false;
+                if (isInvalid)
+                {
+                    RefreshBuffer();
+                    isInvalid = false;
+                }
+                ConsoleRenderer.ActiveBuffer.Draw(buffer, Left, Top);
             }
-            ConsoleRenderer.ActiveBuffer.Draw(buffer, Left, Top);
         }
     }
 }

@@ -151,7 +151,7 @@ namespace ConsoleLibrary.Drawing
             FillRect(rect.Left, rect.Top, rect.Width, rect.Height, charInfo);
         }
 
-        public void FillRect(int x, int y, int width, int height, CharAttribute attributes)
+        public void FillRect(int x, int y, int width, int height, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
         {
             FillRect(x, y, width, height, new CharInfo { UnicodeChar = '\0', Attributes = attributes });
         }

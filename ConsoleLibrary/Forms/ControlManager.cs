@@ -112,9 +112,12 @@ namespace ConsoleLibrary.Forms
 
         public void BeginUpdate(Control control)
         {
-            oldRectangle = control.Rectangle;
-            updating = true;
-            control.Invalidate();
+            if (control.Visible)
+            {
+                oldRectangle = control.Rectangle;
+                updating = true;
+                control.Invalidate();
+            }
         }
 
         public void EndUpdate(Control control)
@@ -144,7 +147,8 @@ namespace ConsoleLibrary.Forms
         public void DrawControls()
         {
             foreach (var control in controls)
-                control.Draw();
+                if (control.Visible)
+                    control.Draw();
         }
 
         public void Add(Control control) => controls.Add(control);

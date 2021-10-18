@@ -70,6 +70,9 @@
     <Compile Include="Forms\Components\ButtonBase.cs" />
     <Compile Include="Forms\ControlManager.cs" />
     <Compile Include="Forms\Controls\Control.cs" />
+    <Compile Include="Forms\Controls\HorizontalScrollbar.cs" />
+    <Compile Include="Forms\Controls\ScrollableTextBox.cs" />
+    <Compile Include="Forms\Controls\Scrollbar.cs" />
     <Compile Include="Forms\Controls\TextBox.cs" />
     <Compile Include="Forms\Controls\VerticalScrollbar.cs" />
     <Compile Include="Forms\EventType.cs" />
