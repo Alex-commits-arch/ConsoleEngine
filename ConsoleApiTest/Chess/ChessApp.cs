@@ -182,7 +182,11 @@ namespace ConsoleApiTest.Chess
                         pieceShape.Fill(pieceChars[piece.color][piece.type]);
                         piecesBuffer.Draw(
                             pieceShape,
-                            pieceColors[piece.color],
+                            pieceColors[piece.color] | Colors.COMMON_LVB_LEADING_BYTE,
+                            windowCenter - boardCenter + new Location(x * tileWidth - 1, y * tileHeight) + tileCenter);
+                        piecesBuffer.Draw(
+                            pieceShape,
+                            pieceColors[piece.color] | Colors.COMMON_LVB_TRAILING_BYTE,
                             windowCenter - boardCenter + new Location(x * tileWidth, y * tileHeight) + tileCenter);
                     }
                 }
