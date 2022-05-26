@@ -27,9 +27,9 @@ namespace ConsoleApiTest.Chess
             ResetBoard();
         }
 
-        public Location[] GetMoves(Location location)
+        public Point[] GetMoves(Point location)
         {
-            ChessPiece piece = board[location.x, location.y];
+            ChessPiece piece = board[location.X, location.Y];
             return ChessLogic.GetMoves(piece, location, board);
         }
 
@@ -55,46 +55,46 @@ namespace ConsoleApiTest.Chess
             }
         }
 
-        public bool IsKing(Location location)
+        public bool IsKing(Point location)
         {
-            return board[location.x, location.y].type == PieceType.King;
+            return board[location.X, location.Y].type == PieceType.King;
         }
 
-        public bool CanMove(PieceColor player, Location location)
+        public bool CanMove(PieceColor player, Point location)
         {
             return ContainsPieceAt(location) && ColorAt(location) == player;
         }
 
-        private PieceColor ColorAt(Location location)
+        private PieceColor ColorAt(Point location)
         {
-            return board[location.x, location.y].color;
+            return board[location.X, location.Y].color;
         }
 
-        public PieceType TypeAt(Location location)
+        public PieceType TypeAt(Point location)
         {
-            return board[location.x, location.y].type;
+            return board[location.X, location.Y].type;
         }
 
-        private bool ContainsPieceAt(Location location)
+        private bool ContainsPieceAt(Point location)
         {
-            return board[location.x, location.y].type != PieceType.None;
+            return board[location.X, location.Y].type != PieceType.None;
         }
 
-        public void Move(Location from, Location to)
+        public void Move(Point from, Point to)
         {
-            board[to.x, to.y] = board[from.x, from.y];
-            board[from.x, from.y] = new ChessPiece(PieceType.None, PieceColor.Black);
+            board[to.X, to.Y] = board[from.X, from.Y];
+            board[from.X, from.Y] = new ChessPiece(PieceType.None, PieceColor.Black);
         }
 
-        public Location[] GetLocations(PieceColor color)
+        public Point[] GetLocations(PieceColor color)
         {
-            List<Location> locations = new List<Location>();
+            List<Point> locations = new List<Point>();
             for (int x = 0; x < 8; x++)
             {
                 for (int y = 0; y < 8; y++)
                 {
                     if (board[x, y].type != PieceType.None && board[x, y].color == color)
-                        locations.Add(new Location(x, y));
+                        locations.Add(new Point(x, y));
                 }
             }
             return locations.ToArray();
@@ -102,7 +102,7 @@ namespace ConsoleApiTest.Chess
 
         private class ChessLogic
         {
-            public static Location[] GetMoves(ChessPiece piece, Location location, ChessPiece[,] board)
+            public static Point[] GetMoves(ChessPiece piece, Point location, ChessPiece[,] board)
             {
                 int direction = piece.color == PieceColor.White ? -1 : 1;
 
@@ -111,49 +111,49 @@ namespace ConsoleApiTest.Chess
                     case PieceType.Pawn:
                         return GetPawnMoves(location, board, piece.color);
                     case PieceType.King:
-                        return GetJumps(location, new Location[] { new Location(-1, -1), new Location(0, -1), new Location(1, -1),
-                                                                   new Location(-1,  0),                      new Location(1,  0),
-                                                                   new Location(-1,  1), new Location(0,  1), new Location(1,  1) }, board, piece.color);
+                        return GetJumps(location, new Point[] { new Point(-1, -1), new Point(0, -1), new Point(1, -1),
+                                                                   new Point(-1,  0),                      new Point(1,  0),
+                                                                   new Point(-1,  1), new Point(0,  1), new Point(1,  1) }, board, piece.color);
                     case PieceType.Knight:
-                        return GetJumps(location, new Location[] { new Location(-2, -1), new Location(-1, -2), new Location(1, -2), new Location(2, -1),
-                                                                   new Location(-2,  1), new Location(-1,  2), new Location(1,  2), new Location(2,  1) }, board, piece.color);
+                        return GetJumps(location, new Point[] { new Point(-2, -1), new Point(-1, -2), new Point(1, -2), new Point(2, -1),
+                                                                   new Point(-2,  1), new Point(-1,  2), new Point(1,  2), new Point(2,  1) }, board, piece.color);
                     case PieceType.Bishop:
-                        return GetPaths(location, new Location[] { new Location(-1, -1), new Location(1, -1),
-                                                                   new Location(-1, +1), new Location(1,  1) }, board, piece.color);
+                        return GetPaths(location, new Point[] { new Point(-1, -1), new Point(1, -1),
+                                                                   new Point(-1, +1), new Point(1,  1) }, board, piece.color);
                     case PieceType.Rook:
-                        return GetPaths(location, new Location[] { new Location( 0, -1), new Location(0, 1),
-                                                                   new Location(-1,  0), new Location(1, 0) }, board, piece.color);
+                        return GetPaths(location, new Point[] { new Point( 0, -1), new Point(0, 1),
+                                                                   new Point(-1,  0), new Point(1, 0) }, board, piece.color);
                     case PieceType.Queen:
-                        return GetPaths(location, new Location[] { new Location( 0, -1), new Location(0,  1),
-                                                                   new Location(-1,  0), new Location(1,  0),
-                                                                   new Location(-1, -1), new Location(1, -1),
-                                                                   new Location(-1, +1), new Location(1,  1) }, board, piece.color);
+                        return GetPaths(location, new Point[] { new Point( 0, -1), new Point(0,  1),
+                                                                   new Point(-1,  0), new Point(1,  0),
+                                                                   new Point(-1, -1), new Point(1, -1),
+                                                                   new Point(-1, +1), new Point(1,  1) }, board, piece.color);
                     default:
                         return null;
                 }
             }
 
-            private static Location[] GetPawnMoves(Location location, ChessPiece[,] board, PieceColor color)
+            private static Point[] GetPawnMoves(Point location, ChessPiece[,] board, PieceColor color)
             {
                 int direction = color == PieceColor.White ? -1 : 1;
-                List<Location> locations = new List<Location>();
-                Location[] directions = {               //relative to direction
-                    new Location(0, direction),         //forward one step
-                    new Location(0, direction * 2),     //forward two steps
-                    new Location(direction, direction), //forward left
-                    new Location(-direction, direction) //forward right
+                List<Point> locations = new List<Point>();
+                Point[] directions = {               //relative to direction
+                    new Point(0, direction),         //forward one step
+                    new Point(0, direction * 2),     //forward two steps
+                    new Point(direction, direction), //forward left
+                    new Point(-direction, direction) //forward right
                 };
 
-                Location dir = location + directions[0];
+                Point dir = location + directions[0];
 
-                if (board.WithinBounds(dir) && board[dir.x, dir.y].type == PieceType.None)
+                if (board.WithinBounds(dir) && board[dir.X, dir.Y].type == PieceType.None)
                 {
                     locations.Add(dir);
                     dir = location + directions[1];
 
                     if (board.WithinBounds(dir)
-                     && board[dir.x, dir.y].type == PieceType.None
-                     && ((direction < 0 && location.y == 6) || location.y == 1) && !ContainsFriend(board, dir, color) && !ContainsEnemy(board, dir, color))
+                     && board[dir.X, dir.Y].type == PieceType.None
+                     && ((direction < 0 && location.Y == 6) || location.Y == 1) && !ContainsFriend(board, dir, color) && !ContainsEnemy(board, dir, color))
                         locations.Add(dir);
                 }
 
@@ -168,13 +168,13 @@ namespace ConsoleApiTest.Chess
                 return locations.ToArray();
             }
 
-            private static Location[] GetPaths(Location location, Location[] directions, ChessPiece[,] board, PieceColor color)
+            private static Point[] GetPaths(Point location, Point[] directions, ChessPiece[,] board, PieceColor color)
             {
-                List<Location> locations = new List<Location>();
+                List<Point> locations = new List<Point>();
 
                 for (int i = 0; i < directions.Length; i++)
                 {
-                    Location sampleLocation = location + directions[i];
+                    Point sampleLocation = location + directions[i];
                     while (board.WithinBounds(sampleLocation) && !ContainsFriend(board, sampleLocation, color))
                     {
                         locations.Add(sampleLocation);
@@ -186,25 +186,25 @@ namespace ConsoleApiTest.Chess
                 return locations.ToArray();
             }
 
-            private static bool ContainsFriend(ChessPiece[,] board, Location location, PieceColor color)
+            private static bool ContainsFriend(ChessPiece[,] board, Point location, PieceColor color)
             {
-                return board[location.x, location.y].type != PieceType.None
-                    && board[location.x, location.y].color == color;
+                return board[location.X, location.Y].type != PieceType.None
+                    && board[location.X, location.Y].color == color;
             }
 
-            private static bool ContainsEnemy(ChessPiece[,] board, Location location, PieceColor color)
+            private static bool ContainsEnemy(ChessPiece[,] board, Point location, PieceColor color)
             {
-                return board[location.x, location.y].type != PieceType.None
-                    && board[location.x, location.y].color != color;
+                return board[location.X, location.Y].type != PieceType.None
+                    && board[location.X, location.Y].color != color;
             }
 
-            private static Location[] GetJumps(Location location, Location[] offsets, ChessPiece[,] board, PieceColor color)
+            private static Point[] GetJumps(Point location, Point[] offsets, ChessPiece[,] board, PieceColor color)
             {
-                List<Location> locations = new List<Location>();
+                List<Point> locations = new List<Point>();
 
                 for (int i = 0; i < offsets.Length; i++)
                 {
-                    Location sampleLocation = location + offsets[i];
+                    Point sampleLocation = location + offsets[i];
                     if (board.WithinBounds(sampleLocation) && !ContainsFriend(board, sampleLocation, color))
                     {
                         locations.Add(sampleLocation);
@@ -219,14 +219,14 @@ namespace ConsoleApiTest.Chess
 
 static class BoardExtensions
 {
-    public static bool WithinBounds(this ChessPiece[,] board, Location location)
+    public static bool WithinBounds(this ChessPiece[,] board, Point location)
     {
-        if(location.y == -1)
+        if(location.Y == -1)
         {
 
         }
-        return location.x >= 0 && location.x <= board.GetUpperBound(0)
-            && location.y >= 0 && location.y <= board.GetUpperBound(1);
+        return location.X >= 0 && location.X <= board.GetUpperBound(0)
+            && location.Y >= 0 && location.Y <= board.GetUpperBound(1);
     }
 }
 

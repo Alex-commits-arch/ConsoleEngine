@@ -20,14 +20,14 @@ namespace ConsoleApiTest.Chess
         public void MakeMove()
         {
             var locations = game.board.GetLocations(PieceColor.Black);
-            Location[] moves = new Location[0];
-            Location from;
+            Point[] moves = new Point[0];
+            Point from;
             do
             {
                 from = locations.ElementAt(rnd.Next(locations.Length));
                 moves = game.board.GetMoves(from);
             } while (moves.Length == 0);
-            Location to = moves.ElementAt(rnd.Next(moves.Length));
+            Point to = moves.ElementAt(rnd.Next(moves.Length));
 
             game.Move(from, to);
         }

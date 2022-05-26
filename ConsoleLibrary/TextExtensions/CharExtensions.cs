@@ -1,6 +1,8 @@
-﻿using ConsoleLibrary.Api.WinApi.Constants;
-using ConsoleLibrary.Api.WinApi.Structs;
-using System.Text;
+﻿using System.Text;
+using WindowsWrapper;
+using WindowsWrapper.Constants;
+using WindowsWrapper.Enums;
+using WindowsWrapper.Structs;
 
 namespace ConsoleLibrary.TextExtensions
 {
@@ -37,7 +39,7 @@ namespace ConsoleLibrary.TextExtensions
                     int i = y * w + x;
                     output[i].UnicodeChar = cArr[x, y];//.FormatUnicode();
                     output[i].AsciiChar = (byte)cArr[x, y];
-                    output[i].Attributes = (ushort)(Colors.FOREGROUND_GREEN | Colors.FOREGROUND_INTENSITY);
+                    output[i].Attributes = CharAttribute.ForegroundGreen;
                 }
             }
             return output;
