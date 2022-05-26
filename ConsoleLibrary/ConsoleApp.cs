@@ -12,7 +12,9 @@ namespace ConsoleLibrary
         public int Height => MyConsole.Height;
         public Point FontSize => MyConsole.GetFontSize();
         public Point ClientSize => MyConsole.GetClientSize();
+        public string Title { get => MyConsole.GetTitle(); set => MyConsole.SetTitle(value); }
         protected Rectangle ClientArea => MyConsole.ClientArea;
+
 
         public ConsoleApp(int width = 40, int height = 30)
         {
@@ -30,13 +32,11 @@ namespace ConsoleLibrary
             if (fullscreen)
             {
                 MyConsole.SetBufferSize(MyConsole.MaximumWidth, MyConsole.MaximumHeight + 1);
-                //MyConsole.SetWindowSize(MyConsole.MaximumWidth - 1, MyConsole.MaximumHeight - 1);
                 MyConsole.SetSize(MyConsole.MaximumWidth, MyConsole.MaximumHeight);
             }
             else if (maximized)
             {
                 MyConsole.SetBufferSize(MyConsole.MaximumWidth, initialBufferHeight+1);
-                //MyConsole.SetWindowSize(MyConsole.MaximumWidth - 1, initialBufferHeight - 1);
                 MyConsole.SetSize(MyConsole.MaximumWidth, initialBufferHeight);
             }
             else

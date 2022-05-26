@@ -17,8 +17,8 @@ namespace ConsoleLibrary
     /// </summary>
     internal static class MyConsole
     {
-        static readonly IntPtr handle = WinApi.GetConsoleWindow();
-        static readonly IntPtr sysMenu = WinApi.GetSystemMenu(handle, false);
+        static readonly IntPtr windowHandle = WinApi.GetConsoleWindow();
+        static readonly IntPtr sysMenu = WinApi.GetSystemMenu(windowHandle, false);
         static readonly ConsoleHandle inputHandle = WinApi.GetStdHandle(ConsoleConstants.STD_INPUT_HANDLE);
         static ConsoleHandle bufferHandle = WinApi.CreateConsoleScreenBuffer(GenericAccess.GENERIC_READ | GenericAccess.GENERIC_WRITE, 0x00000004, IntPtr.Zero, 1, IntPtr.Zero);
 
@@ -38,6 +38,7 @@ namespace ConsoleLibrary
 
         static bool exiting = false;
 
+        public static string Title { get => GetTitle(); set => SetTitle(value); }
         public static int Width => GetConsoleBufferSize().X;
         public static int Height => GetConsoleBufferSize().Y;
         public static int MaximumWidth => screenWidth / Math.Max(GetFontSize().X, 1);
@@ -66,7 +67,7 @@ namespace ConsoleLibrary
         private static WINDOWINFO GetWindowInfo()
         {
             WINDOWINFO info = new WINDOWINFO(true);
-            HandleError(!WinApi.GetWindowInfo(handle, ref info));
+            HandleError(!WinApi.GetWindowInfo(windowHandle, ref info));
             return info;
         }
         //public static 
@@ -94,7 +95,7 @@ namespace ConsoleLibrary
         /// </summary>
         public static Point GetClientSize()
         {
-            HandleError(!WinApi.GetClientRect(handle, out RECT rect));
+            HandleError(!WinApi.GetClientRect(windowHandle, out RECT rect));
             return new Point(rect.Width, rect.Height);
         }
 
@@ -103,7 +104,7 @@ namespace ConsoleLibrary
         /// </summary>
         public static Point GetWindowSize()
         {
-            HandleError(!WinApi.GetWindowRect(handle, out RECT rect));
+            HandleError(!WinApi.GetWindowRect(windowHandle, out RECT rect));
             return new Point(rect.Width, rect.Height);
         }
 
@@ -268,6 +269,13 @@ namespace ConsoleLibrary
             HandleError(!WinApi.SetConsoleScreenBufferSize(bufferHandle, size), lineNumber, filePath);
         }
 
+        public static string GetTitle()
+        {
+            var sb = new System.Text.StringBuilder(128);
+            HandleError(WinApi.GetConsoleTitle(sb, sb.Capacity) == 0);
+            return sb.ToString();
+        }
+
         public static void SetTitle(string s)
         {
             HandleError(!WinApi.SetConsoleTitle(s));
@@ -276,7 +284,25 @@ namespace ConsoleLibrary
         public static void SetIcon(System.Drawing.Icon icon)
         {
             HandleError(!WinApi.SetConsoleIcon(icon.Handle));
-            WinApi.SendMessage(handle, WM.SETICON, 0x80, icon.Handle);
+            WinApi.SendMessage(windowHandle, WM.SETICON, 0x80, icon.Handle);
+        }
+
+        static System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(16, 16);
+        public static void Test()
+        {
+            //while (WinApi.ShowCursor(false) >= 0) { }
+            //WinApi.SetCursor(IntPtr.Zero);
+            IntPtr hCursor = WinApi.LoadCursor(IntPtr.Zero, IDC_STANDARD_CURSORS.IDC_CROSS);
+            if (hCursor == IntPtr.Zero)
+                Debug.WriteLine("Oj");
+            HandleError(WinApi.SetClassLong(windowHandle, ClassLongFlags.GCLP_HCURSOR, hCursor) == IntPtr.Zero);
+            return;
+            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            {
+                System.Drawing.Icon icon = new System.Drawing.Icon(@"D:\Dokument\GIT\ConsoleEngine\ConsoleApiTest\Treetog-Junior-Monitor-test.ico");
+                WinApi.SendMessage(windowHandle, WM.SETICON, 0, icon.Handle);
+                WinApi.SendMessage(windowHandle, WM.SETICON, 1, icon.Handle);
+            }
         }
 
         //TODO: Add SetFont method
@@ -302,4 +328,5 @@ namespace ConsoleLibrary
             return WinApi.GetConsoleFontSize(bufferHandle, font.nFont);
         }
     }
+
 }

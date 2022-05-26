@@ -40,12 +40,13 @@ namespace ConsoleApiTest
 
             //new TestApp(84, 42).Init();
 
-            Console.WriteLine(new { hello = "test" });
+            //Console.WriteLine(new { hello = "test" });
 
 
             //new TestApp(80, 20).Init();
-            //ConsoleInput.InputLoop();
-            Console.ReadLine();
+            new TestApp(115, 52).Init();
+            ConsoleInput.InputLoop();
+            //Console.ReadLine();
         }
 
         private static int A(int a, int b, int c) => Math.Min(c - a, b);
@@ -118,23 +119,27 @@ namespace ConsoleApiTest
 
             vs = new VerticalScrollbar(controlManager)
             {
-                Height = 5,
-                Left = 20,
-                Top = 4
+                Height = Height - 1,
+                Left = Width - 2,
+                Top = 0,
+                Name = "Vertical scrollbar"
             };
+            vs.Visible = false;
 
             hs = new HorizontalScrollbar(controlManager)
             {
-                Width = 10,
-                Left = 3,
-                Top = Height - 1
+                Width = Width - 2,
+                Left = 0,
+                Top = Height - 1,
+                Name = "Horizontal scrollbar"
             };
+            hs.Visible = false;
 
-            new ScrollableTextBox(controlManager)
-            {
-                Width= 20,
-                Height= 5
-            };
+            //new ScrollableTextBox(controlManager)
+            //{
+            //    Width= 20,
+            //    Height= 5
+            //};
 
 
             colorfulString = new ColorfulString
@@ -143,6 +148,7 @@ namespace ConsoleApiTest
                 ColorThing = ColorSelectMode.Repeat,
                 Attributes = (CharAttribute[])Enum.GetValues(typeof(CharAttribute))
             };
+            //ConsoleRenderer.
 
 
             strings = new string[]
@@ -174,12 +180,14 @@ namespace ConsoleApiTest
             for (int y = 0; y < square.GetLength(0); y++)
                 for (int x = 0; x < square.GetLength(1); x++)
                 {
-                    if (x % tileWidth == 0 && y % tileHeight == 0)
+                    if (x % tileWidth == 0 && y % tileHeight == 0 && (y < 8 || y > 28))
                     {
                         int px = x + spacingX;
                         int py = y + spacingY;
                         square[py, px].UnicodeChar = '♕';
                         square[py, px].Attributes |= CharAttribute.LeadingByte;
+                        square[py, px + 1].UnicodeChar = '♕';
+                        square[py, px + 1].Attributes |= CharAttribute.TrailingByte;
 
                         var yellow = CharAttribute.BackgroundYellow | CharAttribute.ForegroundBlack;
                         var marker = new CharInfo
@@ -205,11 +213,15 @@ namespace ConsoleApiTest
 
             ConsoleInput.KeyHeld += ConsoleInput_KeyPressed;
 
+            //ConsoleInput.MousePressed += Text
+
             ConsoleInput.MouseReleased += TextBox_MouseReleased;
 
             ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
 
             ConsoleInput.Resized += ConsoleInput_Resized;
+
+            //controlManager.SubscribeMouseEvent(ConsoleLibrary.Forms.EventType.M, dataBox, DataBox)
             //ConsoleInput.Resized += delegate
             //{
             //    Draw();
@@ -225,12 +237,12 @@ namespace ConsoleApiTest
             vs.Height = Height - 1;
             vs.EndUpdate();
 
-            textBox.Visible = false;
             hs.BeginUpdate();
             hs.Left = 0;
             hs.Top = Height - 1;
             hs.Width = Width - 2;
             hs.EndUpdate();
+
             Draw();
         }
 
@@ -407,9 +419,10 @@ namespace ConsoleApiTest
             Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
             //gradient = new Gradient(CharAttribute.BackgroundCyan, CharAttribute.BackgroundMagenta, CharAttribute.ForegroundYellow, CharAttribute.BackgroundBlack);
             //gradient = new Gradient(CharAttribute.BackgroundBlue, CharAttribute.BackgroundCyan, CharAttribute.BackgroundGreen);
-            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
-            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
+            //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
+            //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
             //gradient.Reverse();
+            gradient = new Gradient(CharAttribute.ForegroundBlue, CharAttribute.ForegroundCyan, CharAttribute.BackgroundGreen, CharAttribute.BackgroundYellow, CharAttribute.BackgroundRed, CharAttribute.BackgroundMagenta);
             buffer.Draw(gradient, 0, 0, Width, Height / 2);
             gradient.Reverse();
             buffer.Draw(gradient, 0, Height / 2, Width, Height);
@@ -421,9 +434,9 @@ namespace ConsoleApiTest
             //buffer.Draw("Hello", 10, Height - 1);
 
             controlManager.DrawControls();
-            buffer.FillRect(r0, CharAttribute.BackgroundCyan);
-            buffer.FillRect(r1, CharAttribute.BackgroundRed);
-            buffer.FillRect(r2, CharAttribute.BackgroundYellow);
+            //buffer.FillRect(r0, CharAttribute.BackgroundCyan);
+            //buffer.FillRect(r1, CharAttribute.BackgroundRed);
+            //buffer.FillRect(r2, CharAttribute.BackgroundYellow);
             ConsoleRenderer.RenderOutput();
         }
 

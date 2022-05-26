@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Constants\Colors.cs" />
     <Compile Include="Constants\ConsoleConstants.cs" />
+    <Compile Include="Enums\ClassLongFlags.cs" />
     <Compile Include="Enums\ConsoleModes.cs" />
     <Compile Include="Enums\DuplicateOptions.cs" />
     <Compile Include="Enums\FormatMessage.cs" />

@@ -33,15 +33,6 @@ namespace WindowsWrapper
         [DllImport("kernel32.dll")]
         public static extern int GetConsoleOutputCP();
 
-        [DllImport("user32.dll")]
-        public static extern short GetKeyState(int key);
-
-        [DllImport("user32.dll")]
-        public static extern short GetAsyncKeyState(VirtualKeys vKey);
-
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool GetCursorPos(out POINT lpPoint);
-
         [DllImport("kernel32.dll", SetLastError = true)]
         public static extern bool SetCurrentConsoleFontEx(
             ConsoleHandle ConsoleOutput,
@@ -98,9 +89,6 @@ namespace WindowsWrapper
             out uint lpcNumberOfEvents
         );
 
-        //[DllImport("kernel32.dll")]
-        //public static extern uint GetLastError();
-
         [DllImport("kernel32.dll")]
         static extern int FormatMessage(
             FormatMessage dwFlags,
@@ -129,6 +117,12 @@ namespace WindowsWrapper
             ConsoleHandle hConsoleOutput,
             bool bAbsolute,
             ref SMALL_RECT lpConsoleWindow
+        );
+
+        [DllImport("kernel32.dll", EntryPoint = "GetConsoleTitle", CharSet = CharSet.Unicode, SetLastError = true)]
+        public static extern int GetConsoleTitle(
+            StringBuilder lpConsoleTitle,
+            int nSize
         );
 
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -160,7 +154,7 @@ namespace WindowsWrapper
             ref SMALL_RECT lpWriteRegion
         );
 
-        [DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern ConsoleHandle CreateFile(
             string fileName,
             [MarshalAs(UnmanagedType.U4)] uint fileAccess,
@@ -273,6 +267,13 @@ namespace WindowsWrapper
             ConsoleHandle hConsoleOutput
         );
 
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool SetConsoleIcon(IntPtr hIcon);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool SetConsoleMode(ConsoleHandle hConsoleHandle, ConsoleModes dwMode);
+
         public static IntPtr OpenProcess(Process proc, ProcessAccessFlags flags)
         {
             return OpenProcess(flags, false, proc.Id);
@@ -335,6 +336,20 @@ namespace WindowsWrapper
             int nIndex,
             IntPtr dwNewLong);
 
+        public static IntPtr SetClassLong(IntPtr hWnd, ClassLongFlags nIndex, IntPtr dwNewLong)
+        {
+            if (IntPtr.Size > 4)
+                return SetClassLongPtr64(hWnd, nIndex, dwNewLong);
+            else
+                return new IntPtr(SetClassLongPtr32(hWnd, nIndex, unchecked((uint)dwNewLong.ToInt32())));
+        }
+
+        [DllImport("user32.dll", EntryPoint = "SetClassLong")]
+        private static extern uint SetClassLongPtr32(IntPtr hWnd, ClassLongFlags nIndex, uint dwNewLong);
+
+        [DllImport("user32.dll", EntryPoint = "SetClassLongPtr")]
+        private static extern IntPtr SetClassLongPtr64(IntPtr hWnd, ClassLongFlags nIndex, IntPtr dwNewLong);
+
         public delegate bool EnumedWindow(IntPtr handleWindow, ArrayList handles);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -354,15 +369,8 @@ namespace WindowsWrapper
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessage(IntPtr hWnd, WM Msg, IntPtr wParam, IntPtr lParam);
 
-        [DllImport("User32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
         public static extern IntPtr SendMessageW(IntPtr hWnd, WM Msg, UIntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        public static extern bool SetConsoleIcon(IntPtr hIcon);
-
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool SetConsoleMode(ConsoleHandle hConsoleHandle, ConsoleModes dwMode);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr LoadCursor(IntPtr hInstance, IDC_STANDARD_CURSORS lpCursorName);
@@ -415,11 +423,23 @@ namespace WindowsWrapper
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool ShowScrollBar(IntPtr hWnd, ScrollBar wBar, bool bShow);
 
-        [DllImport("user32", ExactSpelling = true, SetLastError = true)]
+        [DllImport("user32.dll")]
+        public static extern int ShowCursor(bool bShow);
+
+        [DllImport("user32.dll", ExactSpelling = true, SetLastError = true)]
         public static extern int MapWindowPoints(IntPtr hWndFrom, IntPtr hWndTo, ref System.Drawing.Point[] pt, [MarshalAs(UnmanagedType.U4)] int cPoints);
 
-        [DllImport("user32", SetLastError = true)]
+        [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetWindowInfo(IntPtr hwnd, ref WINDOWINFO pwi);
+
+        [DllImport("user32.dll")]
+        public static extern short GetKeyState(int key);
+
+        [DllImport("user32.dll")]
+        public static extern short GetAsyncKeyState(VirtualKeys vKey);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        public static extern bool GetCursorPos(out POINT lpPoint);
         #endregion
 
         #region GDI32.DLL

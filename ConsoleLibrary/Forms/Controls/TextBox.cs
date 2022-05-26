@@ -90,7 +90,7 @@ namespace ConsoleLibrary.Forms.Controls
 
         public FlexibleTextBox(ControlManager container) : base(container)
         {
-            
+            Text = "helllo";
         }
 
         protected override void RefreshBuffer()

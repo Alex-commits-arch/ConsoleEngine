@@ -6,12 +6,13 @@ using ConsoleLibrary.Structures;
 using System.Runtime.CompilerServices;
 using WindowsWrapper.Structs;
 using ConsoleLibrary.Drawing;
+using System.Collections.Generic;
 
 namespace ConsoleLibrary.Forms.Controls
 {
     public abstract class Control
     {
-        protected ControlManager controlManager;
+        //protected ControlManager controlManager;
 
         protected Rectangle rectangle;
         protected string name;
@@ -20,6 +21,8 @@ namespace ConsoleLibrary.Forms.Controls
         protected bool isInvalid = true;
         protected CharAttribute attributes = CharAttribute.BackgroundBlack;
         protected BufferArea buffer;
+        protected Control parent;
+        protected List<Control> controls;
 
         public Rectangle Rectangle { get => rectangle; set => rectangle = value; }
         public BufferArea Buffer => buffer;
@@ -95,10 +98,23 @@ namespace ConsoleLibrary.Forms.Controls
             remove => controlManager.UnsubscribeMouseEvent(EventType.MouseLeave, this, value);
         }
 
-        public Control(ControlManager manager)
+        private Control()
         {
-            controlManager = manager;
-            manager.Add(this);
+            buffer = new BufferArea(0, 0);
+            controls = new List<Control>();
+            MousePressed += OnMousePressed;
+        }
+
+        //public Control(ControlManager manager) : this()
+        //{
+        //    controlManager = manager;
+        //    manager.Add(this);
+        //}
+
+        public Control(Control parent) : this()
+        {
+            this.parent = parent;
+            //parent.controls
         }
 
         public void Invalidate()
@@ -106,19 +122,22 @@ namespace ConsoleLibrary.Forms.Controls
             isInvalid = true;
         }
 
-        public void BeginUpdate() => controlManager.BeginUpdate(this);
-        public void EndUpdate() => controlManager.EndUpdate(this);
+        public void BeginUpdate() => parent.BeginUpdate();
+        public void EndUpdate() => parent.EndUpdate();
 
-        public bool ContainsPoint(Point p)
-        {
-            return ContainsPoint(p.X, p.Y);
-        }
-
+        public bool ContainsPoint(Point p) => ContainsPoint(p.X, p.Y);
         public bool ContainsPoint(int mx, int my) => Rectangle.ContainsPoint(mx, my);
-
         public bool IntersectsWith(Rectangle rectangle) => Rectangle.IntersectsWith(rectangle);
-
         public Point GetRelativeLocation(Point p) => new Point(p.X - Left, p.Y - Top);
+
+        private void OnMousePressed(object obj, MouseEventArgs args)
+        {
+            foreach (var control in controls)
+            {
+                if (control.ContainsPoint(args.Location))
+                    control.OnMousePressed(obj, args);
+            }
+        }
 
         /// <summary>
         /// Reinitializes the buffer with the current width and height
@@ -131,6 +150,17 @@ namespace ConsoleLibrary.Forms.Controls
                 buffer.Resize(Width, Height);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        public virtual void Update()
+        {
+
+        }
+
+        /// <summary>
+        /// Requests drawing to main buffer
+        /// </summary>
         public void Draw(Rectangle rect)
         {
             if (Visible)
@@ -142,7 +172,10 @@ namespace ConsoleLibrary.Forms.Controls
             }
         }
 
-        public void Draw()
+        /// <summary>
+        /// Requests drawing to given buffer
+        /// </summary>
+        public virtual void Draw(BufferArea drawingBuffer)
         {
             if (Visible)
             {
@@ -151,7 +184,11 @@ namespace ConsoleLibrary.Forms.Controls
                     RefreshBuffer();
                     isInvalid = false;
                 }
-                ConsoleRenderer.ActiveBuffer.Draw(buffer, Left, Top);
+
+                foreach (var control in controls)
+                    control.Draw(buffer);
+
+                drawingBuffer.Draw(buffer, Left, Top);
             }
         }
     }

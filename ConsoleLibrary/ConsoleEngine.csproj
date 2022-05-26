@@ -76,6 +76,7 @@
     <Compile Include="Forms\Controls\TextBox.cs" />
     <Compile Include="Forms\Controls\VerticalScrollbar.cs" />
     <Compile Include="Forms\EventType.cs" />
+    <Compile Include="Forms\Form.cs" />
     <Compile Include="Forms\FormApp.cs" />
     <Compile Include="Forms\Components\Border.cs" />
     <Compile Include="Forms\Components\Component.cs" />

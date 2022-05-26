@@ -9,6 +9,7 @@ using WindowsWrapper;
 using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
+using System.Drawing;
 
 namespace ConsoleLibrary.Forms
 {
@@ -19,16 +20,6 @@ namespace ConsoleLibrary.Forms
         protected ControlManager controlManager;
 
         public ControlManager ControlManager { get => controlManager; set => controlManager = value; }
-
-        public string Title
-        {
-            get => title;
-            set
-            {
-                MyConsole.SetTitle(value);
-                title = value;
-            }
-        }
 
         public System.Drawing.Icon Icon
         {
@@ -42,9 +33,6 @@ namespace ConsoleLibrary.Forms
 
         public FormApp(int width, int height) : base(width, height)
         {
-            //ConsoleModes mode = 0;
-            //MyConsole.GetMode(ref mode);
-            //MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_WINDOW_INPUT | ConsoleModes.ENABLE_MOUSE_INPUT);
             MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_MOUSE_INPUT);
         }
 
@@ -63,7 +51,11 @@ namespace ConsoleLibrary.Forms
 
         private void OnMouseMoved(object sender, MouseEventArgs args)
         {
-            MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_HAND);
+            //MyConsole.Test();
+
+            //Icon = bmp.GetHicon();
+            //MyConsole.SetIcon()
+            //MyConsole.SetCursor(IDC_STANDARD_CURSORS.IDC_HAND);
             //WinApi.SendMessage
         }
     }

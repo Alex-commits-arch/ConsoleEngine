@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 namespace ConsoleLibrary.Forms
 {
-    public class ControlManager
+    public class ControlManager : Control
     {
         private int prevMouseX;
         private int prevMouseY;
@@ -18,10 +18,13 @@ namespace ConsoleLibrary.Forms
         private Control controlUnderMouse;
         private readonly List<Control> controls;
         private readonly Dictionary<EventType, EventHandlerList> events;
+        //private Control[,] buffer;
 
         public List<Control> Controls => controls;
 
-        public ControlManager()
+        //private Form form;
+
+        public ControlManager() : base(null)
         {
             controls = new List<Control>();
 
@@ -43,8 +46,16 @@ namespace ConsoleLibrary.Forms
             ConsoleInput.MouseDoubleClick += ConsoleInput_MouseDoubleClick;
         }
 
-        public void SubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].AddHandler(subscriber, handler);
-        public void UnsubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].RemoveHandler(subscriber, handler);
+        //public ControlManager(Form form) : this()
+        //{
+        //    this.form = form;
+        //    controls = form.Controls;
+        //}
+
+        private void ConsoleInput_MouseDragged(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseDragged, e);
+        private void ConsoleInput_MousePressed(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MousePressed, e);
+        private void ConsoleInput_MouseReleased(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseReleased, e);
+        private void ConsoleInput_MouseDoubleClick(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseDoubleClick, e);
 
         private void ConsoleInput_MouseMoved(object _, MouseEventArgs e)
         {
@@ -77,10 +88,8 @@ namespace ConsoleLibrary.Forms
             }
         }
 
-        private void ConsoleInput_MouseDragged(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseDragged, e);
-        private void ConsoleInput_MousePressed(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MousePressed, e);
-        private void ConsoleInput_MouseReleased(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseReleased, e);
-        private void ConsoleInput_MouseDoubleClick(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseDoubleClick, e);
+        public void SubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].AddHandler(subscriber, handler);
+        public void UnsubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].RemoveHandler(subscriber, handler);
 
         private void HandleMouseEvent(EventType type, MouseEventArgs e)
         {
@@ -110,8 +119,13 @@ namespace ConsoleLibrary.Forms
             (events[type][control] as MouseEventHandler)?.Invoke(control, e);
         }
 
+        //public override 
+
         public void BeginUpdate(Control control)
         {
+            if (updating)
+                throw new Exception("EndUpdate must be called before calling BeginUpdate again.");
+
             if (control.Visible)
             {
                 oldRectangle = control.Rectangle;
@@ -128,7 +142,7 @@ namespace ConsoleLibrary.Forms
                 foreach (var ctrl in controls)
                     if (ctrl != control && ctrl.IntersectsWith(oldRectangle))
                         ctrl.Draw(ctrl.Rectangle.Intersect(oldRectangle));
-                control.Draw();
+                control.Draw(ConsoleRenderer.ActiveBuffer);
 
                 int index = controls.IndexOf(control);
                 for (int i = index + 1; i < controls.Count; i++)
@@ -148,7 +162,7 @@ namespace ConsoleLibrary.Forms
         {
             foreach (var control in controls)
                 if (control.Visible)
-                    control.Draw();
+                    control.Draw(ConsoleRenderer.ActiveBuffer);
         }
 
         public void Add(Control control) => controls.Add(control);
