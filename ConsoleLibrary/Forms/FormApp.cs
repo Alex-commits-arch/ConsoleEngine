@@ -42,7 +42,19 @@ namespace ConsoleLibrary.Forms
             controlManager = new ControlManager();
             ConsoleInput.MouseMoved += OnMouseMoved;
             ConsoleInput.KeyPressed += OnKeyPressed;
+            ConsoleInput.Resized += ConsoleInput_Resized;
         }
+
+        private void ConsoleInput_Resized(ResizedEventArgs resizedEventArgs)
+        {
+            //ConsoleRenderer.Resize(resizedEventArgs.Width, resizedEventArgs.Height);
+            //controlManager.BeginUpdate();
+            //controlManager.Width = resizedEventArgs.Width;
+            //controlManager.Height = resizedEventArgs.Height;
+            //controlManager.EndUpdate();
+        }
+
+        //private void OnWindowResized()
 
         private void OnKeyPressed(KeyEventArgs keyEventArgs)
         {

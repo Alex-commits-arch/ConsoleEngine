@@ -194,7 +194,7 @@ namespace ConsoleLibrary
         public static void WriteOutput(CharInfo[,] chars, COORD bufferSize, COORD coord)
         {
             SMALL_RECT rect = new SMALL_RECT(coord, bufferSize);
-            WinApi.WriteConsoleOutputW(bufferHandle, chars, bufferSize, new COORD(), ref rect);
+            HandleError(!WinApi.WriteConsoleOutputW(bufferHandle, chars, bufferSize, new COORD(), ref rect));
         }
 
         public static CharInfo GetCharInfo(int x, int y)

@@ -21,7 +21,7 @@ namespace ConsoleLibrary.Input
         public static event KeyEventHandler KeyReleased;
         public static event KeyEventHandler KeyHeld;
 
-        public delegate void ResizedEventHandler(ResizedEventArgs keyEventArgs);
+        public delegate void ResizedEventHandler(ResizedEventArgs resizedEventArgs);
         public static event ResizedEventHandler Resized;
 
         private static readonly bool[] keyStates = new bool[65535];
@@ -111,6 +111,9 @@ namespace ConsoleLibrary.Input
                             {
                                 var clientSize = MyConsole.GetClientSize();
                                 var fontSize = MyConsole.GetFontSize();
+                                if (fontSize.X <= 0 || fontSize.Y <= 0)
+                                    break;
+
                                 int w = clientSize.X / fontSize.X;
                                 int h = clientSize.Y / fontSize.Y;
 

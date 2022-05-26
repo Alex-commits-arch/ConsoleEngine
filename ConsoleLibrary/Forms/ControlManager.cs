@@ -16,28 +16,11 @@ namespace ConsoleLibrary.Forms
         private bool updating = false;
         private Rectangle oldRectangle;
         private Control controlUnderMouse;
-        private readonly List<Control> controls;
-        private readonly Dictionary<EventType, EventHandlerList> events;
-        //private Control[,] buffer;
-
-        public List<Control> Controls => controls;
-
-        //private Form form;
 
         public ControlManager() : base(null)
         {
+            name = "Control manager";
             controls = new List<Control>();
-
-            events = new Dictionary<EventType, EventHandlerList>
-            {
-                {EventType.MouseMoved,       new EventHandlerList()},
-                {EventType.MouseEnter,       new EventHandlerList()},
-                {EventType.MouseLeave,       new EventHandlerList()},
-                {EventType.MouseDragged,     new EventHandlerList()},
-                {EventType.MousePressed,     new EventHandlerList()},
-                {EventType.MouseReleased,    new EventHandlerList()},
-                {EventType.MouseDoubleClick, new EventHandlerList()}
-            };
 
             ConsoleInput.MouseMoved += ConsoleInput_MouseMoved;
             ConsoleInput.MouseDragged += ConsoleInput_MouseDragged;
@@ -46,16 +29,10 @@ namespace ConsoleLibrary.Forms
             ConsoleInput.MouseDoubleClick += ConsoleInput_MouseDoubleClick;
         }
 
-        //public ControlManager(Form form) : this()
-        //{
-        //    this.form = form;
-        //    controls = form.Controls;
-        //}
-
-        private void ConsoleInput_MouseDragged(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseDragged, e);
-        private void ConsoleInput_MousePressed(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MousePressed, e);
-        private void ConsoleInput_MouseReleased(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseReleased, e);
-        private void ConsoleInput_MouseDoubleClick(object _, MouseEventArgs e) => HandleMouseEvent(EventType.MouseDoubleClick, e);
+        private void ConsoleInput_MouseDragged(object _, MouseEventArgs e) => controlUnderMouse?.HandleMouseDragged(e);
+        private void ConsoleInput_MousePressed(object _, MouseEventArgs e) => controlUnderMouse?.HandleMousePressed(e);
+        private void ConsoleInput_MouseReleased(object _, MouseEventArgs e) => controlUnderMouse?.HandleMouseReleased(e);
+        private void ConsoleInput_MouseDoubleClick(object _, MouseEventArgs e) => controlUnderMouse?.HandleMouseDoubleClick(e);
 
         private void ConsoleInput_MouseMoved(object _, MouseEventArgs e)
         {
@@ -66,14 +43,14 @@ namespace ConsoleLibrary.Forms
                 {
                     if (controlUnderMouse.ContainsPoint(x, y))
                     {
-                        InvokeMouseEvent(EventType.MouseMoved, controlUnderMouse, e);
+                        controlUnderMouse.HandleMouseMoved(e);
                     }
                     else
                     {
                         var control = ControlUnderMouse(x, y);
 
-                        InvokeMouseEvent(EventType.MouseEnter, control, e);
-                        InvokeMouseEvent(EventType.MouseLeave, controlUnderMouse, e);
+                        control?.HandleMouseEnter(e);
+                        controlUnderMouse.HandleMouseLeave(e);
 
                         controlUnderMouse = control;
                     }
@@ -81,47 +58,14 @@ namespace ConsoleLibrary.Forms
                 else
                 {
                     controlUnderMouse = ControlUnderMouse(x, y);
-                    InvokeMouseEvent(EventType.MouseEnter, controlUnderMouse, e);
+                    controlUnderMouse?.HandleMouseEnter(e);
                 }
                 prevMouseX = x;
                 prevMouseY = y;
             }
         }
 
-        public void SubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].AddHandler(subscriber, handler);
-        public void UnsubscribeMouseEvent(EventType type, object subscriber, MouseEventHandler handler) => events[type].RemoveHandler(subscriber, handler);
-
-        private void HandleMouseEvent(EventType type, MouseEventArgs e)
-        {
-            (int x, int y) = e.Location;
-            var control = ControlUnderMouse(x, y);
-            InvokeMouseEvent(type, control, e);
-        }
-
-        private Control ControlUnderMouse(int x, int y)
-        {
-            for (int i = controls.Count - 1; i >= 0; i--)
-            {
-                Control control = controls[i];
-                if (control.Visible && control.Enabled && control.ContainsPoint(x, y))
-                    return control;
-            }
-            return null;
-        }
-
-        private void IntersectingControls(Rectangle rect)
-        {
-
-        }
-
-        private void InvokeMouseEvent(EventType type, Control control, MouseEventArgs e)
-        {
-            (events[type][control] as MouseEventHandler)?.Invoke(control, e);
-        }
-
-        //public override 
-
-        public void BeginUpdate(Control control)
+        protected override void BeginUpdate(Control control)
         {
             if (updating)
                 throw new Exception("EndUpdate must be called before calling BeginUpdate again.");
@@ -134,7 +78,7 @@ namespace ConsoleLibrary.Forms
             }
         }
 
-        public void EndUpdate(Control control)
+        protected override void EndUpdate(Control control)
         {
             if (updating)
             {
@@ -156,6 +100,12 @@ namespace ConsoleLibrary.Forms
                 ConsoleRenderer.RenderArea(control.Rectangle);
                 updating = false;
             }
+        }
+
+        public void Draw()
+        {
+            foreach (var control in controls)
+                control.Draw(ConsoleRenderer.ActiveBuffer);
         }
 
         public void DrawControls()

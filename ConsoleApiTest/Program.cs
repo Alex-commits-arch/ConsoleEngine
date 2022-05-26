@@ -102,7 +102,7 @@ namespace ConsoleApiTest
             };
             textBox.Text = lorem;
             textBox.MousePressed += TextBox_MousePressed;
-            textBox.Visible = false;
+            //textBox.Visible = false;
             //textBox.MouseReleased += TextBox_MouseReleased;
 
             dataBox = new TextBox(controlManager)
@@ -231,17 +231,17 @@ namespace ConsoleApiTest
 
         private void ConsoleInput_Resized(ResizedEventArgs keyEventArgs)
         {
-            vs.BeginUpdate();
-            vs.Top = 0;
-            vs.Left = Width - vs.Width;
-            vs.Height = Height - 1;
-            vs.EndUpdate();
+            //vs.BeginUpdate();
+            //vs.Top = 0;
+            //vs.Left = Width - vs.Width;
+            //vs.Height = Height - 1;
+            //vs.EndUpdate();
 
-            hs.BeginUpdate();
-            hs.Left = 0;
-            hs.Top = Height - 1;
-            hs.Width = Width - 2;
-            hs.EndUpdate();
+            //hs.BeginUpdate();
+            //hs.Left = 0;
+            //hs.Top = Height - 1;
+            //hs.Width = Width - 2;
+            //hs.EndUpdate();
 
             Draw();
         }
@@ -319,7 +319,7 @@ namespace ConsoleApiTest
                 using (System.Drawing.Graphics g = System.Drawing.Graphics.FromImage(b))
                 {
                     g.CopyFromScreen(area.UpperLeft, new System.Drawing.Point(0, 0), new System.Drawing.Size(size));
-                    b.Save("Test.png");
+                    b.Save(@"Test.png");
                 }
             }
 
@@ -433,7 +433,8 @@ namespace ConsoleApiTest
             //buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height / 2 - strings.Length / 2, CharAttribute.ForegroundWhite);
             //buffer.Draw("Hello", 10, Height - 1);
 
-            controlManager.DrawControls();
+            //controlManager.DrawControls();
+            controlManager.Draw();
             //buffer.FillRect(r0, CharAttribute.BackgroundCyan);
             //buffer.FillRect(r1, CharAttribute.BackgroundRed);
             //buffer.FillRect(r2, CharAttribute.BackgroundYellow);
