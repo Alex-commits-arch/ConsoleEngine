@@ -310,14 +310,14 @@ namespace ConsoleLibrary
         {
             CONSOLE_FONT_INFO_EX cfi = new CONSOLE_FONT_INFO_EX();
             cfi.cbSize = (uint)Marshal.SizeOf(cfi);
-            cfi.FaceName = "";
+            WinApi.GetCurrentConsoleFontEx(bufferHandle.DangerousGetHandle(), false, ref cfi);
 
-            cfi.cbSize = (uint)Marshal.SizeOf(cfi);
-            cfi.nFont = 0;
+            //cfi.cbSize = (uint)Marshal.SizeOf(cfi);
+            //cfi.nFont = 0;
             cfi.dwFontSize = new COORD((short)width, (short)height);
-            cfi.FontFamily = 0;
-            cfi.FontWeight = 400;
-            cfi.FaceName = "Consolas";
+            //cfi.FontFamily = 0;
+            //cfi.FontWeight = 400;
+            //cfi.FaceName = "Arial";
 
             HandleError(!WinApi.SetCurrentConsoleFontEx(bufferHandle, false, ref cfi));
         }

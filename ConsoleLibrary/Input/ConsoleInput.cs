@@ -16,12 +16,10 @@ namespace ConsoleLibrary.Input
         public static event MouseEventHandler MouseDoubleClick;
         public static event MouseEventHandler MouseMoved;
 
-        public delegate void KeyEventHandler(KeyEventArgs keyEventArgs);
         public static event KeyEventHandler KeyPressed;
         public static event KeyEventHandler KeyReleased;
         public static event KeyEventHandler KeyHeld;
 
-        public delegate void ResizedEventHandler(ResizedEventArgs resizedEventArgs);
         public static event ResizedEventHandler Resized;
 
         private static readonly bool[] keyStates = new bool[65535];
@@ -119,9 +117,6 @@ namespace ConsoleLibrary.Input
 
                                 if (prevWidth != w || prevHeight != h)
                                 {
-                                    MyConsole.SetSize(w, h);
-                                    MyConsole.HideCursor();
-                                    Drawing.ConsoleRenderer.Resize(w, h);
                                     Resized?.Invoke(new ResizedEventArgs
                                     {
                                         Width = w,

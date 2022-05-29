@@ -11,6 +11,181 @@
 //using WindowsWrapper.Constants;
 ////using static ConsoleLibrary.InputManager;
 
+
+using ConsoleLibrary.Drawing;
+using ConsoleLibrary.Game;
+using ConsoleLibrary.Structures;
+using System;
+using System.Collections.Generic;
+using WindowsWrapper.Enums;
+using WindowsWrapper.Structs;
+
+namespace ConsoleApiTest.Chess
+{
+    public class ChessApp : GameApp
+    {
+        Point tileSize;
+        Point borderSize;
+        Point center;
+        Point boardSize;
+        Point boardCenter;
+        float backgroundAngle = 0.0f;
+        BufferArea backgroundBuffer;
+        BufferArea boardBuffer;
+        ChessGame game;
+
+        Dictionary<PieceColor, Dictionary<PieceType, char>> pieceChars = new Dictionary<PieceColor, Dictionary<PieceType, char>>
+        {
+            { PieceColor.Black, new Dictionary<PieceType, char>{
+                { PieceType.Pawn, '♙' },
+                { PieceType.Rook, '♖' },
+                { PieceType.Knight, '♘' },
+                { PieceType.Bishop, '♗' },
+                { PieceType.Queen, '♕' },
+                { PieceType.King, '♔' },
+            } },
+            { PieceColor.White, new Dictionary<PieceType, char>{
+                { PieceType.Pawn, '♟' },
+                { PieceType.Rook, '♜' },
+                { PieceType.Knight, '♞' },
+                { PieceType.Bishop, '♝' },
+                { PieceType.Queen, '♛' },
+                { PieceType.King, '♚' },
+            } }
+        };
+
+
+        public ChessApp(int width, int height) : base(width, height) { }
+
+        public override void Initialize(Harness harness)
+        {
+            base.Initialize(harness);
+
+            game = new ChessGame();
+            center = new Point(width / 2, height / 2);
+
+            InitBoard();
+            InitBackground();
+        }
+
+        private void InitBackground()
+        {
+            backgroundBuffer = new BufferArea(width, height);
+            var white = CharAttribute.BackgroundWhite;
+            var lightGray = CharAttribute.BackgroundGray;
+            var darkGray = CharAttribute.BackgroundDarkGray;
+            var black = CharAttribute.BackgroundBlack;
+            Gradient gradient = new Gradient(black, CharAttribute.BackgroundDarkBlue, black);
+            //gradient.Reverse();
+            backgroundBuffer.Draw(gradient, 0, 0, width, height, true);
+
+            //backgroundBuffer.Draw(gradient, 0, 0, width / 2, height);
+            //gradient.Reverse();
+            //backgroundBuffer.Draw(gradient, width / 2, 0, width / 2, height);
+        }
+
+        private void InitBoard()
+        {
+            int tileWidth = 6;
+            tileSize = new Point(tileWidth, tileWidth / 2);
+            int borderWidth = 1;
+            borderSize = new Point(borderWidth * 2, borderWidth);
+
+            boardSize = tileSize * 8 + borderSize * 2;
+            boardCenter = boardSize / 2;
+            boardBuffer = new BufferArea(boardSize.X, boardSize.Y);
+
+            boardBuffer.Fill(new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundDarkGreen });
+
+            for (int by = 0; by < 8; by++)
+            {
+                for (int bx = 0; bx < 8; bx++)
+                {
+                    CharInfo info = new CharInfo
+                    {
+                        UnicodeChar = (bx + by) % 2 == 0 ? ShadingCharacter.Dark : '\0',
+                        Attributes = (bx + by) % 2 == 0 ? CharAttribute.BackgroundGreen : CharAttribute.BackgroundBlack
+                    };
+                    boardBuffer.FillRect(bx * tileSize.X + borderSize.X, by * tileSize.Y + borderSize.Y, tileSize.X, tileSize.Y, info);
+                }
+            }
+        }
+
+        public override void Update(float deltaTime)
+        {
+            Point mousePos = InputManager.GetMousePosition();
+
+            backgroundAngle += (float)(System.Math.PI * deltaTime) / 16;
+            //backgroundAngle %= (float)System.Math.PI;
+            //backgroundAngle = (float)(System.Math.PI / 2);
+            backgroundAngle = (float)(Math.PI / 15);
+
+            harness.RequestRedraw();
+        }
+
+        private void DrawBackground(BufferArea mainBuffer)
+        {
+            backgroundBuffer.Clear();
+            Gradient gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlack);
+            var pos = center - boardCenter;
+            //backgroundBuffer.DrawRotatedGradient(gradient, 0, 0, width, height, backgroundAngle);
+            backgroundBuffer.DrawRotatedGradient(
+                gradient,
+                pos.X,
+                pos.Y,
+                boardSize.X,
+                boardSize.Y,
+                backgroundAngle);
+            backgroundBuffer.Draw(backgroundAngle.ToString(), 0, 0);
+            mainBuffer.Draw(backgroundBuffer, 0, 0);
+        }
+
+        private void DrawBoard(BufferArea mainBuffer, Point position)
+        {
+            var options = new DrawingOptions();
+            options.X = position.X;
+            options.Y = position.Y;
+            mainBuffer.Draw(boardBuffer, options);
+        }
+
+        private void DrawPieces(BufferArea mainBuffer, Point position)
+        {
+            var board = game.board.GetBoard();
+
+            for (int y = 0; y < board.GetLength(0); y++)
+            {
+                for (int x = 0; x < board.GetLength(1); x++)
+                {
+                    var piece = board[x, y];
+
+                    if (piece.type != PieceType.None)
+                    {
+                        Point offset = borderSize + tileSize / 2 + new Point(-1, 0);
+                        Point pos = position + tileSize * new Point(x, y) + offset;
+
+                        CharAttribute attribute = piece.color == PieceColor.White
+                            ? CharAttribute.ForegroundWhite
+                            : CharAttribute.ForegroundGrey;
+                        attribute |= CharAttribute.LeadingByte;
+
+                        mainBuffer.Draw(pieceChars[piece.color][piece.type], pos.X, pos.Y, attribute);
+                    }
+                }
+            }
+        }
+
+        public override void Draw(BufferArea buffer)
+        {
+            buffer.Clear();
+            DrawBackground(buffer);
+            Point boardPosition = center - boardCenter;
+            //DrawBoard(buffer, boardPosition);
+            //DrawPieces(buffer, boardPosition);
+        }
+    }
+}
+
+
 //namespace ConsoleApiTest.Chess
 //{
 //    class ChessApp : ConsoleApp
@@ -58,7 +233,7 @@
 //            //{ PieceType.Bishop, BISHOP },
 //            //{ PieceType.Queen,  QUEEN },
 //            //{ PieceType.King,   KING },}
-            
+
 //        };
 
 //        Dictionary<PieceColor, int> pieceColors = new Dictionary<PieceColor, int>

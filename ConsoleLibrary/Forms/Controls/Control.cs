@@ -64,6 +64,8 @@ namespace ConsoleLibrary.Forms.Controls
         public event MouseEventHandler MouseEnter;
         public event MouseEventHandler MouseLeave;
 
+        //public event ResizedEventHandler Resized;
+
         private Control()
         {
             buffer = new BufferArea(0, 0);
@@ -158,6 +160,12 @@ namespace ConsoleLibrary.Forms.Controls
             return null;
         }
 
+        protected virtual internal void HandleResized(int width, int height)
+        {
+
+            //Resized?.Invoke(args);
+        }
+
 
         /// <summary>
         /// Reinitializes the buffer with the current width and height
@@ -166,8 +174,10 @@ namespace ConsoleLibrary.Forms.Controls
         {
             if (buffer == null)
                 buffer = new BufferArea(Width, Height);
-            else
+            else if (buffer.Width != Width || buffer.Height != Height)
                 buffer.Resize(Width, Height);
+            else
+                buffer.Clear();
         }
 
         /// <summary>
@@ -197,6 +207,10 @@ namespace ConsoleLibrary.Forms.Controls
         /// </summary>
         public virtual void Draw(BufferArea drawingBuffer)
         {
+            if(Name == "Scrollable")
+            {
+
+            }
             if (Visible)
             {
                 if (isInvalid)

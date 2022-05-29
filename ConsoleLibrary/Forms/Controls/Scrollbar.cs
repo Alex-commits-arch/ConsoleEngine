@@ -11,9 +11,9 @@ namespace ConsoleLibrary.Forms.Controls
         protected int thickness = 1;
         protected int handleOffset = 0;
         protected int handleSize = 1;
-        protected CharAttribute buttonAttributes = CharAttribute.BackgroundDarkGrey | CharAttribute.ForegroundWhite | CharAttribute.LeadingByte;
+        protected CharAttribute buttonAttributes = CharAttribute.BackgroundDarkGray | CharAttribute.ForegroundWhite | CharAttribute.LeadingByte;
 
-        public Scrollbar(ControlManager manager) : base(manager)
+        public Scrollbar(Control manager) : base(manager)
         {
             MousePressed += OnMouseDown;
             MouseDoubleClick += OnMouseDown;

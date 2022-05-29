@@ -221,7 +221,7 @@ static class BoardExtensions
 {
     public static bool WithinBounds(this ChessPiece[,] board, Point location)
     {
-        if(location.Y == -1)
+        if (location.Y == -1)
         {
 
         }

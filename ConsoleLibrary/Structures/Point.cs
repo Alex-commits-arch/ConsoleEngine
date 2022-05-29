@@ -67,6 +67,7 @@ namespace ConsoleLibrary.Structures
         public static Point operator +(Point l1, Point l2) => new Point(l1.X + l2.X, l1.Y + l2.Y);
         public static Point operator -(Point l1, Point l2) => new Point(l1.X - l2.X, l1.Y - l2.Y);
         public static Point operator *(Point l1, Point l2) => new Point(l1.X * l2.X, l1.Y * l2.Y);
+        public static Point operator /(Point l1, Point l2) => new Point(l1.X / l2.X, l1.Y / l2.Y);
         public static Point operator /(Point l1, int val) => new Point(l1.X / val, l1.Y / val);
         public static Point operator *(Point l1, int val) => new Point(l1.X * val, l1.Y * val);
         public static bool operator ==(Point l1, Point l2) => l1.X == l2.X && l1.Y == l2.Y;

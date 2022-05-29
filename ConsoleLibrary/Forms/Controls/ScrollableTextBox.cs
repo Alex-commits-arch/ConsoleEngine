@@ -9,43 +9,45 @@ namespace ConsoleLibrary.Forms.Controls
     public class ScrollableTextBox : Control
     {
         VerticalScrollbar scrollbar;
-        FlexibleTextBox textBox;
+        TextBox textBox;
 
+        public ScrollableTextBox(Control parent) : base(parent)
+        {
+            Width = 20;
+            Height = 10;
+            Top = 1;
+            Name = "Scrollable";
 
-        public override int Height
-        {
-            get => base.Height; 
-            set
-            {
-                int height = Math.Max(2, value);
-                base.Height = height;
-                textBox.Height = height;
-            }
-        }
-        public override int Width
-        {
-            get => base.Width;
-            set
-            {
-                base.Width = Math.Max(1, value);
-                textBox.Width = value - 1;
-            }
+            textBox = new TextBox(this);
+
+            textBox.Width = Width - 2;
+            textBox.Height = Height;
+            textBox.Text = "HEllO";
+            textBox.Attributes = WindowsWrapper.Enums.CharAttribute.BackgroundDarkBlue | WindowsWrapper.Enums.CharAttribute.ForegroundWhite;
+
+            scrollbar = new VerticalScrollbar(this);
+            scrollbar.Height = Height;
+            scrollbar.Left = Width - 2;
         }
 
-        public ScrollableTextBox(ControlManager manager) : base(manager)
+        protected internal override void HandleResized(int width, int height)
         {
-            scrollbar = new VerticalScrollbar(manager);
-            textBox = new FlexibleTextBox(manager);
+            Width = width / 2;
+            Left = width / 4;
+            Height = height - 2;
+            textBox.Height = Height;
+            textBox.Width = Width - 1;
+            scrollbar.Height = Height;
+            scrollbar.Left = Width - scrollbar.Width;
         }
 
         protected override void RefreshBuffer()
         {
             base.RefreshBuffer();
 
-            
 
-            buffer.Draw(textBox.Buffer, 0, 0);
-            buffer.Draw(scrollbar.Buffer, Width - 1, 0);
+            textBox.Draw(buffer);
+            scrollbar.Draw(buffer);
         }
     }
 }

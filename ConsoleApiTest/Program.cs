@@ -13,6 +13,8 @@ using WindowsWrapper;
 using ConsoleLibrary.TextExtensions;
 using System.Linq;
 using ConsoleLibrary.Structures;
+using ConsoleLibrary.Game;
+using ConsoleApiTest.Chess;
 
 namespace ConsoleApiTest
 {
@@ -44,8 +46,14 @@ namespace ConsoleApiTest
 
 
             //new TestApp(80, 20).Init();
-            new TestApp(115, 52).Init();
-            ConsoleInput.InputLoop();
+
+            var harness = new Harness();
+            harness.Strap(new ChessApp(100, 50));
+            //harness.Strap(new ConsoleLibrary.Game.TestApp(20, 20));
+            harness.Run();
+
+            //new TestApp(115, 52).Init();
+            //ConsoleInput.InputLoop();
             //Console.ReadLine();
         }
 
@@ -102,7 +110,9 @@ namespace ConsoleApiTest
             };
             textBox.Text = lorem;
             textBox.MousePressed += TextBox_MousePressed;
-            //textBox.Visible = false;
+            textBox.Visible = false;
+
+            var scrollable = new ScrollableTextBox(controlManager);
             //textBox.MouseReleased += TextBox_MouseReleased;
 
             dataBox = new TextBox(controlManager)
@@ -174,7 +184,7 @@ namespace ConsoleApiTest
             for (int y = 0; y < square.GetLength(0); y++)
                 for (int x = 0; x < square.GetLength(1); x++)
                     square[y, x].Attributes |= ((x / tileWidth + y / tileHeight) % 2 == 0
-                        ? CharAttribute.BackgroundGrey | CharAttribute.ForegroundBlack
+                        ? CharAttribute.BackgroundGray | CharAttribute.ForegroundBlack
                         : CharAttribute.BackgroundBlack | CharAttribute.ForegroundWhite);
 
             for (int y = 0; y < square.GetLength(0); y++)
@@ -186,15 +196,27 @@ namespace ConsoleApiTest
                         int py = y + spacingY;
                         square[py, px].UnicodeChar = '♕';
                         square[py, px].Attributes |= CharAttribute.LeadingByte;
-                        square[py, px + 1].UnicodeChar = '♕';
-                        square[py, px + 1].Attributes |= CharAttribute.TrailingByte;
+                        //square[py, px + 1].UnicodeChar = '♕';
+                        //square[py, px + 1].Attributes |= CharAttribute.TrailingByte;
 
-                        var yellow = CharAttribute.BackgroundYellow | CharAttribute.ForegroundBlack;
+                        var yellow = CharAttribute.BackgroundYellow | CharAttribute.ForegroundDarkYellow;
                         var marker = new CharInfo
                         {
-                            UnicodeChar = ShadingCharacter.Light,
+                            UnicodeChar = ShadingCharacter.Medium,
                             Attributes = yellow
                         };
+
+                        if(x == 0 && y == 0)
+                        for (int ox = 0; ox < tileWidth; ox++)
+                        {
+                            for (int oy = 0; oy < tileHeight; oy++)
+                            {
+                                if(oy == 0 || oy == tileHeight-1 || oy > 0 && (ox <= 1 || ox >= tileWidth - 2))
+                                square[y + oy, x + ox] = marker;
+
+                            }
+
+                        }
                     }
                 }
 
@@ -202,7 +224,7 @@ namespace ConsoleApiTest
             CharInfo backChar = new CharInfo
             {
                 UnicodeChar = ShadingCharacter.Dark,
-                Attributes = CharAttribute.BackgroundDarkGrey
+                Attributes = CharAttribute.BackgroundDarkGray
             };
             backface.Fill(backChar);
 
@@ -416,19 +438,26 @@ namespace ConsoleApiTest
         private void Draw()
         {
             //buffer.Clear(CharAttribute.BackgroundDarkYellow);
-            Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGrey, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
+            Gradient gradient = new Gradient(CharAttribute.BackgroundDarkGray, CharAttribute.ForegroundWhite, CharAttribute.BackgroundGreen, CharAttribute.BackgroundMagenta, CharAttribute.BackgroundCyan, CharAttribute.BackgroundYellow);
             //gradient = new Gradient(CharAttribute.BackgroundCyan, CharAttribute.BackgroundMagenta, CharAttribute.ForegroundYellow, CharAttribute.BackgroundBlack);
             //gradient = new Gradient(CharAttribute.BackgroundBlue, CharAttribute.BackgroundCyan, CharAttribute.BackgroundGreen);
             //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGrey, CharAttribute.BackgroundGrey, CharAttribute.BackgroundWhite);
             //gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlue);
             //gradient.Reverse();
-            gradient = new Gradient(CharAttribute.ForegroundBlue, CharAttribute.ForegroundCyan, CharAttribute.BackgroundGreen, CharAttribute.BackgroundYellow, CharAttribute.BackgroundRed, CharAttribute.BackgroundMagenta);
-            buffer.Draw(gradient, 0, 0, Width, Height / 2);
-            gradient.Reverse();
-            buffer.Draw(gradient, 0, Height / 2, Width, Height);
+            //gradient = new Gradient(CharAttribute.ForegroundBlue, CharAttribute.ForegroundCyan, CharAttribute.BackgroundGreen, CharAttribute.BackgroundYellow, CharAttribute.BackgroundRed, CharAttribute.BackgroundMagenta);
+            //buffer.Draw(gradient, 0, 0, Width, Height / 2);
+            //buffer.Draw(gradient, 0, 0, Width/2, Height);
+            //gradient.Reverse();
+            //buffer.Draw(gradient, Width/2, 0, Width/2, Height);
+
+            gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkGray, CharAttribute.BackgroundGray, CharAttribute.BackgroundWhite, CharAttribute.BackgroundGray, CharAttribute.BackgroundDarkGray, CharAttribute.BackgroundBlack);
+            buffer.Draw(gradient, 0, 0, Width, Height);
+            //buffer.Draw(gradient, 0, Height / 2, Width, Height);
 
             buffer.Draw(backface, Width / 2 - backface.Width / 2, Height / 2 - backface.Height / 2);
             buffer.Draw(square, Width / 2 - square.GetLength(1) / 2, Height / 2 - square.GetLength(0) / 2);
+            ConsoleRenderer.RenderOutput();
+            //return;
 
             //buffer.Draw(strings, Width / 2 - strings[0].Length / 2, Height / 2 - strings.Length / 2, CharAttribute.ForegroundWhite);
             //buffer.Draw("Hello", 10, Height - 1);

@@ -33,7 +33,7 @@ namespace ConsoleLibrary.Forms.Controls
             set => rectangle.Height = Math.Max(2, value);
         }
 
-        public VerticalScrollbar(ControlManager manager) : base(manager)
+        public VerticalScrollbar(Control manager) : base(manager)
         {
             handleSize = 5;
             buttonAttributes &= doubleWidth ? buttonAttributes : ~CharAttribute.LeadingByte;

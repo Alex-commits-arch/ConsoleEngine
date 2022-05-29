@@ -14,7 +14,7 @@ namespace ConsoleLibrary.Forms.Controls
         public WordBreak WordBreak { get; set; }
         public TextAlign TextAlign { get; set; }
 
-        public TextBox(ControlManager container) : base(container)
+        public TextBox(Control container) : base(container)
         {
 
         }
@@ -88,7 +88,7 @@ namespace ConsoleLibrary.Forms.Controls
         public WordBreak WordBreak { get; set; }
         public TextAlign TextAlign { get; set; }
 
-        public FlexibleTextBox(ControlManager container) : base(container)
+        public FlexibleTextBox(Control container) : base(container)
         {
             Text = "helllo";
         }

@@ -27,6 +27,17 @@ namespace ConsoleLibrary.Forms
             ConsoleInput.MousePressed += ConsoleInput_MousePressed;
             ConsoleInput.MouseReleased += ConsoleInput_MouseReleased;
             ConsoleInput.MouseDoubleClick += ConsoleInput_MouseDoubleClick;
+            ConsoleInput.Resized += ConsoleInput_Resized;
+        }
+
+        private void ConsoleInput_Resized(ResizedEventArgs args)
+        {
+            controls.ForEach(control =>
+            {
+                control.HandleResized(args.Width, args.Height);
+                control.Invalidate();
+            });
+            //controls.ForEach(control => control.Refre);
         }
 
         private void ConsoleInput_MouseDragged(object _, MouseEventArgs e) => controlUnderMouse?.HandleMouseDragged(e);

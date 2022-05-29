@@ -2,6 +2,7 @@
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
 using System;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
@@ -31,6 +32,8 @@ namespace ConsoleLibrary.Drawing
             height = content.GetLength(0);
             this.content = content;
         }
+
+        #region Management
 
         public void Resize(int width, int height)
         {
@@ -110,6 +113,10 @@ namespace ConsoleLibrary.Drawing
             return area;
         }
 
+        #endregion
+
+        #region Drawing
+
         public void Clear(CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
         {
             CharInfo clearChar = new CharInfo
@@ -166,6 +173,18 @@ namespace ConsoleLibrary.Drawing
             for (int yy = startY; yy < endY; yy++)
                 for (int xx = startX; xx < endX; xx++)
                     content[y + yy, x + xx] = charInfo;
+        }
+
+        public void FillRect(DrawingOptions options, CharInfo charInfo)
+        {
+            int startX = SafeSourceStart(options.X);
+            int startY = SafeSourceStart(options.Y);
+            int endX = SafeSourceEnd(options.X, options.Width, width);
+            int endY = SafeSourceEnd(options.Y, options.Height, height);
+
+            for (int yy = startY; yy < endY; yy++)
+                for (int xx = startX; xx < endX; xx++)
+                    content[options.Y + yy, options.X + xx] = charInfo;
         }
 
         public void Draw(char c, int x, int y, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
@@ -239,7 +258,61 @@ namespace ConsoleLibrary.Drawing
             }
         }
 
-        public void Draw(Gradient gradient, int x, int y, int width, int height)
+        public void Draw(Gradient gradient, int x, int y, int width, int height, bool vertical = false)
+        {
+            if (vertical)
+                DrawVerticalGradient(gradient, x, y, width, height);
+            else
+                DrawHorizontalGradient(gradient, x, y, width, height);
+        }
+
+        private Point RotatePoint(Point p, float angle, Point origin)
+        {
+            //return p;
+            Point translated = (p - origin) * new Point(1, -1);
+            return new Point
+            {
+                X = origin.X + (int)Math.Round((p.X - origin.X) * Math.Cos(angle) - (p.Y - origin.Y) * Math.Sin(angle)),
+                Y = origin.Y - (int)Math.Round((p.X - origin.X) * Math.Sin(angle) + (p.Y - origin.Y) * Math.Cos(angle))
+            };
+            //return p + new Point
+            //{
+            //    X = (int)Math.Round(translated.X * Math.Cos(angle) - translated.Y * Math.Sin(angle)),
+            //    Y = (int)Math.Round(translated.X * Math.Sin(angle) + translated.Y * Math.Cos(angle))
+            //};
+        }
+
+        private Rectangle CalculateBoundingBox(Point p0, Point p1, Point p2, Point p3)
+        {
+            int[] xVals = new[] { p0.X, p1.X, p2.X, p3.X };
+            int[] yVals = new[] { p0.Y, p1.Y, p2.Y, p3.Y };
+            int smallestX = Enumerable.Min(xVals);
+            int smallestY = Enumerable.Min(yVals);
+            int largestX = Enumerable.Max(xVals);
+            int largestY = Enumerable.Max(yVals);
+            return new Rectangle(smallestX, smallestY, largestX - smallestX + 1, largestY - smallestY + 1);
+        }
+
+        public void DrawRotatedGradient(Gradient gradient, int x, int y, int width, int height, float angle)
+        {
+            Point origin = new Point(x, y) + new Point(width, height) / 2;
+            Point p0 = RotatePoint(new Point(x, y), angle, origin);
+            Point p1 = RotatePoint(new Point(x + width - 1, y), angle, origin);
+            Point p2 = RotatePoint(new Point(x + width - 1, y + height - 1), angle, origin);
+            Point p3 = RotatePoint(new Point(x, y + height - 1), angle, origin);
+
+            Rectangle boundingBox = CalculateBoundingBox(p0, p1, p2, p3);
+
+            FillRect(boundingBox, CharAttribute.BackgroundDarkRed);
+            Draw('+', p0.X, p0.Y, CharAttribute.ForegroundMagenta);
+            Draw('+', p1.X, p1.Y, CharAttribute.ForegroundYellow);
+            Draw('+', p2.X, p2.Y, CharAttribute.ForegroundCyan);
+            Draw('+', p3.X, p3.Y, CharAttribute.ForegroundGreen);
+
+            //float x0 = 
+        }
+
+        private void DrawHorizontalGradient(Gradient gradient, int x, int y, int width, int height)
         {
             int startX = SafeSourceStart(x);
             int startY = SafeSourceStart(y);
@@ -256,9 +329,36 @@ namespace ConsoleLibrary.Drawing
             }
         }
 
+        private void DrawVerticalGradient(Gradient gradient, int x, int y, int width, int height)
+        {
+            int startX = SafeSourceStart(x);
+            int startY = SafeSourceStart(y);
+            int endX = SafeSourceEnd(x, width, this.width);
+            int endY = SafeSourceEnd(y, height, this.height);
+
+            for (int yy = startY; yy < endY; yy++)
+            {
+                CharInfo color = gradient.Palette[(int)(yy / (height / (float)gradient.Palette.Length)) % gradient.Palette.Length];
+                for (int xx = startX; xx < endX; xx++)
+                {
+                    content[y + yy, x + xx] = color;
+                }
+            }
+        }
+
+        public void Draw(BufferArea bufferArea, DrawingOptions options)
+        {
+            Draw(bufferArea.Content, options);
+        }
+
         public void Draw(BufferArea bufferArea, int x, int y)
         {
             Draw(bufferArea.Content, x, y);
+        }
+
+        public void Draw(CharInfo[,] info, DrawingOptions options)
+        {
+            Draw(info, options.X, options.Y, options.WithTransparency, options.TransparentCharacter);
         }
 
         public void Draw(CharInfo[,] info, int x, int y, bool withTransparancy = false, char transparentCharacter = '\0')
@@ -286,6 +386,8 @@ namespace ConsoleLibrary.Drawing
             }
         }
 
+        #endregion
+
         #region UTILITY
         [MethodImpl]
         private int SafeSourceStart(int index) => index < 0 ? -index : 0;
@@ -294,6 +396,17 @@ namespace ConsoleLibrary.Drawing
         private int BoundToHeight(int y) => Math.Max(0, Math.Min(height, y));
         private bool IsBoundedIndex(int index, int size) => index >= 0 && index < size;
         #endregion
+    }
+
+    public struct DrawingOptions
+    {
+        public int X;
+        public int Y;
+        public int Width;
+        public int Height;
+        public bool WithTransparency;
+        public CharAttribute Attributes;
+        public char TransparentCharacter;
     }
 
     public class ScreenBuffer : BufferArea

@@ -36,18 +36,29 @@ namespace ConsoleLibrary
             }
             else if (maximized)
             {
-                MyConsole.SetBufferSize(MyConsole.MaximumWidth, initialBufferHeight+1);
+                MyConsole.SetBufferSize(MyConsole.MaximumWidth, initialBufferHeight + 1);
                 MyConsole.SetSize(MyConsole.MaximumWidth, initialBufferHeight);
             }
             else
             {
                 MyConsole.SetSize(width, height);
             }
+
+            Input.ConsoleInput.Resized += ConsoleInput_Resized;
         }
 
         ~ConsoleApp()
         {
             Exit();
+        }
+
+        private void ConsoleInput_Resized(Input.Events.ResizedEventArgs resizedEventArgs)
+        {
+            int w = resizedEventArgs.Width;
+            int h = resizedEventArgs.Height;
+            MyConsole.SetSize(w, h);
+            MyConsole.HideCursor();
+            Drawing.ConsoleRenderer.Resize(w, h);
         }
 
         protected void UpdateColor()

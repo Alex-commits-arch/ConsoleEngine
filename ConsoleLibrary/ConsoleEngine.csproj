@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.cs" />
+    <Compile Include="Game\GameApp.cs" />
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="Drawing\ColorfulString.cs" />
     <Compile Include="Drawing\DrawArgs.cs" />
@@ -78,11 +78,14 @@
     <Compile Include="Drawing\Shapes\Rect.cs" />
     <Compile Include="Drawing\Shapes\IShape.cs" />
     <Compile Include="Drawing\Shapes\TextBox.cs" />
+    <Compile Include="Game\InputManager.cs" />
     <Compile Include="Input\ConsoleInput.cs" />
+    <Compile Include="Input\Events\KeyEventHandler.cs" />
     <Compile Include="Input\Events\MouseEventHandler.cs" />
     <Compile Include="Input\Events\ResizedEventArgs.cs" />
     <Compile Include="Input\Events\KeyEventArgs.cs" />
     <Compile Include="Input\Events\MouseEventArgs.cs" />
+    <Compile Include="Input\Events\ResizedEventHandler.cs" />
     <Compile Include="MyConsole.cs" />
     <Compile Include="Structures\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
