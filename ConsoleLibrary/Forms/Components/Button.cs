@@ -15,7 +15,7 @@ namespace ConsoleLibrary.Forms.Components
         private CharAttribute attributes = CharAttribute.ForegroundGrey;
         private CharAttribute activeAttributes = CharAttribute.BackgroundBlue | CharAttribute.ForegroundWhite;
         private CharAttribute pressedAttributes = CharAttribute.BackgroundDarkBlue | CharAttribute.ForegroundGrey;
-        private CharAttribute disabledAttributes = CharAttribute.ForegroundDarkGrey;
+        private CharAttribute disabledAttributes = CharAttribute.ForegroundDarkGray;
 
         public string Text
         {

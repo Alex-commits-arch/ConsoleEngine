@@ -20,6 +20,26 @@ namespace ConsoleApiTest
 {
     class Program
     {
+        enum Test
+        {
+            None,
+            Test1,
+            Test2,
+            Test3 = Test1 | Test2,
+            Test4
+        }
+
+        [Flags]
+        public enum SensorHardwareTypes
+        {
+            OldPulseSensor = 0,
+            TemperatureData = 1,
+            CounterData = 2,
+            AllData = TemperatureData | CounterData,
+            Humidity = 4,
+            MBus = 8
+        }
+
         static void Main(string[] args)
         {
             //var t = (SystemMetric[])Enum.GetValues(typeof(SystemMetric));
@@ -44,22 +64,108 @@ namespace ConsoleApiTest
 
             //Console.WriteLine(new { hello = "test" });
 
+            Test test = Test.Test3 | Test.Test4;
+            test = Test.None;
+
+            //Console.WriteLine(test.HasFlag(Test.None));
+            //Console.WriteLine(test == Test.None);
+            //Console.WriteLine(test.HasFlag(Test.Test1));
+            //Console.WriteLine(test.HasFlag(Test.Test2));
+            //Console.WriteLine(test.HasFlag(Test.Test3));
+            //Console.WriteLine(test.HasFlag(Test.Test4));
+            //Console.WriteLine(test.HasFlag(Test.Test1 | Test.Test2));
+            //Console.WriteLine((SensorHardwareTypes)(48 >> 4));
+
+            //SensorHardwareTypes ConvertToEnum(int v)
+            //{
+            //    v |= ((v & 0x40) >> 6) * 0x30;
+            //    v >>= 4;
+            //    return (SensorHardwareTypes)v;
+            //    //return (SensorHardwareTypes)((v | ((v & 0x40) * 0x30)) >> 4);
+            //}
+
+            //SensorHardwareTypes ConvertToEnum(int v) => (SensorHardwareTypes)((v | (((v & 0x40) >> 6) * 0x30)) >> 4);
+
+            //var a = ConvertToEnum(0xC0);
+            //Console.WriteLine(a);
+
+            //Console.ReadLine();
+            //return;
 
             //new TestApp(80, 20).Init();
 
-            var harness = new Harness();
-            harness.Strap(new ChessApp(100, 50));
+            //var harness = new Harness();
+            //harness.Strap(new ChessApp(100, 50));
+            //harness.Strap(new ChessApp(100, 100));
             //harness.Strap(new ConsoleLibrary.Game.TestApp(20, 20));
-            harness.Run();
+            //harness.Run();
 
             //new TestApp(115, 52).Init();
-            //ConsoleInput.InputLoop();
+            new MyApp().Init();
+            ConsoleInput.InputLoop();
             //Console.ReadLine();
         }
 
         private static int A(int a, int b, int c) => Math.Min(c - a, b);
 
         private static int B(int a, int b, int c) => (c - a) < b ? c - a : b;
+    }
+
+    public class MyApp : FormApp
+    {
+        public MyApp() : base(80, 40)
+        {
+            Title = "Test";
+
+            //new TextBox(ControlManager)
+            //{
+            //    Text = "Hello",
+            //    Attributes = CharAttribute.ForegroundBlue | CharAttribute.BackgroundGreen,
+            //    Height = 1,
+            //    //Width  =10,
+            //    Top = 0,
+            //    Left = 0
+            //};
+
+            var sb = new HorizontalScrollbar(controlManager);
+            sb.Width = 20;
+
+            new VerticalScrollbar(controlManager)
+            {
+                Left = Width - 2,
+                Height = Height-1,
+                Top = 1
+            };
+
+            new ScrollableTextBox(controlManager)
+            {
+                Width = 20,
+                Height = 10,
+                Top = 15,
+                Left = 10
+            };
+
+            //sb.MouseDragged += Sb_MouseDragged;
+        }
+
+        private void Sb_MouseDragged(object sender, MouseEventArgs e)
+        {
+            var scrollbar = sender as Scrollbar;
+            if (scrollbar != null)
+            {
+                scrollbar.BeginUpdate();
+                //(sender as Scrollbar).Left = e.Location.X;
+                scrollbar.EndUpdate();
+            }
+        }
+
+        public override void Init()
+        {
+            base.Init();
+            //ConsoleRenderer.ActiveBuffer.Draw('c', 0, 0);
+            //controlManager.DrawControls();
+            Render();
+        }
     }
 
     public class TestApp : FormApp
@@ -113,6 +219,10 @@ namespace ConsoleApiTest
             textBox.Visible = false;
 
             var scrollable = new ScrollableTextBox(controlManager);
+            scrollable.MouseEnter += (object obj, MouseEventArgs args) =>
+            {
+                Debug.WriteLine("Box entered");
+            };
             //textBox.MouseReleased += TextBox_MouseReleased;
 
             dataBox = new TextBox(controlManager)

@@ -20,7 +20,7 @@ namespace ConsoleApiTest.Poker
     {
         Button startButton;
         Button placeholder;
-        Border border;
+        ConsoleLibrary.Forms.Components.Border border;
         int sideMargin = 10;
 
         int width;
@@ -69,7 +69,7 @@ namespace ConsoleApiTest.Poker
             //placeholder.Click += Placeholder_Click;
             //Components.Add(placeholder);
 
-            border = new DoubleBorder();
+            border = new ConsoleLibrary.Forms.Components.DoubleBorder();
             border.Left = sideMargin;
             border.Width = width - border.Left * 2;
             border.Height = height;

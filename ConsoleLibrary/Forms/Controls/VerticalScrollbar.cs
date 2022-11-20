@@ -15,9 +15,11 @@ namespace ConsoleLibrary.Forms.Controls
     public class VerticalScrollbar : Scrollbar
     {
         //private const char bigArrowUp = '\u25b2';
-        private const char bigArrowUp = '\u2b06';
+        //private const char bigArrowUp = '\u2b06';
+        private const char bigArrowUp = '^';
         //private const char bigArrowDown = '\u25bc';
-        private const char bigArrowDown = '\u2b07';
+        //private const char bigArrowDown = '\u2b07';
+        private const char bigArrowDown = 'v';
         private const char smallArrowUp = '\u25b4';
         private const char smallArrowDown = '\u25be';
         private const char handleSymbol = '\u2588';

@@ -44,7 +44,9 @@ namespace ConsoleLibrary.Game
         {
             this.app = app;
 
-            MyConsole.SetFontSize(9, 18);
+            //MyConsole.Test();
+            //MyConsole.SetFontSize(9, 18);
+            //MyConsole.SetFontSize(8, 8);
             MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_WINDOW_INPUT | ConsoleModes.ENABLE_MOUSE_INPUT);
             MyConsole.DisableResize();
 
@@ -61,7 +63,7 @@ namespace ConsoleLibrary.Game
             if (app != null)
             {
                 //InputManager.InputLoop();
-                while (running)
+                while (running && !MyConsole.Exiting)
                 {
                     //InputManager.HandleInput();
                     app.Update(GetDeltaTime());

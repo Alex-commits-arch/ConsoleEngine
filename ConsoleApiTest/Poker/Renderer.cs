@@ -31,7 +31,7 @@ namespace ConsoleApiTest.Poker
 
             //ConsoleRenderer.FillRect(' ', x + 1, y + 1, width - 2, height - 2, CharAttribute.BackgroundBlack);
 
-            Border border = new RoundedBorder();
+            ConsoleLibrary.Forms.Components.Border border = new ConsoleLibrary.Forms.Components.RoundedBorder();
             border.Width = width;
             border.Height = height;
             border.Left = x;
@@ -59,14 +59,14 @@ namespace ConsoleApiTest.Poker
 
         public static void DrawTable(int x, int y, int w, int h)
         {
-            var border = new RoundedBorder();
+            var border = new ConsoleLibrary.Forms.Components.RoundedBorder();
             border.Width = w;
             border.Height = h;
             border.Left = x;
             border.Top = y;
             border.Attributes = CharAttribute.ForegroundWhite;
             border.Draw();
-            var innerBorder = new DashedBorder();
+            var innerBorder = new ConsoleLibrary.Forms.Components.DashedBorder();
             innerBorder.Width = w - 2;
             innerBorder.Height = h - 2;
             innerBorder.Left = x + 1;

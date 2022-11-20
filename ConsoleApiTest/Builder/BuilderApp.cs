@@ -14,7 +14,7 @@ namespace ConsoleApiTest.Builder
 {
     public class BuilderApp : FormApp
     {
-        Border border;
+        ConsoleLibrary.Forms.Components.Border border;
 
         public BuilderApp(int width, int height) : base(width, height)
         {
@@ -27,7 +27,7 @@ namespace ConsoleApiTest.Builder
 
             var (width, height) = ConsoleRenderer.GetConsoleSize();
 
-            border = new SingleBorder();
+            border = new ConsoleLibrary.Forms.Components.SingleBorder();
             border.Left = -1;
             border.Top = -1;
             border.Width = 20;

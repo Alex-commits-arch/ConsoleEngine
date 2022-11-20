@@ -29,7 +29,13 @@ namespace ConsoleApiTest.Chess
         Point center;
         Point boardSize;
         Point boardCenter;
+        Point boardPosition;
+        Point markerPos;
+        Rectangle boardBounds;
+        string horizontalGlyphs = "ABCDEFGH";
+        string verticalGlyphs = "87654321";
         float backgroundAngle = 0.0f;
+        Border selectionMarker;
         BufferArea backgroundBuffer;
         BufferArea boardBuffer;
         ChessGame game;
@@ -63,7 +69,9 @@ namespace ConsoleApiTest.Chess
 
             game = new ChessGame();
             center = new Point(width / 2, height / 2);
+            selectionMarker = new DoubleBorder();
 
+            SetFont("MS Gothic", 9, 18);
             InitBoard();
             InitBackground();
         }
@@ -75,9 +83,18 @@ namespace ConsoleApiTest.Chess
             var lightGray = CharAttribute.BackgroundGray;
             var darkGray = CharAttribute.BackgroundDarkGray;
             var black = CharAttribute.BackgroundBlack;
-            Gradient gradient = new Gradient(black, CharAttribute.BackgroundDarkBlue, black);
+            var blue = CharAttribute.BackgroundBlue;
+            var darkBlue = CharAttribute.BackgroundDarkBlue;
+            Gradient gradient = new Gradient(black, darkBlue, black);
+            gradient = new Gradient(black, darkBlue, blue, darkBlue, black);
             //gradient.Reverse();
             backgroundBuffer.Draw(gradient, 0, 0, width, height, true);
+
+            for (int i = 0; i < 8; i++)
+            {
+                backgroundBuffer.Draw(horizontalGlyphs[i], boardPosition.X + tileSize.X * i + borderSize.X + tileSize.X / 2 - 1, boardPosition.Y + boardSize.Y + 1);
+                backgroundBuffer.Draw(verticalGlyphs[7 - i], boardPosition.X - 2, boardPosition.Y + boardSize.Y - tileSize.Y * i - borderSize.Y - tileSize.Y / 2 - 1);
+            }
 
             //backgroundBuffer.Draw(gradient, 0, 0, width / 2, height);
             //gradient.Reverse();
@@ -93,7 +110,9 @@ namespace ConsoleApiTest.Chess
 
             boardSize = tileSize * 8 + borderSize * 2;
             boardCenter = boardSize / 2;
+            boardPosition = center - boardCenter;
             boardBuffer = new BufferArea(boardSize.X, boardSize.Y);
+            boardBounds = new Rectangle(boardPosition + borderSize, boardSize - borderSize * 2 - tileSize + new Point(1, 1));
 
             boardBuffer.Fill(new CharInfo { UnicodeChar = ShadingCharacter.Dark, Attributes = CharAttribute.ForegroundDarkGreen });
 
@@ -113,30 +132,46 @@ namespace ConsoleApiTest.Chess
 
         public override void Update(float deltaTime)
         {
-            Point mousePos = InputManager.GetMousePosition();
+            if (InputManager.IsPressed(VirtualKeys.LeftControl) && InputManager.IsPressed(VirtualKeys.C))
+                Exit();
 
-            backgroundAngle += (float)(System.Math.PI * deltaTime) / 16;
+            Point mousePos = InputManager.GetMousePosition();
+            markerPos = (mousePos - boardPosition - borderSize) / tileSize;
+            markerPos.Bound(new Rectangle(0, 0, 8, 8));
+
+            //if (InputManager.IsPressed(VirtualKeys.LeftButton))
+            //    Title = "Hello";
+            //backgroundAngle += (float)(System.Math.PI * deltaTime) / 1;
             //backgroundAngle %= (float)System.Math.PI;
             //backgroundAngle = (float)(System.Math.PI / 2);
-            backgroundAngle = (float)(Math.PI / 15);
+            //backgroundAngle = (float)(Math.PI / 4);
+            //backgroundAngle = 0;
 
             harness.RequestRedraw();
         }
 
         private void DrawBackground(BufferArea mainBuffer)
         {
-            backgroundBuffer.Clear();
-            Gradient gradient = new Gradient(CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlack);
-            var pos = center - boardCenter;
-            //backgroundBuffer.DrawRotatedGradient(gradient, 0, 0, width, height, backgroundAngle);
-            backgroundBuffer.DrawRotatedGradient(
-                gradient,
-                pos.X,
-                pos.Y,
-                boardSize.X,
-                boardSize.Y,
-                backgroundAngle);
-            backgroundBuffer.Draw(backgroundAngle.ToString(), 0, 0);
+            //backgroundBuffer.Clear(CharAttribute.BackgroundDarkGray);
+            //var black = CharAttribute.BackgroundBlack;
+            //var blue = CharAttribute.BackgroundBlue;
+            //var darkBlue = CharAttribute.BackgroundDarkBlue;
+            //Gradient gradient = new Gradient(black, darkBlue, black);
+            //gradient = new Gradient(black, darkBlue, blue, darkBlue, black);
+            ////Gradient gradient = new Gradient(CharAttribute.BackgroundDarkBlue, CharAttribute.BackgroundBlack, CharAttribute.BackgroundDarkBlue);
+            //var pos = center - boardCenter;
+            ////backgroundBuffer.Draw(gradient, 0, 0, width, height, true);
+            ////backgroundBuffer.DrawRotatedGradient(gradient, 0, 0, width, height, backgroundAngle);
+            //backgroundBuffer.DrawRotatedGradientC(gradient, 0, 0, width, height, backgroundAngle);
+            //backgroundBuffer.DrawRotatedGradientC(gradient, 4 * 2, 2 * 2, width - 8 * 2, height - 4 * 2, backgroundAngle);
+            //backgroundBuffer.DrawRotatedGradient(
+            //    gradient,
+            //    pos.X,
+            //    pos.Y,
+            //    boardSize.X,
+            //    boardSize.Y,
+            //    backgroundAngle);
+            //backgroundBuffer.Draw(backgroundAngle.ToString(), 0, 0);
             mainBuffer.Draw(backgroundBuffer, 0, 0);
         }
 
@@ -165,7 +200,7 @@ namespace ConsoleApiTest.Chess
 
                         CharAttribute attribute = piece.color == PieceColor.White
                             ? CharAttribute.ForegroundWhite
-                            : CharAttribute.ForegroundGrey;
+                            : CharAttribute.ForegroundDarkGray;
                         attribute |= CharAttribute.LeadingByte;
 
                         mainBuffer.Draw(pieceChars[piece.color][piece.type], pos.X, pos.Y, attribute);
@@ -174,13 +209,27 @@ namespace ConsoleApiTest.Chess
             }
         }
 
+        private void DrawMarker(BufferArea mainBuffer)
+        {
+            Point markerDrawPos = markerPos * tileSize + boardPosition + borderSize;
+            mainBuffer.Draw(selectionMarker, markerDrawPos.X, markerDrawPos.Y, tileSize.X, tileSize.Y, CharAttribute.ForegroundMagenta);
+        }
+
+        private void DrawInfo(BufferArea mainBuffer)
+        {
+            var type = game.board.TypeAt(markerPos);
+            mainBuffer.Draw($"{type}", boardPosition.X + boardSize.X + 1, boardPosition.Y);
+            mainBuffer.Draw($"{horizontalGlyphs[markerPos.X]}{verticalGlyphs[markerPos.Y]}", boardPosition.X + boardSize.X + 1, boardPosition.Y + 1);
+        }
+
         public override void Draw(BufferArea buffer)
         {
             buffer.Clear();
             DrawBackground(buffer);
-            Point boardPosition = center - boardCenter;
-            //DrawBoard(buffer, boardPosition);
-            //DrawPieces(buffer, boardPosition);
+            DrawBoard(buffer, boardPosition);
+            DrawPieces(buffer, boardPosition);
+            DrawMarker(buffer);
+            DrawInfo(buffer);
         }
     }
 }

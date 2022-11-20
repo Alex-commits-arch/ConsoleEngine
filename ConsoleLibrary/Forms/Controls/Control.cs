@@ -19,13 +19,23 @@ namespace ConsoleLibrary.Forms.Controls
         protected bool visible = true;
         protected bool enabled = true;
         protected bool isInvalid = true;
+        protected bool propagateEvents = true;
         protected CharAttribute attributes = CharAttribute.BackgroundBlack;
         protected BufferArea buffer;
         protected Control parent;
         protected List<Control> controls;
 
+        public Control Parent => parent;
+
         public Rectangle Rectangle { get => rectangle; set => rectangle = value; }
-        public BufferArea Buffer => buffer;
+        public Rectangle ClientRectangle => new Rectangle
+        {
+            Left = Left + parent.Left,
+            Top = Top + parent.Top,
+            Width = Width,
+            Height = Height
+        };
+        public virtual BufferArea Buffer => buffer;
 
         public int Left
         {
@@ -68,7 +78,7 @@ namespace ConsoleLibrary.Forms.Controls
 
         private Control()
         {
-            buffer = new BufferArea(0, 0);
+            //buffer = new BufferArea(0, 0);
             controls = new List<Control>();
         }
 
@@ -76,7 +86,10 @@ namespace ConsoleLibrary.Forms.Controls
         {
             this.parent = parent;
             if (parent != null)
+            {
+                buffer = parent.buffer;
                 parent.controls.Add(this);
+            }
         }
 
         public void Invalidate()
@@ -100,48 +113,56 @@ namespace ConsoleLibrary.Forms.Controls
         public bool ContainsPoint(Point p) => ContainsPoint(p.X, p.Y);
         public bool ContainsPoint(int mx, int my) => Rectangle.ContainsPoint(mx, my);
         public bool IntersectsWith(Rectangle rectangle) => Rectangle.IntersectsWith(rectangle);
-        public Point GetRelativeLocation(Point p) => new Point(p.X - Left, p.Y - Top);
+        //public Point GetRelativeLocation(Point p) => new Point(p.X - Left, p.Y - Top);
+        public Point GetRelativeLocation(Point p) => new Point(p.X - Left - parent.Left, p.Y - Top - parent.Top);
 
         protected internal void HandleMouseEnter(MouseEventArgs args)
         {
-            ControlUnderMouse(args.Location)?.HandleMouseEnter(args);
             MouseEnter?.Invoke(this, args);
+            if (propagateEvents)
+                ControlUnderMouse(args.Location)?.HandleMouseEnter(args);
         }
 
         protected internal void HandleMouseLeave(MouseEventArgs args)
         {
-            ControlUnderMouse(args.Location)?.HandleMouseLeave(args);
             MouseLeave?.Invoke(this, args);
+            if (propagateEvents)
+                ControlUnderMouse(args.Location)?.HandleMouseLeave(args);
         }
 
         protected internal void HandleMouseMoved(MouseEventArgs args)
         {
-            ControlUnderMouse(args.Location)?.HandleMouseMoved(args);
             MouseMoved?.Invoke(this, args);
+            if (propagateEvents)
+                ControlUnderMouse(args.Location)?.HandleMouseMoved(args);
         }
 
         protected internal void HandleMouseDragged(MouseEventArgs args)
         {
-            ControlUnderMouse(args.Location)?.HandleMouseDragged(args);
             MouseDragged?.Invoke(this, args);
+            if (propagateEvents)
+                ControlUnderMouse(args.Location)?.HandleMouseDragged(args);
         }
 
         protected internal void HandleMouseReleased(MouseEventArgs args)
         {
-            ControlUnderMouse(args.Location)?.HandleMouseReleased(args);
             MouseReleased?.Invoke(this, args);
+            if (propagateEvents)
+                ControlUnderMouse(args.Location)?.HandleMouseReleased(args);
         }
 
         protected internal void HandleMouseDoubleClick(MouseEventArgs args)
         {
-            ControlUnderMouse(args.Location)?.HandleMouseDoubleClick(args);
             MouseDoubleClick?.Invoke(this, args);
+            if (propagateEvents)
+                ControlUnderMouse(args.Location)?.HandleMouseDoubleClick(args);
         }
 
         protected internal void HandleMousePressed(MouseEventArgs args)
         {
-            ControlUnderMouse(args.Location)?.HandleMousePressed(args);
             MousePressed?.Invoke(this, args);
+            if (propagateEvents)
+                ControlUnderMouse(args.Location)?.HandleMousePressed(args);
         }
 
         protected Control ControlUnderMouse(Point point)
@@ -154,7 +175,7 @@ namespace ConsoleLibrary.Forms.Controls
             for (int i = controls.Count - 1; i >= 0; i--)
             {
                 Control control = controls[i];
-                if (control.Visible && control.Enabled && control.ContainsPoint(x, y))
+                if (control.Visible && control.Enabled && control.ContainsPoint(x - Left, y - Top))
                     return control;
             }
             return null;
@@ -185,7 +206,7 @@ namespace ConsoleLibrary.Forms.Controls
         /// </summary>
         public virtual void Update()
         {
-
+            
         }
 
         /// <summary>
@@ -207,10 +228,6 @@ namespace ConsoleLibrary.Forms.Controls
         /// </summary>
         public virtual void Draw(BufferArea drawingBuffer)
         {
-            if(Name == "Scrollable")
-            {
-
-            }
             if (Visible)
             {
                 if (isInvalid)

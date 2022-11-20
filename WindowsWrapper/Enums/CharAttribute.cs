@@ -13,7 +13,7 @@ namespace WindowsWrapper.Enums
         ForegroundDarkMagenta = 0x0005,
         ForegroundDarkYellow = 0x0006,
         ForegroundGrey = 0x0007,
-        ForegroundDarkGrey = 0x0008,
+        ForegroundDarkGray = 0x0008,
         ForegroundBlue = 0x0009,
         ForegroundGreen = 0x000A,
         ForegroundCyan = 0x000B,

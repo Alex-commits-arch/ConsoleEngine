@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using WindowsWrapper;
 using WindowsWrapper.Constants;
 using WindowsWrapper.Enums;
@@ -290,34 +291,42 @@ namespace ConsoleLibrary
         static System.Drawing.Bitmap bmp = new System.Drawing.Bitmap(16, 16);
         public static void Test()
         {
-            //while (WinApi.ShowCursor(false) >= 0) { }
-            //WinApi.SetCursor(IntPtr.Zero);
-            IntPtr hCursor = WinApi.LoadCursor(IntPtr.Zero, IDC_STANDARD_CURSORS.IDC_CROSS);
-            if (hCursor == IntPtr.Zero)
-                Debug.WriteLine("Oj");
-            HandleError(WinApi.SetClassLong(windowHandle, ClassLongFlags.GCLP_HCURSOR, hCursor) == IntPtr.Zero);
-            return;
-            if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+            bool K(string name)
             {
-                System.Drawing.Icon icon = new System.Drawing.Icon(@"D:\Dokument\GIT\ConsoleEngine\ConsoleApiTest\Treetog-Junior-Monitor-test.ico");
-                WinApi.SendMessage(windowHandle, WM.SETICON, 0, icon.Handle);
-                WinApi.SendMessage(windowHandle, WM.SETICON, 1, icon.Handle);
+                int codePage = Convert.ToInt32(name);
+
+                try
+                {
+                    var enc = Encoding.GetEncoding(codePage);
+                    Debug.WriteLine(string.Format("codePageString = '{0}' BodyName = '{1}' CodePage = {2} EncodingName = '{3}' HeaderName = '{4}' WindowsCodePage = {5}", name, enc.BodyName, enc.CodePage, enc.EncodingName, enc.HeaderName, enc.WindowsCodePage));
+                }
+                catch
+                {
+
+
+                }
+                return true;
             }
+
+            WinApi.EnumSystemCodePages(K, CodePage.Supported);
         }
 
-        //TODO: Add SetFont method
+        public static void SetFont(string fontName, int width, int height)
+        {
+            CONSOLE_FONT_INFO_EX cfi = new CONSOLE_FONT_INFO_EX();
+            cfi.cbSize = (uint)Marshal.SizeOf(cfi);
+            cfi.dwFontSize = new COORD((short)width, (short)height);
+            cfi.FaceName = fontName;
+            HandleError(!WinApi.SetCurrentConsoleFontEx(bufferHandle, false, ref cfi));
+        }
+
         public static void SetFontSize(int width, int height)
         {
             CONSOLE_FONT_INFO_EX cfi = new CONSOLE_FONT_INFO_EX();
             cfi.cbSize = (uint)Marshal.SizeOf(cfi);
-            WinApi.GetCurrentConsoleFontEx(bufferHandle.DangerousGetHandle(), false, ref cfi);
+            WinApi.GetCurrentConsoleFontEx(bufferHandle, false, ref cfi);
 
-            //cfi.cbSize = (uint)Marshal.SizeOf(cfi);
-            //cfi.nFont = 0;
             cfi.dwFontSize = new COORD((short)width, (short)height);
-            //cfi.FontFamily = 0;
-            //cfi.FontWeight = 400;
-            //cfi.FaceName = "Arial";
 
             HandleError(!WinApi.SetCurrentConsoleFontEx(bufferHandle, false, ref cfi));
         }

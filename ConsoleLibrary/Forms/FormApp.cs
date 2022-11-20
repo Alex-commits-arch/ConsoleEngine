@@ -33,16 +33,22 @@ namespace ConsoleLibrary.Forms
 
         public FormApp(int width, int height) : base(width, height)
         {
+            controlManager = new ControlManager();
             MyConsole.SetMode(ConsoleModes.ENABLE_EXTENDED_FLAGS | ConsoleModes.ENABLE_MOUSE_INPUT);
         }
 
         public override void Init()
         {
             base.Init();
-            controlManager = new ControlManager();
             ConsoleInput.MouseMoved += OnMouseMoved;
             ConsoleInput.KeyPressed += OnKeyPressed;
             ConsoleInput.Resized += ConsoleInput_Resized;
+        }
+
+        protected void Render()
+        {
+            controlManager.Draw();
+            ConsoleRenderer.RenderOutput();
         }
 
         private void ConsoleInput_Resized(ResizedEventArgs resizedEventArgs)
@@ -52,6 +58,7 @@ namespace ConsoleLibrary.Forms
             //controlManager.Width = resizedEventArgs.Width;
             //controlManager.Height = resizedEventArgs.Height;
             //controlManager.EndUpdate();
+            Render();
         }
 
         //private void OnWindowResized()

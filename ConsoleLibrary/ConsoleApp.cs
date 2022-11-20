@@ -61,6 +61,11 @@ namespace ConsoleLibrary
             Drawing.ConsoleRenderer.Resize(w, h);
         }
 
+        protected void SetFont(string fontName, int width, int height)
+        {
+            MyConsole.SetFont(fontName, width, height);
+        }
+
         protected void UpdateColor()
         {
             MyConsole.UpdateColor();

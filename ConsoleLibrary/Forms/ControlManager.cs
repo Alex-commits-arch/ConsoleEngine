@@ -17,6 +17,8 @@ namespace ConsoleLibrary.Forms
         private Rectangle oldRectangle;
         private Control controlUnderMouse;
 
+        public override BufferArea Buffer => ConsoleRenderer.ActiveBuffer;
+
         public ControlManager() : base(null)
         {
             name = "Control manager";
@@ -83,7 +85,9 @@ namespace ConsoleLibrary.Forms
 
             if (control.Visible)
             {
-                oldRectangle = control.Rectangle;
+                oldRectangle = control.ClientRectangle;
+                ConsoleRenderer.ActiveBuffer.FillRect(oldRectangle, WindowsWrapper.Enums.CharAttribute.BackgroundYellow);
+                ConsoleRenderer.RenderArea(oldRectangle);
                 updating = true;
                 control.Invalidate();
             }
@@ -93,22 +97,24 @@ namespace ConsoleLibrary.Forms
         {
             if (updating)
             {
+                // Redraw old area
                 ConsoleRenderer.ActiveBuffer.Clear(oldRectangle);
                 foreach (var ctrl in controls)
                     if (ctrl != control && ctrl.IntersectsWith(oldRectangle))
-                        ctrl.Draw(ctrl.Rectangle.Intersect(oldRectangle));
-                control.Draw(ConsoleRenderer.ActiveBuffer);
+                        ctrl.Draw(ctrl.ClientRectangle.Intersect(oldRectangle));
+                //control.Draw(ConsoleRenderer.ActiveBuffer);
+                control.Draw(control.Parent.Buffer);
 
                 int index = controls.IndexOf(control);
                 for (int i = index + 1; i < controls.Count; i++)
                 {
                     var ctrl = controls[i];
-                    if (ctrl.IntersectsWith(control.Rectangle))
-                        ctrl.Draw(ctrl.Rectangle.Intersect(control.Rectangle));
+                    if (ctrl.IntersectsWith(control.ClientRectangle))
+                        ctrl.Draw(ctrl.ClientRectangle.Intersect(control.ClientRectangle));
                 }
 
                 ConsoleRenderer.RenderArea(oldRectangle);
-                ConsoleRenderer.RenderArea(control.Rectangle);
+                ConsoleRenderer.RenderArea(control.ClientRectangle);
                 updating = false;
             }
         }

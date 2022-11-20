@@ -1,5 +1,7 @@
-﻿using System;
+﻿using ConsoleLibrary.Input.Events;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,6 +30,10 @@ namespace ConsoleLibrary.Forms.Controls
             scrollbar = new VerticalScrollbar(this);
             scrollbar.Height = Height;
             scrollbar.Left = Width - 2;
+
+            scrollbar.MouseEnter += (object obj, MouseEventArgs args) => {
+                Debug.WriteLine("Scrollbar entered");
+            };
         }
 
         protected internal override void HandleResized(int width, int height)

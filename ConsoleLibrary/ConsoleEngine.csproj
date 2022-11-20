@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Drawing\Border.cs" />
     <Compile Include="Game\GameApp.cs" />
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="Drawing\ColorfulString.cs" />

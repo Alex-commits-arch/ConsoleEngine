@@ -46,7 +46,7 @@ namespace WindowsWrapper
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public extern static bool GetCurrentConsoleFontEx(
-            IntPtr hConsoleOutput,
+            ConsoleHandle hConsoleOutput,
             bool bMaximumWindow,
             ref CONSOLE_FONT_INFO_EX lpConsoleCurrentFont
         );
@@ -283,6 +283,11 @@ namespace WindowsWrapper
             return OpenProcess(flags, false, proc.Id);
         }
 
+        public delegate bool EnumCodePagesProc(string codePageString);
+
+        [DllImport("kernel32.dll", EntryPoint = "EnumSystemCodePagesA")]
+        public static extern bool EnumSystemCodePages(EnumCodePagesProc callback, CodePage dwFlags);
+
         #endregion
 
         #region USER32.DLL
@@ -496,6 +501,7 @@ namespace WindowsWrapper
         }
         #endregion
     }
+
     public class ConsoleHandle : SafeHandleMinusOneIsInvalid
     {
         public ConsoleHandle() : base(false) { }

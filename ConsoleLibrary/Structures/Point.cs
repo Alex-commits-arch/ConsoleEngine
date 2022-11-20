@@ -35,6 +35,26 @@ namespace ConsoleLibrary.Structures
             initialized = true;
         }
 
+        public static int Distance(Point p1, Point p2)
+        {
+            float dx = p2.X - p1.X;
+            float dy = p2.Y - p1.Y;
+            return (int)Math.Round(Math.Sqrt(dx * dx + dy * dy));
+        }
+
+        public Point Bound(Rectangle rect)
+        {
+            X = Math.Min(rect.Left + rect.Width - 1, Math.Max(rect.Left, X));
+            Y = Math.Min(rect.Top + rect.Height - 1, Math.Max(rect.Top, Y));
+            return this;
+        }
+
+        public void OnBorder(Rectangle rect)
+        {
+            Point center = rect.UpperLeft + rect.Size / 2;
+            double angle = Math.Atan2(center.X, center.Y);
+        }
+
         public override string ToString()
         {
             return string.Format("X: {0}, Y: {1}", X, Y);

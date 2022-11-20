@@ -7,8 +7,10 @@ namespace ConsoleLibrary.Forms.Controls
 {
     public class HorizontalScrollbar : Scrollbar
     {
-        private const char bigArrowLeft = '\u2b05';
-        private const char bigArrowRight = '\u27a1';
+        //private const char bigArrowLeft = '\u2b05';
+        private const char bigArrowLeft = '<';
+        //private const char bigArrowRight = '\u27a1';
+        private const char bigArrowRight = '>';
         private const char smallArrowUp = '\u25b4';
         private const char smallArrowDown = '\u25be';
         private const char handleSymbol = '\u2588';
