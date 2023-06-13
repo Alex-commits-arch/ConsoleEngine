@@ -20,6 +20,7 @@ namespace ConsoleLibrary.Forms.Controls
         protected bool enabled = true;
         protected bool isInvalid = true;
         protected bool propagateEvents = true;
+        protected bool active = false;
         protected CharAttribute attributes = CharAttribute.BackgroundBlack;
         protected BufferArea buffer;
         protected Control parent;
@@ -116,49 +117,49 @@ namespace ConsoleLibrary.Forms.Controls
         //public Point GetRelativeLocation(Point p) => new Point(p.X - Left, p.Y - Top);
         public Point GetRelativeLocation(Point p) => new Point(p.X - Left - parent.Left, p.Y - Top - parent.Top);
 
-        protected internal void HandleMouseEnter(MouseEventArgs args)
+        protected virtual internal void HandleMouseEnter(MouseEventArgs args)
         {
             MouseEnter?.Invoke(this, args);
             if (propagateEvents)
                 ControlUnderMouse(args.Location)?.HandleMouseEnter(args);
         }
 
-        protected internal void HandleMouseLeave(MouseEventArgs args)
+        protected virtual internal void HandleMouseLeave(MouseEventArgs args)
         {
             MouseLeave?.Invoke(this, args);
             if (propagateEvents)
                 ControlUnderMouse(args.Location)?.HandleMouseLeave(args);
         }
 
-        protected internal void HandleMouseMoved(MouseEventArgs args)
+        protected virtual internal void HandleMouseMoved(MouseEventArgs args)
         {
             MouseMoved?.Invoke(this, args);
             if (propagateEvents)
                 ControlUnderMouse(args.Location)?.HandleMouseMoved(args);
         }
 
-        protected internal void HandleMouseDragged(MouseEventArgs args)
+        protected virtual internal void HandleMouseDragged(MouseEventArgs args)
         {
             MouseDragged?.Invoke(this, args);
             if (propagateEvents)
                 ControlUnderMouse(args.Location)?.HandleMouseDragged(args);
         }
 
-        protected internal void HandleMouseReleased(MouseEventArgs args)
+        protected virtual internal void HandleMouseReleased(MouseEventArgs args)
         {
             MouseReleased?.Invoke(this, args);
             if (propagateEvents)
                 ControlUnderMouse(args.Location)?.HandleMouseReleased(args);
         }
 
-        protected internal void HandleMouseDoubleClick(MouseEventArgs args)
+        protected virtual internal void HandleMouseDoubleClick(MouseEventArgs args)
         {
             MouseDoubleClick?.Invoke(this, args);
             if (propagateEvents)
                 ControlUnderMouse(args.Location)?.HandleMouseDoubleClick(args);
         }
 
-        protected internal void HandleMousePressed(MouseEventArgs args)
+        protected virtual internal void HandleMousePressed(MouseEventArgs args)
         {
             MousePressed?.Invoke(this, args);
             if (propagateEvents)
@@ -181,11 +182,15 @@ namespace ConsoleLibrary.Forms.Controls
             return null;
         }
 
-        protected virtual internal void HandleResized(int width, int height)
-        {
+        //protected virtual internal void HandleResized(int width, int height)
+        //{
+        //    Resized?.Invoke(new ResizedEventArgs(width, height));
+        //}
 
-            //Resized?.Invoke(args);
-        }
+        //protected virtual internal void HandleResized(ResizedEventArgs args)
+        //{
+        //    Resized?.Invoke(args);
+        //}
 
 
         /// <summary>
@@ -199,6 +204,9 @@ namespace ConsoleLibrary.Forms.Controls
                 buffer.Resize(Width, Height);
             else
                 buffer.Clear();
+
+            foreach (Control control in controls)
+                control.RefreshBuffer();
         }
 
         /// <summary>
@@ -206,7 +214,7 @@ namespace ConsoleLibrary.Forms.Controls
         /// </summary>
         public virtual void Update()
         {
-            
+
         }
 
         /// <summary>

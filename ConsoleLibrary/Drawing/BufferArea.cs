@@ -502,6 +502,10 @@ namespace ConsoleLibrary.Drawing
                 }
             }
         }
+        public void Draw(Border border, Point pos, Point size, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
+        {
+            Draw(border, pos.X, pos.Y, size.X, size.Y, attributes);
+        }
 
         public void Draw(Border border, int x, int y, int width, int height, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
         {
@@ -530,6 +534,27 @@ namespace ConsoleLibrary.Drawing
             Draw(bufferArea.Content, x, y);
         }
 
+        public void Draw(CharInfo[] info, int x, int y)
+        {
+            Draw(info, x, y, false, '\0');
+        }
+
+        public void Draw(CharInfo[] info, int x, int y, bool withTransparancy = false, char transparentCharacter = '\0')
+        {
+            int areaWidth = info.Length;
+            int safeX = SafeSourceStart(x);
+            int safeWidth = SafeSourceEnd(x, areaWidth, width);
+
+            for (int areaX = safeX; areaX < safeWidth; areaX++)
+            {
+                if (!withTransparancy || info[areaX].UnicodeChar != transparentCharacter)
+                {
+                    int drawX = x + areaX;
+                    int drawY = y;
+                    content[drawY, drawX] = info[areaX];
+                }
+            }
+        }
 
         public void Draw(CharInfo[,] info, DrawingOptions options)
         {

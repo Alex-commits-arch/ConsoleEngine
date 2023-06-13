@@ -267,9 +267,9 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.2.6.1\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ConsoleLibrary\ConsoleEngine.csproj">
+    <ProjectReference Include="..\ConsoleLibrary\ConsoleLibrary.csproj">
       <Project>{41e731a2-8aa7-467c-bd85-af2a0dda44d2}</Project>
-      <Name>ConsoleEngine</Name>
+      <Name>ConsoleLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\WindowsWrapper\WindowsWrapper.csproj">
       <Project>{3AF42A1F-FDEA-4DBC-B2C7-06ABCA2DCEA4}</Project>

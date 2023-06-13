@@ -45,6 +45,11 @@ namespace ConsoleLibrary.TextExtensions
             return output;
         }
 
+        public static bool IsUnicode(this char c)
+        {
+            return c >= 256;
+        }
+
         public static char FormatUnicode(this char c)
         {
             var bytes = Encoding.Unicode.GetBytes(c.ToString());

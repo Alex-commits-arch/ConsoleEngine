@@ -7,5 +7,13 @@ namespace ConsoleLibrary.Input.Events
     {
         public int Width { get; set; }
         public int Height { get; set; }
+
+        public ResizedEventArgs() { }
+
+        public ResizedEventArgs(int width, int height)
+        {
+            Width = width;
+            Height = height;
+        }
     }
 }

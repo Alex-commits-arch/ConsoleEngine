@@ -15,6 +15,7 @@ namespace ConsoleLibrary.Forms
         private int prevMouseY;
         private bool updating = false;
         private Rectangle oldRectangle;
+        private Control activeControl;
         private Control controlUnderMouse;
 
         public override BufferArea Buffer => ConsoleRenderer.ActiveBuffer;
@@ -34,17 +35,36 @@ namespace ConsoleLibrary.Forms
 
         private void ConsoleInput_Resized(ResizedEventArgs args)
         {
-            controls.ForEach(control =>
-            {
-                control.HandleResized(args.Width, args.Height);
-                control.Invalidate();
-            });
+            //controls.ForEach(control =>
+            //{
+            //    control.HandleResized(args.Width, args.Height);
+            //    control.Invalidate();
+            //});
             //controls.ForEach(control => control.Refre);
         }
 
-        private void ConsoleInput_MouseDragged(object _, MouseEventArgs e) => controlUnderMouse?.HandleMouseDragged(e);
-        private void ConsoleInput_MousePressed(object _, MouseEventArgs e) => controlUnderMouse?.HandleMousePressed(e);
-        private void ConsoleInput_MouseReleased(object _, MouseEventArgs e) => controlUnderMouse?.HandleMouseReleased(e);
+        private void ConsoleInput_MouseDragged(object _, MouseEventArgs e)
+        {
+            if (activeControl != null)
+                activeControl.HandleMouseDragged(e);
+            else
+                controlUnderMouse?.HandleMouseDragged(e);
+        }
+
+        private void ConsoleInput_MousePressed(object _, MouseEventArgs e)
+        {
+            activeControl = controlUnderMouse;
+            controlUnderMouse?.HandleMousePressed(e);
+        }
+
+        private void ConsoleInput_MouseReleased(object _, MouseEventArgs e)
+        {
+            activeControl?.HandleMouseReleased(e);
+            if (controlUnderMouse != activeControl)
+                controlUnderMouse?.HandleMouseReleased(e);
+            activeControl = null;
+        }
+
         private void ConsoleInput_MouseDoubleClick(object _, MouseEventArgs e) => controlUnderMouse?.HandleMouseDoubleClick(e);
 
         private void ConsoleInput_MouseMoved(object _, MouseEventArgs e)
@@ -86,8 +106,8 @@ namespace ConsoleLibrary.Forms
             if (control.Visible)
             {
                 oldRectangle = control.ClientRectangle;
-                ConsoleRenderer.ActiveBuffer.FillRect(oldRectangle, WindowsWrapper.Enums.CharAttribute.BackgroundYellow);
-                ConsoleRenderer.RenderArea(oldRectangle);
+                //ConsoleRenderer.ActiveBuffer.FillRect(oldRectangle, WindowsWrapper.Enums.CharAttribute.BackgroundYellow);
+                //ConsoleRenderer.RenderArea(oldRectangle);
                 updating = true;
                 control.Invalidate();
             }

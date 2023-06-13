@@ -24,7 +24,7 @@ namespace ConsoleLibrary.Forms.Controls
 
             textBox.Width = Width - 2;
             textBox.Height = Height;
-            textBox.Text = "HEllO";
+            textBox.Text = "Hello";
             textBox.Attributes = WindowsWrapper.Enums.CharAttribute.BackgroundDarkBlue | WindowsWrapper.Enums.CharAttribute.ForegroundWhite;
 
             scrollbar = new VerticalScrollbar(this);
@@ -36,16 +36,17 @@ namespace ConsoleLibrary.Forms.Controls
             };
         }
 
-        protected internal override void HandleResized(int width, int height)
-        {
-            Width = width / 2;
-            Left = width / 4;
-            Height = height - 2;
-            textBox.Height = Height;
-            textBox.Width = Width - 1;
-            scrollbar.Height = Height;
-            scrollbar.Left = Width - scrollbar.Width;
-        }
+        //protected internal override void HandleResized(int width, int height)
+        //{
+        //    Width = width / 2;
+        //    Left = width / 4;
+        //    //Height = 20;
+        //    //textBox.BeginUpdate
+        //    textBox.Height = Height;
+        //    textBox.Width = Width - 1;
+        //    scrollbar.Height = Height;
+        //    scrollbar.Left = Width - scrollbar.Width;
+        //}
 
         protected override void RefreshBuffer()
         {

@@ -15,6 +15,8 @@ using System.Linq;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.Game;
 using ConsoleApiTest.Chess;
+using ConsoleApiTest.Poker;
+//using ConsoleLibrary.Forms.Components;
 
 namespace ConsoleApiTest
 {
@@ -94,15 +96,16 @@ namespace ConsoleApiTest
 
             //new TestApp(80, 20).Init();
 
-            //var harness = new Harness();
+            var harness = new Harness();
             //harness.Strap(new ChessApp(100, 50));
-            //harness.Strap(new ChessApp(100, 100));
+            harness.Strap(new ChessApp(100, 50));
             //harness.Strap(new ConsoleLibrary.Game.TestApp(20, 20));
-            //harness.Run();
+            harness.Run();
 
             //new TestApp(115, 52).Init();
-            new MyApp().Init();
-            ConsoleInput.InputLoop();
+            //new PokerApp().Init();
+            //new MyApp().Init();
+            //ConsoleInput.InputLoop();
             //Console.ReadLine();
         }
 
@@ -127,15 +130,15 @@ namespace ConsoleApiTest
             //    Left = 0
             //};
 
-            var sb = new HorizontalScrollbar(controlManager);
-            sb.Width = 20;
+            //var sb = new HorizontalScrollbar(controlManager);
+            //sb.Width = 20;
 
-            new VerticalScrollbar(controlManager)
-            {
-                Left = Width - 2,
-                Height = Height-1,
-                Top = 1
-            };
+            //new VerticalScrollbar(controlManager)
+            //{
+            //    Left = Width - 2,
+            //    Height = Height-1,
+            //    Top = 1
+            //};
 
             new ScrollableTextBox(controlManager)
             {
@@ -145,7 +148,26 @@ namespace ConsoleApiTest
                 Left = 10
             };
 
+            var button = new ConsoleLibrary.Forms.Controls.Button(controlManager)
+            {
+                Text = "Hello",
+                Width = 10,
+                Height = 1
+            };
+
+            button.MouseEnter += Button_MouseEnter;
+
+            //controlManager.Add()
+
             //sb.MouseDragged += Sb_MouseDragged;
+        }
+
+        private void Button_MouseEnter(object sender, MouseEventArgs e)
+        {
+            var c = (ConsoleLibrary.Forms.Controls.Button)sender;
+            //c.BeginUpdate();
+            c.Text = "Test";
+            //c.EndUpdate();
         }
 
         private void Sb_MouseDragged(object sender, MouseEventArgs e)

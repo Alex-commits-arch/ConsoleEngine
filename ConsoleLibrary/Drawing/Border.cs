@@ -30,6 +30,13 @@ namespace ConsoleLibrary.Drawing
         public Border() { }
     }
 
+    public class CustomBorder : Border
+    {
+        public CustomBorder(char c) { 
+        
+        }
+    }
+
     public class SingleBorder : Border
     {
         public SingleBorder(bool heavy = false) : base()

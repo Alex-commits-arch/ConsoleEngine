@@ -65,7 +65,7 @@ namespace ConsoleApiTest.Chess
             return ContainsPieceAt(location) && ColorAt(location) == player;
         }
 
-        private PieceColor ColorAt(Point location)
+        public PieceColor ColorAt(Point location)
         {
             return board[location.X, location.Y].color;
         }
@@ -75,7 +75,23 @@ namespace ConsoleApiTest.Chess
             return board[location.X, location.Y].type;
         }
 
-        private bool ContainsPieceAt(Point location)
+        public void TypeAt(Point location, PieceType pieceType)
+        {
+            board[location.X, location.Y].type = pieceType;
+        }
+
+        public bool IsLastRank(Point location)
+        {
+            PieceColor color = ColorAt(location);
+
+            if (color == PieceColor.White)
+                return location.Y == 0;
+            if (color == PieceColor.Black)
+                return location.Y == 7;
+            return false;
+        }
+
+        public bool ContainsPieceAt(Point location)
         {
             return board[location.X, location.Y].type != PieceType.None;
         }
@@ -255,6 +271,7 @@ enum PieceType
 
 enum PieceColor
 {
+    None,
     White,
     Black
 }

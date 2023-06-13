@@ -1,6 +1,6 @@
 ﻿namespace WindowsWrapper.Enums
 {
-    public enum VirtualKeys : byte
+    public enum VirtualKey : byte
     {
         LeftButton = 0x01,
         RightButton = 0x02,

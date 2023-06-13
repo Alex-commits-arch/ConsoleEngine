@@ -16,15 +16,26 @@ namespace ConsoleLibrary.TextExtensions
             return Encoding.ASCII.GetString(bytes);
         }
 
-        public static CharInfo[] ToCharInfoArray(this string s, CharAttribute attributes = ConsoleRenderer.DefaultAttributes)
+        public static CharInfo[] ToCharInfoArray(this string s, CharAttribute attributes = CharAttribute.BackgroundBlack)
         {
-            CharInfo[] output = new CharInfo[s.Length];
+            CharInfo[] output = new CharInfo[(s.Width())];
 
+            int outputIndex = 0;
             for (int i = 0; i < s.Length; i++)
             {
-                output[i].UnicodeChar = s[i];
-                output[i].Attributes = attributes;
+                output[outputIndex].UnicodeChar = s[i];
+                output[outputIndex].Attributes = attributes;
+
+                if (s[i].IsUnicode())
+                {
+                    output[outputIndex].Attributes |= CharAttribute.LeadingByte;
+                    output[outputIndex + 1].UnicodeChar = s[i];
+                    output[outputIndex + 1].Attributes = attributes | CharAttribute.TrailingByte;
+                    outputIndex++;
+                }
+                outputIndex++;
             }
+
             return output;
         }
 
@@ -110,6 +121,26 @@ namespace ConsoleLibrary.TextExtensions
             int spaces = totalWidth - str.Length;
             int padLeft = spaces / 2 + str.Length;
             return str.PadLeft(padLeft).PadRight(totalWidth);
+        }
+
+        public static int Width(this string str)
+        {
+            return str.Aggregate(0, (r, c) => r += c < 256 ? 1 : 2);
+            var length = 0;
+            for (var i = 0; i < str.Length; i++)
+            {
+                byte[] bytes = Encoding.Default.GetBytes(str.Substring(i, 1));
+                length += bytes.Length;
+                //if (bytes.Length > 1)
+                //{
+                //    length += 2;
+                //}
+                //else
+                //{
+                //    length += 1;
+                //}
+            }
+            return length;
         }
     }
 }

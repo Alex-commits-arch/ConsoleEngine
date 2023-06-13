@@ -442,10 +442,10 @@ namespace WindowsWrapper
         public static extern bool GetWindowInfo(IntPtr hwnd, ref WINDOWINFO pwi);
 
         [DllImport("user32.dll")]
-        public static extern short GetKeyState(VirtualKeys vKey);
+        public static extern short GetKeyState(VirtualKey vKey);
 
         [DllImport("user32.dll")]
-        public static extern short GetAsyncKeyState(VirtualKeys vKey);
+        public static extern short GetAsyncKeyState(VirtualKey vKey);
 
         [DllImport("user32.dll", SetLastError = true)]
         public static extern bool GetCursorPos(out POINT lpPoint);
@@ -497,7 +497,7 @@ namespace WindowsWrapper
             StringBuilder msgOut = new StringBuilder(256);
             var flags = Enums.FormatMessage.ALLOCATE_BUFFER | Enums.FormatMessage.FROM_SYSTEM | Enums.FormatMessage.IGNORE_INSERTS;
             FormatMessage(flags, IntPtr.Zero, errorCode, langId, out msgOut, msgOut.Capacity, IntPtr.Zero);
-            return msgOut.ToString().Trim();
+            return msgOut?.ToString().Trim() ?? string.Empty;
         }
         #endregion
     }

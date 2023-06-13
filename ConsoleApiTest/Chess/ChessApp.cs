@@ -15,8 +15,11 @@
 using ConsoleLibrary.Drawing;
 using ConsoleLibrary.Game;
 using ConsoleLibrary.Structures;
+using ConsoleLibrary.TextExtensions;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
@@ -31,13 +34,26 @@ namespace ConsoleApiTest.Chess
         Point boardCenter;
         Point boardPosition;
         Point markerPos;
+        Point selectedPiece;
         Rectangle boardBounds;
+
+        //PieceColor currentPlayer = PieceColor.White;
+
+        Point[] possibleMoves;
+
         string horizontalGlyphs = "ABCDEFGH";
         string verticalGlyphs = "87654321";
         float backgroundAngle = 0.0f;
+
+
+        //Button restartButton;
+        GameOverPanel gameOverPanel;
+        PromotionPanel promitionPanel;
         Border selectionMarker;
+        Border moveMarker;
         BufferArea backgroundBuffer;
         BufferArea boardBuffer;
+        //BufferArea gameOverBuffer;
         ChessGame game;
 
         Dictionary<PieceColor, Dictionary<PieceType, char>> pieceChars = new Dictionary<PieceColor, Dictionary<PieceType, char>>
@@ -68,12 +84,40 @@ namespace ConsoleApiTest.Chess
             base.Initialize(harness);
 
             game = new ChessGame();
+            game.LastRank += LastRankHandler;
             center = new Point(width / 2, height / 2);
             selectionMarker = new DoubleBorder();
+            moveMarker = new DoubleBorder();
 
+            Title = "Chess";
             SetFont("MS Gothic", 9, 18);
             InitBoard();
             InitBackground();
+
+            gameOverPanel = new GameOverPanel(game);
+            gameOverPanel.Position = center - gameOverPanel.Center;
+            gameOverPanel.Restart += Reset;
+
+            //restartButton = new Button("Restart");
+            //restartButton.Position = center - (restartButton.Text.Length / 2, -4);
+            //restartButton.Click += Reset;
+
+            promitionPanel = new PromotionPanel();
+            promitionPanel.Visible = false;
+            promitionPanel.Position = center - promitionPanel.Center;
+            promitionPanel.Promotion += PromotionHandler;
+        }
+
+        private void LastRankHandler(Point location)
+        {
+            selectedPiece = location;
+            promitionPanel.Visible = true;
+        }
+
+        private void PromotionHandler(PieceType pieceType)
+        {
+            game.Promote(selectedPiece, pieceType);
+            promitionPanel.Visible = false;
         }
 
         private void InitBackground()
@@ -85,8 +129,11 @@ namespace ConsoleApiTest.Chess
             var black = CharAttribute.BackgroundBlack;
             var blue = CharAttribute.BackgroundBlue;
             var darkBlue = CharAttribute.BackgroundDarkBlue;
+            var darkMagenta = CharAttribute.BackgroundDarkMagenta;
+            var magenta = CharAttribute.BackgroundMagenta;
             Gradient gradient = new Gradient(black, darkBlue, black);
             gradient = new Gradient(black, darkBlue, blue, darkBlue, black);
+            //gradient = new Gradient(CharAttribute.BackgroundDarkRed, CharAttribute.BackgroundDarkMagenta, CharAttribute.BackgroundCyan);
             //gradient.Reverse();
             backgroundBuffer.Draw(gradient, 0, 0, width, height, true);
 
@@ -130,25 +177,66 @@ namespace ConsoleApiTest.Chess
             }
         }
 
+        private void Reset()
+        {
+            game.Reset();
+        }
+
         public override void Update(float deltaTime)
         {
-            if (InputManager.IsPressed(VirtualKeys.LeftControl) && InputManager.IsPressed(VirtualKeys.C))
+            InputManager.Update();
+
+            if (InputManager.IsPressed(VirtualKey.LeftControl) && InputManager.IsPressed(VirtualKey.C))
                 Exit();
 
             Point mousePos = InputManager.GetMousePosition();
             markerPos = (mousePos - boardPosition - borderSize) / tileSize;
+            var b = new Rectangle(0, 0, 8, 8);
+            markerPos.initialized = new Rectangle(boardPosition + borderSize, boardSize - borderSize * 2).ContainsPoint(mousePos);
             markerPos.Bound(new Rectangle(0, 0, 8, 8));
 
-            //if (InputManager.IsPressed(VirtualKeys.LeftButton))
-            //    Title = "Hello";
-            //backgroundAngle += (float)(System.Math.PI * deltaTime) / 1;
-            //backgroundAngle %= (float)System.Math.PI;
-            //backgroundAngle = (float)(System.Math.PI / 2);
-            //backgroundAngle = (float)(Math.PI / 4);
-            //backgroundAngle = 0;
+            if (game.gameOver)
+            {
+                gameOverPanel.Update();
+                //restartButton.Update();
+            }
+            else
+            {
+                if (InputManager.IsFirstPressed(VirtualKey.LeftButton))
+                {
+                    if (possibleMoves != null && possibleMoves.Length > 0 && game.board.ColorAt(markerPos) != game.currentPlayer)
+                    {
+                        foreach (var move in possibleMoves)
+                        {
+                            if (move == markerPos)
+                            {
+                                game.Move(selectedPiece, move);
+                                possibleMoves = null;
+                            }
+                        }
+                    }
+                    else if (game.board.ColorAt(markerPos) == game.currentPlayer)
+                    {
+                        if (markerPos == selectedPiece && possibleMoves != null)
+                            possibleMoves = null;
+                        else
+                            possibleMoves = game.board.GetMoves(markerPos);
+
+                        if (possibleMoves != null)
+                            selectedPiece = markerPos;
+                    }
+                }
+                promitionPanel.Update();
+            }
 
             harness.RequestRedraw();
         }
+
+        private void GameOver()
+        {
+
+        }
+
 
         private void DrawBackground(BufferArea mainBuffer)
         {
@@ -203,7 +291,10 @@ namespace ConsoleApiTest.Chess
                             : CharAttribute.ForegroundDarkGray;
                         attribute |= CharAttribute.LeadingByte;
 
+                        //mainBuffer.Draw(pieceChars[piece.color][piece.type], pos.X, pos.Y, attribute | CharAttribute.TrailingByte);
+                        //mainBuffer.Draw(pieceChars[piece.color][piece.type], pos.X + 1, pos.Y, attribute | CharAttribute.LeadingByte);
                         mainBuffer.Draw(pieceChars[piece.color][piece.type], pos.X, pos.Y, attribute);
+                        //mainBuffer.Draw(pieceChars[piece.color][piece.type], pos.X + 1, pos.Y, attribute | CharAttribute.LeadingByte);
                     }
                 }
             }
@@ -211,16 +302,54 @@ namespace ConsoleApiTest.Chess
 
         private void DrawMarker(BufferArea mainBuffer)
         {
+            if (!markerPos.initialized || game.gameOver)
+                return;
+
             Point markerDrawPos = markerPos * tileSize + boardPosition + borderSize;
             mainBuffer.Draw(selectionMarker, markerDrawPos.X, markerDrawPos.Y, tileSize.X, tileSize.Y, CharAttribute.ForegroundMagenta);
         }
 
         private void DrawInfo(BufferArea mainBuffer)
         {
-            var type = game.board.TypeAt(markerPos);
-            mainBuffer.Draw($"{type}", boardPosition.X + boardSize.X + 1, boardPosition.Y);
-            mainBuffer.Draw($"{horizontalGlyphs[markerPos.X]}{verticalGlyphs[markerPos.Y]}", boardPosition.X + boardSize.X + 1, boardPosition.Y + 1);
+            if (game.gameOver)
+                return;
+
+            if (markerPos.initialized)
+            {
+                var type = game.board.TypeAt(markerPos);
+                mainBuffer.Draw($"{type}", boardPosition.X + boardSize.X + 1, boardPosition.Y);
+                mainBuffer.Draw($"{horizontalGlyphs[markerPos.X]}{verticalGlyphs[markerPos.Y]}", boardPosition.X + boardSize.X + 1, boardPosition.Y + 1);
+            }
+
+            if (game.gameOver)
+                mainBuffer.Draw("Game Over!", boardPosition.X + boardCenter.X - 5, boardPosition.Y - 2);
+
+
+            mainBuffer.Draw("Current player: " + game.currentPlayer, 0, 0);
         }
+
+        private void DrawMoves(BufferArea mainBuffer)
+        {
+            if (possibleMoves == null)
+                return;
+
+            foreach (Point move in possibleMoves)
+            {
+                mainBuffer.Draw(moveMarker, boardPosition + borderSize + move * tileSize, tileSize, CharAttribute.ForegroundYellow);
+            }
+        }
+
+        //private void DrawGameOver(BufferArea mainBuffer)
+        //{
+        //    Point size = new Point(60, 15);
+        //    Point pos = center - size / 2;
+
+        //    mainBuffer.FillRect(new Rectangle(pos, size), new CharInfo { UnicodeChar = '\0' });
+        //    mainBuffer.Draw(new Border(), pos, size);
+        //    mainBuffer.Draw("  Game Over!  ", center.X - 6, pos.Y, CharAttribute.ForegroundYellow);
+        //    mainBuffer.Draw("Winner: " + game.currentPlayer, center.X - 6, pos.Y + 3, CharAttribute.ForegroundWhite);
+        //    restartButton.Draw(mainBuffer);
+        //}
 
         public override void Draw(BufferArea buffer)
         {
@@ -229,7 +358,202 @@ namespace ConsoleApiTest.Chess
             DrawBoard(buffer, boardPosition);
             DrawPieces(buffer, boardPosition);
             DrawMarker(buffer);
+            DrawMoves(buffer);
             DrawInfo(buffer);
+            if (game.gameOver)
+                gameOverPanel.Draw(buffer);
+            promitionPanel.Draw(buffer);
+        }
+    }
+
+    class GameOverPanel : Panel
+    {
+        public event Action Restart;
+
+        private ChessGame game;
+        public GameOverPanel(ChessGame game)
+        {
+            this.game = game;
+
+            Title = "Game Over!";
+            Size = (60, 15);
+
+            Button restartButton = new Button("Restart");
+            restartButton.Click += () => Restart?.Invoke();
+            restartButton.Position = (Center.X - restartButton.Text.Width() / 2, 10);
+            buttons.Add(restartButton);
+        }
+    }
+
+    class PromotionPanel : Panel
+    {
+        public delegate void PromotionEventHandler(PieceType pieceType);
+
+        public event PromotionEventHandler Promotion;
+
+        public PromotionPanel()
+        {
+            Title = "Piece Promotion";
+            Size = (Title.Width() + 4, 13);
+
+            Button queenButton = new Button("Queen: ♛");
+            queenButton.Position = (Size.X / 2 - queenButton.Text.Width() / 2, 3);
+            queenButton.Click += () => Promotion?.Invoke(PieceType.Queen);
+            buttons.Add(queenButton);
+
+            Button rookButton = new Button("Rook: ♜");
+            rookButton.Position = (Size.X / 2 - rookButton.Text.Width() / 2, 5);
+            rookButton.Click += () => Promotion?.Invoke(PieceType.Rook);
+            buttons.Add(rookButton);
+
+            Button bishopButton = new Button("Bishop: ♝");
+            bishopButton.Position = (Size.X / 2 - bishopButton.Text.Width() / 2, 7);
+            bishopButton.Click += () => Promotion?.Invoke(PieceType.Bishop);
+            buttons.Add(bishopButton);
+
+            Button knightButton = new Button("Knight: ♞");
+            knightButton.Position = (Size.X / 2 - knightButton.Text.Width() / 2, 9);
+            knightButton.Click += () => Promotion?.Invoke(PieceType.Knight);
+            buttons.Add(knightButton);
+        }
+    }
+
+    class Panel
+    {
+        public Point Position { get => position; set => UpdatePosition(value); }
+        public Point Size { get; set; }
+        public Point Center => Size / 2;
+        public string Title { get => title; set => title = value.PadLeft(value.Length + 2).PadRight(value.Length + 4); }
+        public bool Visible { get; set; }
+        //public string Title { get => title; set => title = $"  {value}  "; }
+        protected List<Button> buttons;
+
+        private Point position;
+        private Border border;
+        private string title;
+
+        public Panel()
+        {
+            Visible = true;
+            buttons = new List<Button>();
+            border = new Border();
+        }
+
+        public Panel(string title) : this()
+        {
+            Title = title;
+        }
+
+        public void AddButton(Button button)
+        {
+            button.Position += position;
+            buttons.Add(button);
+        }
+
+        public void Update()
+        {
+            if (!Visible) return;
+
+            foreach (var button in buttons)
+            {
+                button.Update();
+            }
+        }
+
+        public void Draw(BufferArea buffer)
+        {
+            if (!Visible) return;
+
+            buffer.FillRect(new Rectangle(Position, Size));
+            buffer.Draw(border, Position, Size);
+            buffer.Draw(title, Position.X + Size.X / 2 - title.Length / 2, Position.Y, CharAttribute.ForegroundYellow);
+            foreach (var button in buttons)
+            {
+                button.Draw(buffer);
+            }
+        }
+
+        private void UpdatePosition(Point newPosition)
+        {
+            UpdateButtonPositions(newPosition - position);
+            position = newPosition;
+        }
+
+        private void UpdateButtonPositions(Point offset)
+        {
+            foreach (var button in buttons)
+            {
+                button.Position += offset;
+            }
+        }
+    }
+
+    class Button
+    {
+        public Point Position { get; set; }
+        public string Text { get => GetText(); set => SetText(value); }
+
+        public event Action Click;
+
+        protected string text;
+        private int width;
+        private bool mouseOver;
+        private bool mouseDown;
+        private CharAttribute[] attributes =
+        {
+            ConsoleRenderer.DefaultAttributes,
+            CharAttribute.BackgroundBlue | CharAttribute.ForegroundWhite,
+            CharAttribute.BackgroundDarkBlue,
+            CharAttribute.BackgroundDarkBlue
+        };
+
+        public Button() { }
+
+        public Button(string text)
+        {
+            Text = text;
+        }
+
+        protected virtual string GetText()
+        {
+            return text;
+        }
+
+        protected virtual void SetText(string value)
+        {
+            text = value;
+            width = value.Width();
+        }
+
+        protected CharAttribute GetColor()
+        {
+            return attributes[Convert.ToInt32(mouseOver) | Convert.ToInt32(mouseDown) << 1];
+        }
+
+        public virtual void Update()
+        {
+            var mousePosition = InputManager.GetMousePosition();
+            mouseOver = PointIntersects(mousePosition);
+
+            if (mouseOver && InputManager.IsFirstPressed(VirtualKey.LeftButton))
+                mouseDown = true;
+
+            if (mouseOver && mouseDown && InputManager.IsFirstReleased(VirtualKey.LeftButton))
+                Click?.Invoke();
+
+            if (InputManager.IsReleased(VirtualKey.LeftButton))
+                mouseDown = false;
+        }
+
+        public virtual void Draw(BufferArea buffer)
+        {
+            CharAttribute attribute = GetColor();
+            buffer.Draw(text, Position.X, Position.Y, attribute);
+        }
+
+        private bool PointIntersects(Point p)
+        {
+            return p.Y == Position.Y && p.X >= Position.X && p.X < Position.X + width;
         }
     }
 }

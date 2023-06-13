@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ConsoleLibrary</RootNamespace>
     <AssemblyName>ConsoleLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Drawing\Border.cs" />
+    <Compile Include="Forms\Controls\Button.cs" />
     <Compile Include="Game\GameApp.cs" />
     <Compile Include="ConsoleApp.cs" />
     <Compile Include="Drawing\ColorfulString.cs" />

@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WindowsWrapper</RootNamespace>
     <AssemblyName>WindowsWrapper</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -71,7 +72,7 @@
     <Compile Include="Enums\ClassStyles.cs" />
     <Compile Include="Enums\CharAttribute.cs" />
     <Compile Include="Enums\EventType.cs" />
-    <Compile Include="Enums\VirtualKeys.cs" />
+    <Compile Include="Enums\VirtualKey.cs" />
     <Compile Include="Enums\WindowLongFlags.cs" />
     <Compile Include="Enums\WM.cs" />
     <Compile Include="Structs\CharInfo.cs" />
