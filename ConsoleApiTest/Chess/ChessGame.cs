@@ -12,6 +12,7 @@ namespace ConsoleApiTest.Chess
         public delegate void LastRankEventHandler(Point location);
 
         public event LastRankEventHandler LastRank;
+        public event Action GameOver;
 
         public ChessBoard board;
         public PieceColor currentPlayer = PieceColor.White;
@@ -39,15 +40,20 @@ namespace ConsoleApiTest.Chess
         public void Move(Point from, Point to)
         {
             if (board.IsKing(to))
+            {
                 gameOver = true;
+                GameOver?.Invoke();
+            }
 
             board.Move(from, to);
 
-            if (!gameOver && board.TypeAt(to) == PieceType.Pawn && board.IsLastRank(to))
-                LastRank?.Invoke(to);
-
             if (!gameOver)
+            {
+                if (board.TypeAt(to) == PieceType.Pawn && board.IsLastRank(to))
+                    LastRank?.Invoke(to);
+
                 ChangePlayer();
+            }
         }
 
         public void Promote(Point location, PieceType pieceType)

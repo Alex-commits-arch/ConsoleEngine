@@ -10,6 +10,7 @@
     <RootNamespace>ConsoleLibrary</RootNamespace>
     <AssemblyName>ConsoleLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+	  <LangVersion>Latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>

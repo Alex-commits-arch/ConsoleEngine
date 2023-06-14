@@ -9,6 +9,9 @@ namespace ConsoleLibrary.Drawing
     {
         const char DEFAULT_CHAR = '#';
 
+        public static Border Instance => instance ??= new();
+        private static Border instance;
+
         public char UpperLeftCorner => upperLeftCorner;
         public char UpperRightCorner => upperRightCorner;
         public char LowerRightCorner => lowerRightCorner;
@@ -30,15 +33,18 @@ namespace ConsoleLibrary.Drawing
         public Border() { }
     }
 
-    public class CustomBorder : Border
+    public class CustomBorder : SquigglyBorder
     {
         public CustomBorder(char c) { 
         
         }
     }
 
-    public class SingleBorder : Border
+    public class SingleBorder : SquigglyBorder
     {
+        public static new SingleBorder Instance => instance ??= new();
+        private static SingleBorder instance;
+
         public SingleBorder(bool heavy = false) : base()
         {
             upperLeftCorner = heavy ? '┏' : '┌';
@@ -52,6 +58,9 @@ namespace ConsoleLibrary.Drawing
 
     public class RoundedBorder : SingleBorder
     {
+        public static new RoundedBorder Instance => instance ??= new();
+        private static RoundedBorder instance;
+
         [Flags]
         public enum Rounded
         {
@@ -71,8 +80,11 @@ namespace ConsoleLibrary.Drawing
         }
     }
 
-    public class DoubleBorder : Border
+    public class DoubleBorder : SquigglyBorder
     {
+        public static new DoubleBorder Instance => instance ??= new();
+        private static DoubleBorder instance;
+
         public DoubleBorder() : base()
         {
             upperLeftCorner = '╔';
@@ -86,6 +98,9 @@ namespace ConsoleLibrary.Drawing
 
     public class DashedBorder : SingleBorder
     {
+        public static new DashedBorder Instance => instance ??= new();
+        private static DashedBorder instance;
+
         public DashedBorder(bool heavy = false) : base(heavy)
         {
             upper = lower = heavy ? '┅' : '┄';
@@ -95,6 +110,9 @@ namespace ConsoleLibrary.Drawing
 
     public class SquigglyBorder : Border
     {
+        public static SquigglyBorder Instance => instance ??= new();
+        private static SquigglyBorder instance;
+
         public SquigglyBorder() : base()
         {
             left = 'ⸯ';

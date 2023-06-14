@@ -13,13 +13,17 @@
 
 
 using ConsoleLibrary.Drawing;
+//using ConsoleLibrary.Forms.Components;
 using ConsoleLibrary.Game;
 using ConsoleLibrary.Structures;
 using ConsoleLibrary.TextExtensions;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Diagnostics;
 using System.Linq;
+using System.Xml.Schema;
 using WindowsWrapper.Enums;
 using WindowsWrapper.Structs;
 
@@ -85,6 +89,7 @@ namespace ConsoleApiTest.Chess
 
             game = new ChessGame();
             game.LastRank += LastRankHandler;
+            game.GameOver += GameOver;
             center = new Point(width / 2, height / 2);
             selectionMarker = new DoubleBorder();
             moveMarker = new DoubleBorder();
@@ -95,6 +100,7 @@ namespace ConsoleApiTest.Chess
             InitBackground();
 
             gameOverPanel = new GameOverPanel(game);
+            gameOverPanel.Visible = false;
             gameOverPanel.Position = center - gameOverPanel.Center;
             gameOverPanel.Restart += Reset;
 
@@ -102,23 +108,26 @@ namespace ConsoleApiTest.Chess
             //restartButton.Position = center - (restartButton.Text.Length / 2, -4);
             //restartButton.Click += Reset;
 
-            promitionPanel = new PromotionPanel();
-            promitionPanel.Visible = false;
-            promitionPanel.Position = center - promitionPanel.Center;
-            promitionPanel.Promotion += PromotionHandler;
+            //promitionPanel = new PromotionPanel();
+            //promitionPanel.Visible = false;
+            //promitionPanel.Position = center - promitionPanel.Center;
+            //promitionPanel.Promotion += PromotionHandler;
         }
 
         private void LastRankHandler(Point location)
         {
             selectedPiece = location;
-            promitionPanel.Visible = true;
+            //Draw(ConsoleRenderer.ActiveBuffer);
+            var pieceType = new PromotionPrompt().GetResult();
+            game.Promote(selectedPiece, pieceType);
+            //promitionPanel.Visible = true;
         }
 
-        private void PromotionHandler(PieceType pieceType)
-        {
-            game.Promote(selectedPiece, pieceType);
-            promitionPanel.Visible = false;
-        }
+        //private void PromotionHandler(PieceType pieceType)
+        //{
+        //    game.Promote(selectedPiece, pieceType);
+        //    promitionPanel.Visible = false;
+        //}
 
         private void InitBackground()
         {
@@ -179,12 +188,16 @@ namespace ConsoleApiTest.Chess
 
         private void Reset()
         {
+            gameOverPanel.Visible = false;
             game.Reset();
         }
 
         public override void Update(float deltaTime)
         {
             InputManager.Update();
+
+            //if (InputManager.IsFirstPressed(VirtualKey.A))
+            //    game.gameOver = true;
 
             if (InputManager.IsPressed(VirtualKey.LeftControl) && InputManager.IsPressed(VirtualKey.C))
                 Exit();
@@ -195,8 +208,11 @@ namespace ConsoleApiTest.Chess
             markerPos.initialized = new Rectangle(boardPosition + borderSize, boardSize - borderSize * 2).ContainsPoint(mousePos);
             markerPos.Bound(new Rectangle(0, 0, 8, 8));
 
+
             if (game.gameOver)
             {
+
+                //new PromotionPrompt().GetResult();
                 gameOverPanel.Update();
                 //restartButton.Update();
             }
@@ -226,7 +242,7 @@ namespace ConsoleApiTest.Chess
                             selectedPiece = markerPos;
                     }
                 }
-                promitionPanel.Update();
+                //promitionPanel.Update();
             }
 
             harness.RequestRedraw();
@@ -234,7 +250,7 @@ namespace ConsoleApiTest.Chess
 
         private void GameOver()
         {
-
+            gameOverPanel.Visible = true;
         }
 
 
@@ -339,30 +355,20 @@ namespace ConsoleApiTest.Chess
             }
         }
 
-        //private void DrawGameOver(BufferArea mainBuffer)
-        //{
-        //    Point size = new Point(60, 15);
-        //    Point pos = center - size / 2;
-
-        //    mainBuffer.FillRect(new Rectangle(pos, size), new CharInfo { UnicodeChar = '\0' });
-        //    mainBuffer.Draw(new Border(), pos, size);
-        //    mainBuffer.Draw("  Game Over!  ", center.X - 6, pos.Y, CharAttribute.ForegroundYellow);
-        //    mainBuffer.Draw("Winner: " + game.currentPlayer, center.X - 6, pos.Y + 3, CharAttribute.ForegroundWhite);
-        //    restartButton.Draw(mainBuffer);
-        //}
-
         public override void Draw(BufferArea buffer)
         {
             buffer.Clear();
             DrawBackground(buffer);
             DrawBoard(buffer, boardPosition);
             DrawPieces(buffer, boardPosition);
-            DrawMarker(buffer);
-            DrawMoves(buffer);
-            DrawInfo(buffer);
-            if (game.gameOver)
-                gameOverPanel.Draw(buffer);
-            promitionPanel.Draw(buffer);
+            if (!game.gameOver)
+            {
+                DrawMarker(buffer);
+                DrawMoves(buffer);
+                DrawInfo(buffer);
+            }
+            gameOverPanel.Draw(buffer);
+            //promitionPanel.Draw(buffer);
         }
     }
 
@@ -381,7 +387,7 @@ namespace ConsoleApiTest.Chess
             Button restartButton = new Button("Restart");
             restartButton.Click += () => Restart?.Invoke();
             restartButton.Position = (Center.X - restartButton.Text.Width() / 2, 10);
-            buttons.Add(restartButton);
+            Components.Add(restartButton);
         }
     }
 
@@ -399,44 +405,34 @@ namespace ConsoleApiTest.Chess
             Button queenButton = new Button("Queen: ♛");
             queenButton.Position = (Size.X / 2 - queenButton.Text.Width() / 2, 3);
             queenButton.Click += () => Promotion?.Invoke(PieceType.Queen);
-            buttons.Add(queenButton);
+            Components.Add(queenButton);
 
             Button rookButton = new Button("Rook: ♜");
             rookButton.Position = (Size.X / 2 - rookButton.Text.Width() / 2, 5);
             rookButton.Click += () => Promotion?.Invoke(PieceType.Rook);
-            buttons.Add(rookButton);
+            Components.Add(rookButton);
 
             Button bishopButton = new Button("Bishop: ♝");
             bishopButton.Position = (Size.X / 2 - bishopButton.Text.Width() / 2, 7);
             bishopButton.Click += () => Promotion?.Invoke(PieceType.Bishop);
-            buttons.Add(bishopButton);
+            Components.Add(bishopButton);
 
             Button knightButton = new Button("Knight: ♞");
             knightButton.Position = (Size.X / 2 - knightButton.Text.Width() / 2, 9);
             knightButton.Click += () => Promotion?.Invoke(PieceType.Knight);
-            buttons.Add(knightButton);
+            Components.Add(knightButton);
         }
     }
 
-    class Panel
+    class Panel : Component
     {
-        public Point Position { get => position; set => UpdatePosition(value); }
-        public Point Size { get; set; }
-        public Point Center => Size / 2;
         public string Title { get => title; set => title = value.PadLeft(value.Length + 2).PadRight(value.Length + 4); }
-        public bool Visible { get; set; }
-        //public string Title { get => title; set => title = $"  {value}  "; }
-        protected List<Button> buttons;
 
-        private Point position;
-        private Border border;
         private string title;
 
         public Panel()
         {
             Visible = true;
-            buttons = new List<Button>();
-            border = new Border();
         }
 
         public Panel(string title) : this()
@@ -444,61 +440,27 @@ namespace ConsoleApiTest.Chess
             Title = title;
         }
 
-        public void AddButton(Button button)
-        {
-            button.Position += position;
-            buttons.Add(button);
-        }
-
-        public void Update()
-        {
-            if (!Visible) return;
-
-            foreach (var button in buttons)
-            {
-                button.Update();
-            }
-        }
-
-        public void Draw(BufferArea buffer)
+        public override void Draw(BufferArea buffer)
         {
             if (!Visible) return;
 
             buffer.FillRect(new Rectangle(Position, Size));
-            buffer.Draw(border, Position, Size);
+            buffer.Draw(DoubleBorder.Instance, Position, Size);
             buffer.Draw(title, Position.X + Size.X / 2 - title.Length / 2, Position.Y, CharAttribute.ForegroundYellow);
-            foreach (var button in buttons)
-            {
-                button.Draw(buffer);
-            }
-        }
-
-        private void UpdatePosition(Point newPosition)
-        {
-            UpdateButtonPositions(newPosition - position);
-            position = newPosition;
-        }
-
-        private void UpdateButtonPositions(Point offset)
-        {
-            foreach (var button in buttons)
-            {
-                button.Position += offset;
-            }
+            base.Draw(buffer);
         }
     }
 
-    class Button
+    class Button : InputComponent
     {
-        public Point Position { get; set; }
-        public string Text { get => GetText(); set => SetText(value); }
+        public string Text { get => text; set => SetText(value); }
 
-        public event Action Click;
+        //public event Action Click;
 
         protected string text;
-        private int width;
-        private bool mouseOver;
-        private bool mouseDown;
+        //private int width;
+        //private bool mouseOver;
+        //private bool mouseDown;
         private CharAttribute[] attributes =
         {
             ConsoleRenderer.DefaultAttributes,
@@ -514,15 +476,10 @@ namespace ConsoleApiTest.Chess
             Text = text;
         }
 
-        protected virtual string GetText()
-        {
-            return text;
-        }
-
         protected virtual void SetText(string value)
         {
             text = value;
-            width = value.Width();
+            Width = value.Width();
         }
 
         protected CharAttribute GetColor()
@@ -530,7 +487,94 @@ namespace ConsoleApiTest.Chess
             return attributes[Convert.ToInt32(mouseOver) | Convert.ToInt32(mouseDown) << 1];
         }
 
-        public virtual void Update()
+        public override void Draw(BufferArea buffer)
+        {
+            CharAttribute attribute = GetColor();
+            buffer.Draw(text, ClientPosition.X, ClientPosition.Y, attribute);
+        }
+    }
+
+    class PromotionPrompt : Prompt<PieceType>
+    {
+        public PromotionPrompt()
+        {
+            Title = "Piece Promotion";
+            Size = (Title.Width() + 4, 13);
+            Position = ConsoleRenderer.GetConsoleSize() / 2 - Center;
+
+            Button queenButton = new Button("Queen: ♛");
+            queenButton.Position = (Size.X / 2 - queenButton.Text.Width() / 2, 3);
+            queenButton.Click += () => result = PieceType.Queen;
+            Components.Add(queenButton);
+
+            Button rookButton = new Button("Rook: ♜");
+            rookButton.Position = (Size.X / 2 - rookButton.Text.Width() / 2, 5);
+            rookButton.Click += () => result = PieceType.Rook;
+            Components.Add(rookButton);
+
+            Button bishopButton = new Button("Bishop: ♝");
+            bishopButton.Position = (Size.X / 2 - bishopButton.Text.Width() / 2, 7);
+            bishopButton.Click += () => result = PieceType.Bishop;
+            Components.Add(bishopButton);
+
+            Button knightButton = new Button("Knight: ♞");
+            knightButton.Position = (Size.X / 2 - knightButton.Text.Width() / 2, 9);
+            knightButton.Click += () => result = PieceType.Knight;
+            Components.Add(knightButton);
+        }
+    }
+
+    abstract class Prompt<T> : InputComponent where T : struct, Enum
+    {
+        public string Title { get => title; set => title = value.PadLeft(value.Length + 2).PadRight(value.Length + 4); }
+
+        //protected List<Component> components = new List<Component>();
+        private string title;
+        protected T? result;
+
+        public T GetResult()
+        {
+            while (result == null)
+            {
+                Update();
+                Draw(ConsoleRenderer.ActiveBuffer);
+                System.Threading.Thread.Sleep(1);
+            }
+            return result ?? default;
+        }
+
+        public override void Update()
+        {
+            InputManager.Update();
+            base.Update();
+            foreach (var component in Components)
+            {
+                component.Update();
+            }
+        }
+
+        public override void Draw(BufferArea buffer)
+        {
+            buffer.FillRect(new Rectangle(Position, Size));
+            buffer.Draw(DoubleBorder.Instance, Position, Size);
+            buffer.Draw(title, Position.X + Size.X / 2 - title.Length / 2, Position.Y, CharAttribute.ForegroundYellow);
+            foreach (var component in Components)
+            {
+                component.Draw(buffer);
+            }
+            ConsoleRenderer.RenderOutput();
+        }
+
+    }
+
+    abstract class InputComponent : Component
+    {
+        public event Action Click;
+
+        protected bool mouseOver;
+        protected bool mouseDown;
+
+        public override void Update()
         {
             var mousePosition = InputManager.GetMousePosition();
             mouseOver = PointIntersects(mousePosition);
@@ -544,314 +588,74 @@ namespace ConsoleApiTest.Chess
             if (InputManager.IsReleased(VirtualKey.LeftButton))
                 mouseDown = false;
         }
+    }
 
-        public virtual void Draw(BufferArea buffer)
+    abstract class Component
+    {
+        public class ComponentCollection : List<Component>
         {
-            CharAttribute attribute = GetColor();
-            buffer.Draw(text, Position.X, Position.Y, attribute);
+            private readonly Component owner;
+
+            public ComponentCollection(Component owner)
+            {
+                this.owner = owner;
+            }
+
+            public new void Add(Component component)
+            {
+                component.Parent?.Components.Remove(component);
+                component.parent = owner;
+                base.Add(component);
+            }
         }
 
-        private bool PointIntersects(Point p)
+        public Component Parent => parent;
+        public ComponentCollection Components => components;
+        public bool Visible { get; set; }
+        public Point Position { get => position; set => UpdatePosition(value); }
+        public Point ClientPosition => parent == null ? position : parent.position + position;
+        public int Left { get => Position.X; set => UpdatePosition((value, Position.Y)); }
+        public int Top { get => Position.Y; set => UpdatePosition((Position.X, value)); }
+
+        public Point Size { get => size; set => size = (Math.Max(1, value.X), Math.Max(1, value.Y)); }
+        public int Width { get => size.X; set => Size = (value, size.Y); }
+        public int Height { get => size.Y; set => Size = (size.X, value); }
+
+        public Point Center => size / 2;
+
+        private Point position;
+        private Point size;
+        private Component parent;
+        private readonly ComponentCollection components;
+
+        public Component()
         {
-            return p.Y == Position.Y && p.X >= Position.X && p.X < Position.X + width;
+            components = new ComponentCollection(this);
+        }
+
+        protected virtual void UpdatePosition(Point newPosition)
+        {
+            position = newPosition;
+        }
+
+        public virtual void Update()
+        {
+            if (!Visible) return;
+            foreach (var component in Components)
+                component.Update();
+        }
+        public virtual void Draw(BufferArea buffer)
+        {
+            if (!Visible) return;
+            foreach (var component in Components)
+                component.Draw(buffer);
+        }
+
+        protected bool PointIntersects(Point p)
+        {
+            Point position = ClientPosition;
+            return p.Y >= position.Y && p.Y < position.Y + size.Y &&
+                   p.X >= position.X && p.X < position.X + size.X;
         }
     }
 }
-
-
-//namespace ConsoleApiTest.Chess
-//{
-//    class ChessApp : ConsoleApp
-//    {
-//        public ChessApp(int width = 40, int height = 30) : base(width, height) { }
-
-//        const char PAWN = '♙';
-//        const char ROOK = '♖';
-//        const char KNIGHT = '♘';
-//        const char BISHOP = '♗';
-//        const char QUEEN = '♕';
-//        const char KING = '♔';
-//        // ♙♖♘♗♕♔
-//        // ♟♜♞♝♛♚
-//        Dictionary<PieceColor, Dictionary<PieceType, char>> pieceChars = new Dictionary<PieceColor, Dictionary<PieceType, char>>
-//        {
-//            //{ PieceType.Pawn,   '\u2659' },
-//            //{ PieceType.Pawn,   PAWN },
-//            //{ PieceType.Pawn,   'P' },
-//            //{ PieceType.Rook,   'R' },
-//            //{ PieceType.Knight, 'N' },
-//            //{ PieceType.Bishop, 'B' },
-//            //{ PieceType.Queen,  'Q' },
-//            //{ PieceType.King,   'K' },
-//            { PieceColor.Black, new Dictionary<PieceType, char>{
-//                { PieceType.Pawn, '♙' },
-//                { PieceType.Rook, '♖' },
-//                { PieceType.Knight, '♘' },
-//                { PieceType.Bishop, '♗' },
-//                { PieceType.Queen, '♕' },
-//                { PieceType.King, '♔' },
-//            } },
-//            { PieceColor.White, new Dictionary<PieceType, char>{
-//                { PieceType.Pawn, '♟' },
-//                { PieceType.Rook, '♜' },
-//                { PieceType.Knight, '♞' },
-//                { PieceType.Bishop, '♝' },
-//                { PieceType.Queen, '♛' },
-//                { PieceType.King, '♚' },
-//            } }
-
-//            //{PieceColor.Black  { PieceType.Pawn,   PAWN },
-//            //{ PieceType.Rook,   ROOK },
-//            //{ PieceType.Knight, KNIGHT },
-//            //{ PieceType.Bishop, BISHOP },
-//            //{ PieceType.Queen,  QUEEN },
-//            //{ PieceType.King,   KING },}
-
-//        };
-
-//        Dictionary<PieceColor, int> pieceColors = new Dictionary<PieceColor, int>
-//        {
-//            { PieceColor.White, Colors.BACKGROUND_WHITE | Colors.COMMON_LVB_REVERSE_VIDEO },
-//            { PieceColor.Black, Colors.FOREGROUND_INTENSITY },
-//        };
-
-//        int tilesX = 8;
-//        int tilesY = 8;
-//        int tileWidth = 6;
-//        int tileHeight = 3;
-
-//        Location windowCenter;
-//        Location boardCenter;
-//        Location tileCenter;
-//        Location tileSize;
-//        Location boardSize;
-//        Location selected;
-//        Location playerPos;
-
-//        //int playerX = 0;
-//        //int playerY = 0;
-
-//        readonly int boardColor = Colors.FOREGROUND_GREEN | Colors.FOREGROUND_INTENSITY;
-
-//        //ChessBoard board;
-//        ChessGame game;
-
-//        public override void Init()
-//        {
-//            base.Init();
-//            playerPos = new Location(0, 0);
-//            windowCenter = new Location(width, height) / 2;
-//            tileSize = new Location(tileWidth, tileHeight);
-//            tileCenter = tileSize / 2;
-//            boardSize = new Location(tilesX, tilesY) * tileSize;
-//            boardCenter = boardSize / 2;
-
-//            InitControls();
-//            InitLayers();
-//            InitGame();
-
-//            //base.Loop(Update);
-//        }
-
-//        private void InitGame()
-//        {
-//            game = new ChessGame(true);
-//            //board = new ChessBoard();
-//            //board.GetMoves(new Location(0, 1));
-//            DrawBoard();
-//        }
-
-//        public void Update()
-//        {
-//            DrawPieces();
-//            DrawText();
-//            DrawPlayer();
-//            DrawWinner();
-//            //context.RenderFrame();
-//            //context.DrawChar('♙', 1, 0);
-//            //context.DrawString("♙", 0, 0);
-//        }
-
-//        private void DrawBoard()
-//        {
-//            var tileShape = new Rect(tileWidth, tileHeight);
-//            var borderShape = new Rect(boardSize + new Location(2, 2));
-
-//            //var boardBuffer = context["board"];
-//            tileShape.Fill('░');
-//            borderShape.Border('╔', '╗', '╚', '╝', '║', '═');
-//            //borderShape.Border('░');
-
-//            //boardBuffer.Draw(borderShape, boardColor, windowCenter - boardCenter + new Location(-1, -1));
-//            //for (int x = 0; x < tilesX; x++)
-//            //{
-//            //    boardBuffer.Draw("ABCDEFGH"[x], boardColor, windowCenter + new Location(tileWidth / 2 + tileWidth * x - boardCenter.x, boardCenter.y + tileCenter.y));
-//            //    boardBuffer.Draw("12345678"[x], boardColor, windowCenter + new Location(-boardCenter.x - tileCenter.x, boardCenter.y - tileHeight / 2 - tileHeight * x - 1));
-
-//            //    for (int y = 0; y < tilesY; y++)
-//            //    {
-//            //        if ((x + y) % 2 != 0)
-//            //            boardBuffer.Draw(tileShape, boardColor, windowCenter - boardCenter + new Location(x, y) * tileSize);
-//            //    }
-//            //}
-//        }
-
-//        private void DrawPlayer()
-//        {
-//            var playerShape = new Rect(tileWidth, tileHeight);
-//            var playerColor = Colors.FOREGROUND_MAGENTA | Colors.FOREGROUND_INTENSITY;
-//            playerShape.Corners('╔', '╗', '╚', '╝');
-//            //playerShape.Sides('|', '-');
-//            playerShape.Sides('║', '-');
-
-//            //var playerBuffer = null;// context["player"];
-//            //playerBuffer.Clear();
-//            //playerBuffer.Draw(playerShape, playerColor, windowCenter - boardCenter + playerPos * tileSize);
-
-//            //playerBuffer.Draw('>', playerColor, windowCenter + new Location(-boardCenter.x - tileCenter.x - 2, -boardCenter.y + (tileHeight / 2) + tileHeight * playerPos.y));
-//            //playerBuffer.Draw("/\\", playerColor, windowCenter + new Location(tileWidth / 2 + tileWidth * playerPos.x - boardCenter.x, boardCenter.y + tileCenter.y + 2));
-//        }
-
-//        private void DrawPieces()
-//        {
-//            var pieceShape = new Rect(1, 1);
-//            //var piecesBuffer = context["pieces"];
-//            var field = game.board.GetBoard();
-
-//            //piecesBuffer.Clear();
-//            for (int x = 0; x < tilesX; x++)
-//            {
-//                for (int y = 0; y < tilesY; y++)
-//                {
-//                    ChessPiece piece = field[x, y];
-//                    if (piece.type != PieceType.None)
-//                    {
-//                        pieceShape.Fill(pieceChars[piece.color][piece.type]);
-//                        //piecesBuffer.Draw(
-//                        //    pieceShape,
-//                        //    pieceColors[piece.color],
-//                        //    windowCenter - boardCenter + new Location(x * tileWidth, y * tileHeight) + tileCenter);
-//                    }
-//                }
-//            }
-//        }
-
-//        private void DrawWinner()
-//        {
-//            if (game.gameOver)
-//            {
-//                //var playerBuffer = context["player"];
-//                string winString = $"{game.currentPlayer} won the game!";
-//                //playerBuffer.Draw(winString, Colors.FOREGROUND_YELLOW | Colors.FOREGROUND_INTENSITY, windowCenter + new Location(-winString.Length / 2, 0));
-//            }
-//        }
-
-//        private void DrawText()
-//        {
-//            string playerString = $"Player: {game.currentPlayer}";
-//            string posString = $"{"ABCDEFGH"[playerPos.x]}{playerPos.y + 1}";
-//            string completeString = $"{playerString}\n{posString}";
-//            string pieceString = $"Piece: {game.board.TypeAt(playerPos)}".PadRight(20);
-//            var currentPlayerText = new TextBox(playerString.Length, 1);
-//            //currentPlayerText.Text("This is a longer text to test the capabilities of the text box :)");
-//            currentPlayerText.Text(playerString);
-//            //currentPlayerText.Text("This is a longer text to test the capabilities of the");
-
-//            //var textBuffer = context["text"];
-
-//            //textBuffer.Draw(currentPlayerText, boardColor, windowCenter + boardCenter + new Location(2, -boardCenter.y - 5));
-//            //textBuffer.Draw(playerString, boardColor, windowCenter + boardCenter + new Location(2, -boardCenter.y - 5));
-//            //textBuffer.Draw(pieceString, boardColor, windowCenter + boardCenter + new Location(2, -boardCenter.y - 4));
-//            //textBuffer.Draw(posString, boardColor, windowCenter + new Location(-boardCenter.x - posString.Length - 1, boardCenter.y + 1));
-//        }
-
-//        private void DrawMoves(Location[] locations)
-//        {
-//            var markerShape = new Rect(tileWidth, tileHeight);
-//            //var markersBuffer = context["markers"];
-//            markerShape.Border('╔', '╗', '╚', '╝', '║', '═');
-//            markerShape.Border('▓');
-//            //markerShape.Border(' ');
-
-//            //markersBuffer.Clear();
-//            if (locations != null)
-//            {
-//                for (int i = 0; i < locations.Length; i++)
-//                {
-//                    Location location = locations[i];
-//                    //markersBuffer.Draw(markerShape, Colors.FOREGROUND_YELLOW /*| Colors.FOREGROUND_INTENSITY*/ | Colors.BACKGROUND_YELLOW | Colors.BACKGROUND_INTENSITY, windowCenter - boardCenter + location * tileSize);
-//                    //markersBuffer.Draw(markerShape, Colors.FOREGROUND_YELLOW | Colors.FOREGROUND_INTENSITY | Colors.BACKGROUND_WHITE ^ Colors.BACKGROUND_INTENSITY /*| Colors.BACKGROUND_INTENSITY*/, windowCenter - boardCenter + location * tileSize);
-//                    //markersBuffer.Draw(markerShape, Colors.FOREGROUND_YELLOW | Colors.FOREGROUND_INTENSITY | Colors.BACKGROUND_WHITE /*| Colors.BACKGROUND_INTENSITY*/, windowCenter - boardCenter + location * tileSize * 2);
-//                    //markersBuffer.Draw(markerShape, Colors.FOREGROUND_YELLOW | Colors.FOREGROUND_INTENSITY | Colors.BACKGROUND_INTENSITY, windowCenter - boardCenter + location * tileSize);
-//                    //markersBuffer.Draw(markerShape, Colors.FOREGROUND_YELLOW |  | Colors.BACKGROUND_INTENSITY, windowCenter - boardCenter + location * tileSize);
-//                }
-//            }
-//        }
-
-//        Location[] moves;
-//        private void Select()
-//        {
-//            if ((game.currentPlayer == PieceColor.White || !game.againstComputer) && !game.gameOver)
-//            {
-//                //Location playerPos = new Location(playerX, playerY);
-
-//                if (!selected.initialized)
-//                {
-//                    if (game.board.CanMove(game.currentPlayer, playerPos))
-//                    {
-//                        moves = game.board.GetMoves(playerPos);
-//                        if (moves != null && moves.Length > 0)
-//                            selected = playerPos;
-//                    }
-//                }
-//                else
-//                {
-//                    if ((bool)moves?.Contains(playerPos))
-//                    {
-//                        game.Move(selected, playerPos);
-//                        selected.initialized = false;
-//                        moves = null;
-//                    }
-//                    else if (playerPos == selected)
-//                    {
-//                        selected.initialized = false;
-//                        moves = null;
-//                    }
-//                }
-//                DrawMoves(moves);
-//            }
-//        }
-
-//        public void InitLayers()
-//        {
-//            //context.CreateBuffer("board");
-//            //context.CreateBuffer("pieces");
-//            //context.CreateBuffer("markers");
-//            //context.CreateBuffer("text");
-//            //context.CreateBuffer("player");
-//        }
-
-//        public void InitControls()
-//        {
-//            //inputManager.Register(KeyCode.Escape, new KeyHandler(KeyState.Pressed, deltaTime => Exit()));
-//            //inputManager.Register(KeyCode.Space, new KeyHandler(KeyState.Pressed, deltaTime => Select()));
-
-//            //inputManager.Register(KeyCode.Right, new KeyHandler(KeyState.Pressed, deltaTime =>
-//            //{
-//            //    playerPos.x = Math.Min(tilesX - 1, playerPos.x + 1);
-//            //}));
-//            //inputManager.Register(KeyCode.Left, new KeyHandler(KeyState.Pressed, deltaTime =>
-//            //{
-//            //    playerPos.x = Math.Max(0, playerPos.x - 1);
-//            //}));
-//            //inputManager.Register(KeyCode.Up, new KeyHandler(KeyState.Pressed, deltaTime =>
-//            //{
-//            //    playerPos.y = Math.Max(0, playerPos.y - 1);
-//            //}));
-//            //inputManager.Register(KeyCode.Down, new KeyHandler(KeyState.Pressed, deltaTime =>
-//            //{
-//            //    playerPos.y = Math.Min(tilesY - 1, playerPos.y + 1);
-//            //}));
-//        }
-//    }
-//}

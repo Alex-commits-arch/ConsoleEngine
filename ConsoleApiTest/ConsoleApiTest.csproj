@@ -9,6 +9,7 @@
     <RootNamespace>ConsoleApiTest</RootNamespace>
     <AssemblyName>ConsoleApiTest</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+	<LangVersion>Latest</LangVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
